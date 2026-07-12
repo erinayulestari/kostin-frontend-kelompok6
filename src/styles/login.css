@@ -1,0 +1,314 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+
+body{
+    font-family:'Inter',sans-serif;
+    background:#F8FAFC;
+}
+
+
+.page{
+
+    width:100%;
+    height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+}
+
+
+.login-container{
+    width:1200px;
+    height:720px;
+
+    display:flex;
+    background:white;
+    border-radius:30px;
+    overflow:hidden;
+
+}
+
+/* LEFT */
+
+.hero{
+    width:50%;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    padding:55px;
+}
+
+.logo{
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:24px;
+    font-weight:700;
+    color:#0F172A;
+
+}
+.logo svg{
+
+    color:#2563EB;
+
+}
+
+
+
+.brand h1{
+
+    margin-top:80px;
+    font-size:56px;
+    line-height:1.05;
+    color:#0F172A;
+
+}
+
+
+.brand h1 span{
+
+    color:#2563EB;
+
+}
+
+
+.brand p{
+
+    margin-top:25px;
+    font-size:18px;
+    color:#475569;
+
+}
+
+
+
+
+.hero-image{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+    z-index:0;
+}
+.hero .brand{
+position:relative;
+z-index:2;
+
+}
+.hero::after{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:linear-gradient(
+        rgba(255,255,255,.65),
+        rgba(255,255,255,.35),
+        rgba(0,0,0,.20)
+    );
+
+    z-index:1;
+}
+
+/* RIGHT */
+
+.form{
+    width:50%;
+    padding:70px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+
+}
+
+
+
+.form h2{
+    font-size:32px;
+    color:#0F172A;
+
+}
+
+
+.form p{
+    margin-top:10px;
+    color:#64748B;
+    margin-bottom:35px;
+
+}
+
+
+
+label{
+    font-weight:600;
+    margin-bottom:8px;
+
+}
+
+
+
+input{
+    width:100%;
+    height:55px;
+    border:1px solid #CBD5E1;
+    background:white;
+    border-radius:12px;
+    padding:0 18px;
+    font-size:15px;
+    margin-bottom:20px;
+
+
+}
+
+.password{
+position:relative;
+width:100%;
+
+}
+
+.password input{
+margin-bottom:0;
+
+}
+
+.password{
+position:relative;
+
+}
+
+.eye-btn{
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    width:auto;
+    height:auto;
+    padding:0;
+    border:none;
+    background:transparent;
+    color:#64748B;
+    cursor:pointer;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.eye-btn:hover{
+    background:transparent;
+}
+
+.forgot{
+text-align:right;
+color:#2563EB;
+text-decoration:none;
+font-size:14px;
+cursor:pointer;
+margin-top:10px;
+
+}
+
+.form > button{
+    margin-top:25px;
+    height:55px;
+    background:#2563EB;
+    border:none;
+    border-radius:12px;
+    color:white;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+
+}
+.role-box{
+    margin-top:85px;
+    border:1px solid #E2E8F0;
+    border-radius:18px;
+    padding:12px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.role-title{
+    flex:1;
+
+}
+
+.role-title h4{
+    margin:0 0 6px;
+    font-size:14px;
+    font-weight:700;
+    color:#0F172A;
+
+}
+
+
+
+.role-title p{
+    margin:0;
+    font-size:12px;
+    line-height:1.4;
+    color:#64748B;
+    max-width:220px;
+
+}
+
+.role-card{
+    width:90px;
+    height:80px;
+    border-radius:12px;
+    border:1px solid #E2E8F0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    background:white;
+    cursor:pointer;
+
+}
+
+.role-card strong{
+    font-size:11px;
+
+}
+
+
+
+.role-card small{
+    display:none;
+
+}
+
+/* pencari */
+
+.role-card:first-of-type{
+    color:#2563EB;
+
+}
+
+/* pemilik */
+
+.role-card:last-child{
+    color:#22C55E;
+
+}
+
+.role-card.active{
+    border:1.5px solid #2563EB;
+    background:#EFF6FF;
+
+}
