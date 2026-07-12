@@ -1,0 +1,10 @@
+export default function Logo() {
+  return (
+    <div className="logo">
+      <div className="logo-icon">
+        🏠
+      </div>
+      <span>Kostin</span>
+    </div>
+  );
+}
