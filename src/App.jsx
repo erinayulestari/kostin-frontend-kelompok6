@@ -7,6 +7,7 @@ import {
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import CariKost from "./pages/CariKost";
+import DetailKost from "./pages/DetailKost";
 
 function App() {
   return (
@@ -28,6 +29,12 @@ function App() {
           path="/carikost"
           element={<CariKost />}
         />
+
+        <Route
+          path="/detail-kost"
+          element={<DetailKost />}
+        />
+
       </Routes>
 
     </BrowserRouter>
