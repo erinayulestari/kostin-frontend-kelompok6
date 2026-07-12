@@ -1,0 +1,1557 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+
+body{
+    font-family:'Inter',sans-serif;
+    background:#F8FAFC;
+    color:#0F172A;
+}
+
+
+
+/* =====================
+NAVBAR
+===================== */
+
+
+.navbar{
+
+    height:75px;
+    background:white;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 60px;
+
+    position:sticky;
+    top:0;
+
+    z-index:10;
+
+}
+
+
+.logo-home{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    font-size:22px;
+    font-weight:700;
+
+    color:#2563EB;
+
+}
+
+
+.logo-home span{
+
+    color:#0F172A;
+
+}
+
+
+.menu{
+
+    display:flex;
+    gap:45px;
+
+}
+
+
+.menu a{
+
+    font-size:14px;
+    color:#475569;
+
+    cursor:pointer;
+
+}
+
+
+
+.nav-btn{
+
+    display:flex;
+    gap:12px;
+
+}
+
+
+.nav-btn button{
+
+    height:42px;
+    padding:0 25px;
+
+    border-radius:10px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+}
+
+
+
+.login{
+
+    background:white;
+    border:1px solid #CBD5E1;
+
+}
+
+
+
+.register{
+
+    background:#2563EB;
+    color:white;
+    border:none;
+
+}
+
+
+
+/* =====================
+HERO
+===================== */
+
+
+/* =====================
+HERO FIX
+===================== */
+.hero-home{
+
+    min-height:570px;
+
+    display:flex;
+
+    align-items:center;
+
+    padding:60px 70px;
+
+    background:
+    linear-gradient(
+    90deg,
+    #EFF6FF,
+    white
+    );
+
+    gap:40px;
+
+    overflow:hidden;
+
+}
+.hero-text{
+
+    width:55%;
+
+}
+
+
+
+.hero-text h1{
+
+    font-size:56px;
+
+    line-height:1.1;
+
+    font-weight:700;
+
+    color:#0F172A;
+
+}
+
+
+
+.hero-text h1 span{
+
+    color:#2563EB;
+
+}
+
+
+
+.hero-text p{
+
+    margin-top:25px;
+
+    width:450px;
+
+    font-size:17px;
+
+    line-height:1.6;
+
+    color:#64748B;
+
+}
+
+
+
+
+.badge{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    width:max-content;
+
+    background:#EFF6FF;
+
+    color:#2563EB;
+
+    padding:8px 15px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+    margin-bottom:25px;
+
+}
+
+
+
+
+.hero-button{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:35px;
+
+}
+
+
+
+.hero-button button{
+
+
+    height:50px;
+
+    padding:0 25px;
+
+    border:none;
+
+    border-radius:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    background:#2563EB;
+
+    color:white;
+
+    font-weight:600;
+
+}
+
+
+
+
+.hero-button .outline{
+
+
+    background:white;
+
+    color:#0F172A;
+
+    border:1px solid #CBD5E1;
+
+
+}
+.hero-image{
+
+    width:45%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:flex-end;
+
+    transform:translate(-25px,-45px);
+
+}
+
+
+.hero-image img{
+
+    width:100%;
+
+    max-width:650px;
+
+    height:400px;
+
+    object-fit:cover;
+
+    border-radius:30px;
+
+}
+
+/* =====================
+SEARCH BOX
+===================== */
+
+
+.search-box{
+
+
+    width:90%;
+
+    margin:-40px auto 60px;
+
+
+    background:white;
+
+
+    padding:25px;
+
+
+    border-radius:25px;
+
+
+    display:flex;
+
+
+    align-items:center;
+
+
+    gap:30px;
+
+
+    box-shadow:
+    0 20px 40px rgba(0,0,0,.08);
+
+
+}
+
+
+
+/* =====================
+SEARCH BOX FIX
+===================== */
+
+
+.search-box{
+
+
+width:90%;
+
+
+margin:-40px auto 60px;
+
+
+background:white;
+
+
+padding:25px 35px;
+
+
+border-radius:25px;
+
+
+display:flex;
+
+
+align-items:center;
+
+
+gap:20px;
+
+
+box-shadow:
+0 20px 40px rgba(0,0,0,.08);
+
+
+}
+
+
+
+.search-item{
+
+
+flex:1;
+
+
+border-right:1px solid #E2E8F0;
+
+
+padding-right:20px;
+
+
+}
+
+
+
+
+.search-item strong{
+
+
+font-size:16px;
+
+
+color:#0F172A;
+
+
+}
+
+
+
+.search-item p{
+
+margin-top:5px;
+
+color:#64748B;
+
+font-size:14px;
+
+}
+
+
+
+
+.search-item select{
+
+
+margin-top:8px;
+
+border:none;
+
+background:white;
+
+font-size:14px;
+
+color:#64748B;
+
+outline:none;
+
+cursor:pointer;
+
+
+}
+
+
+
+
+
+.search-box button{
+
+
+background:#2563EB;
+
+
+color:white;
+
+
+border:none;
+
+
+padding:14px 35px;
+
+
+border-radius:12px;
+
+
+cursor:pointer;
+
+
+font-weight:600;
+
+
+}
+
+
+
+.search-box button{
+
+background:#2563EB;
+
+color:white;
+
+border:none;
+
+padding:15px 35px;
+
+border-radius:12px;
+
+cursor:pointer;
+
+}
+
+
+.category-icon{
+
+width:45px;
+
+height:45px;
+
+border-radius:50%;
+
+background:#EFF6FF;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+color:#2563EB;
+
+margin-bottom:15px;
+
+}
+
+
+
+.category-card button{
+
+border:none;
+
+width:35px;
+
+height:35px;
+
+border-radius:50%;
+
+background:#EFF6FF;
+
+color:#2563EB;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+margin-top:15px;
+
+}
+
+
+
+
+
+.price-row{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-top:10px;
+
+}
+
+
+
+.rating{
+
+display:flex;
+
+align-items:center;
+
+gap:5px;
+
+font-size:14px;
+
+}
+
+
+
+.rating span{
+
+color:#475569;
+
+}
+
+
+
+.location{
+
+display:flex;
+
+align-items:center;
+
+gap:5px;
+
+color:#64748B;
+
+}
+
+
+
+
+.facility{
+
+display:flex;
+
+gap:8px;
+
+margin-top:12px;
+
+}
+
+
+.facility span{
+
+background:#F1F5F9;
+
+padding:5px 10px;
+
+border-radius:20px;
+
+font-size:12px;
+
+}
+
+
+
+/* =====================
+FEATURE
+===================== */
+
+
+.feature{
+
+
+    padding:50px 60px;
+
+}
+
+
+
+.feature h2{
+
+    text-align:center;
+
+    font-size:32px;
+
+    margin-bottom:35px;
+
+}
+
+
+
+.feature-grid{
+
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:25px;
+
+
+}
+
+
+
+.feature-card{
+
+
+    background:white;
+
+
+    padding:30px;
+
+
+    border-radius:20px;
+
+
+    text-align:center;
+
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.05);
+
+
+}
+
+
+
+.feature-card svg{
+
+
+    width:35px;
+
+    height:35px;
+
+    color:#2563EB;
+
+}
+
+
+
+.feature-card h3{
+
+
+    margin-top:15px;
+
+    font-size:17px;
+
+
+}
+
+
+
+.feature-card p{
+
+    margin-top:10px;
+
+    color:#64748B;
+
+    font-size:14px;
+
+}
+/* =====================
+FOOTER FIX
+===================== */
+
+
+footer{
+
+    background:#0F172A;
+
+    color:white;
+
+    padding:35px 80px 25px;
+
+}
+
+
+
+footer h2{
+
+    font-size:22px;
+
+    margin-bottom:10px;
+
+}
+
+
+
+footer p{
+
+    color:#CBD5E1;
+
+    font-size:14px;
+
+    line-height:1.5;
+
+}
+
+
+
+.footer-menu{
+
+
+    margin-top:30px;
+
+    display:flex;
+
+    gap:120px;
+
+    align-items:flex-start;
+
+
+}
+
+
+
+.footer-menu div{
+
+    min-width:150px;
+
+}
+
+
+
+.footer-menu h4{
+
+    font-size:15px;
+
+    margin-bottom:12px;
+
+}
+
+
+
+.footer-menu p{
+
+    font-size:13px;
+
+    margin-bottom:5px;
+
+}
+
+
+
+footer::after{
+
+    content:"";
+
+    display:block;
+
+    height:1px;
+
+    background:#334155;
+
+    margin-top:25px;
+
+}
+
+
+
+/* RESPONSIVE */
+
+
+@media(max-width:900px){
+
+
+.hero-home{
+
+    flex-direction:column;
+
+}
+
+
+.hero-text,
+.hero-image{
+
+    width:100%;
+
+}
+
+
+
+.menu{
+
+    display:none;
+
+}
+
+
+.feature-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+
+.search-box{
+
+    flex-direction:column;
+
+}
+
+
+}
+/* =========================
+CATEGORY SECTION
+========================= */
+
+
+.category-section,
+.kost-section{
+
+padding:60px;
+
+}
+
+
+.category-section h2,
+.kost-section h2{
+
+font-size:32px;
+
+margin-bottom:35px;
+
+font-weight:700;
+
+color:#0F172A;
+
+}
+
+
+
+/* GRID CATEGORY */
+
+.category-grid{
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:25px;
+
+}
+
+
+
+/* CARD CATEGORY */
+
+.category-card{
+
+
+background:white;
+
+border-radius:22px;
+
+overflow:hidden;
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.06);
+
+position:relative;
+
+padding-bottom:20px;
+
+
+}
+
+
+
+/* bagian gambar */
+
+/* =========================
+CATEGORY CARD FIX
+========================= */
+
+
+.category-card{
+
+background:white;
+
+border-radius:22px;
+
+overflow:hidden;
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.06);
+
+position:relative;
+
+padding-bottom:60px;
+
+}
+
+
+
+.category-top{
+
+position:relative;
+
+height:200px;
+
+overflow:hidden;
+
+}
+
+
+
+.category-image{
+
+width:100%;
+
+height:200px;
+
+object-fit:cover;
+
+display:block;
+
+border-radius:22px 22px 0 0;
+
+}
+
+
+
+
+.category-icon{
+
+
+position:absolute;
+
+left:18px;
+
+bottom:-22px;
+
+
+width:48px;
+
+height:48px;
+
+
+border-radius:50%;
+
+
+background:#EFF6FF;
+
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+
+color:#2563EB;
+
+
+z-index:5;
+
+
+}
+
+
+
+
+
+.category-card h3{
+
+
+padding:20px;
+
+padding-bottom:5px;
+
+font-size:18px;
+
+
+}
+
+
+
+.category-card p{
+
+
+padding:0 20px;
+
+color:#64748B;
+
+font-size:14px;
+
+line-height:1.5;
+
+
+}
+
+
+
+
+.category-card button{
+
+
+position:absolute;
+
+
+right:20px;
+
+bottom:20px;
+
+
+
+width:38px;
+
+height:38px;
+
+
+border:none;
+
+
+border-radius:50%;
+
+
+background:#EFF6FF;
+
+
+color:#2563EB;
+
+
+display:flex;
+
+
+align-items:center;
+
+
+justify-content:center;
+
+
+}
+
+
+
+
+/* tulisan */
+
+
+.category-card h3{
+
+
+padding:35px 20px 5px;
+
+
+font-size:18px;
+
+
+}
+
+
+
+.category-card p{
+
+
+padding:0 20px;
+
+
+color:#64748B;
+
+
+font-size:14px;
+
+
+line-height:1.5;
+
+
+}
+
+
+
+/* tombol panah kanan */
+
+
+.category-card button{
+
+
+position:absolute;
+
+
+right:20px;
+
+bottom:20px;
+
+
+width:38px;
+
+height:38px;
+
+
+border:none;
+
+
+border-radius:50%;
+
+
+background:#EFF6FF;
+
+
+color:#2563EB;
+
+
+display:flex;
+
+
+align-items:center;
+
+
+justify-content:center;
+
+
+}
+
+
+
+
+
+
+/* =========================
+KOST SECTION
+========================= */
+
+
+.kost-list{
+
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:30px;
+
+
+}
+
+
+
+
+.kost-card{
+
+
+background:white;
+
+
+border-radius:22px;
+
+
+overflow:hidden;
+
+
+box-shadow:
+
+0 10px 30px rgba(0,0,0,.08);
+
+
+}
+
+
+
+
+/* gambar */
+
+
+.kost-image{
+
+
+height:210px;
+
+
+position:relative;
+
+
+overflow:hidden;
+
+
+}
+
+
+
+.kost-image img{
+
+
+width:100%;
+
+
+height:100%;
+
+
+object-fit:cover;
+
+
+}
+
+
+
+/* love */
+
+
+.favorite{
+
+
+position:absolute;
+
+
+top:15px;
+
+
+right:15px;
+
+
+width:42px;
+
+
+height:42px;
+
+
+border:none;
+
+
+border-radius:50%;
+
+
+background:white;
+
+
+display:flex;
+
+
+align-items:center;
+
+
+justify-content:center;
+
+
+color:#2563EB;
+
+
+cursor:pointer;
+
+
+box-shadow:
+
+0 5px 15px rgba(0,0,0,.15);
+
+
+}
+
+
+
+
+/* isi card */
+
+
+.kost-content{
+
+
+padding:20px;
+
+
+}
+
+
+
+.kost-content h3{
+
+
+font-size:18px;
+
+margin-bottom:8px;
+
+
+}
+
+
+
+/* lokasi */
+
+
+.location{
+
+
+display:flex;
+
+
+align-items:center;
+
+
+gap:6px;
+
+
+color:#64748B;
+
+
+font-size:14px;
+
+
+}
+
+
+
+/* harga + rating */
+
+
+.price-rating{
+
+
+display:flex;
+
+
+justify-content:space-between;
+
+
+align-items:center;
+
+
+margin-top:15px;
+
+
+}
+
+
+
+.price-rating h4{
+
+
+font-size:16px;
+
+
+color:#2563EB;
+
+
+}
+
+
+
+
+.rating{
+
+
+display:flex;
+
+
+align-items:center;
+
+
+gap:5px;
+
+
+font-size:14px;
+
+
+}
+
+
+
+.rating span{
+
+
+color:#64748B;
+
+
+}
+
+
+
+/* fasilitas */
+
+
+.facility{
+
+
+display:flex;
+
+
+gap:10px;
+
+
+margin-top:15px;
+
+
+}
+
+
+
+.facility span{
+
+
+background:#EFF6FF;
+
+
+color:#2563EB;
+
+
+padding:6px 12px;
+
+
+border-radius:20px;
+
+
+font-size:12px;
+
+
+}
+
+
+
+
+
+
+/* RESPONSIVE */
+
+
+@media(max-width:1000px){
+
+
+.category-grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+
+
+.kost-list{
+
+grid-template-columns:1fr;
+
+}
+
+
+}
+
+
+
+@media(max-width:600px){
+
+
+.category-grid{
+
+grid-template-columns:1fr;
+
+}
+
+
+.category-section,
+.kost-section{
+
+padding:30px;
+
+}
+
+
+}
+.search-item{
+
+display:flex;
+
+flex-direction:column;
+
+gap:8px;
+
+}
+
+
+
+.search-item strong{
+
+font-size:16px;
+
+}
+
+
+
+.search-item select{
+
+width:max-content;
+
+margin-top:0;
+
+border:none;
+
+background:white;
+
+font-size:14px;
+
+color:#64748B;
+
+outline:none;
+
+cursor:pointer;
+
+}
