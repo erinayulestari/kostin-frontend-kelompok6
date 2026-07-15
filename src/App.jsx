@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import CariKost from "./pages/CariKost";
 import DetailKost from "./pages/DetailKost";
 import Favorit from "./pages/Favorit";
+import TentangKami from "./pages/TentangKami";
 
 function App() {
   return (
@@ -38,6 +39,11 @@ function App() {
         <Route
           path="/favorit"
           element={<Favorit />}
+        />
+
+        <Route
+          path="/tentang-kami"
+          element={<TentangKami />}
         />
 
       </Routes>

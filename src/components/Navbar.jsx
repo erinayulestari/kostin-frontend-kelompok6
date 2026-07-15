@@ -1,5 +1,5 @@
-import {Home, Search, Heart} from "lucide-react";
-import {useNavigate} from "react-router-dom";
+import {Home} from "lucide-react";
+import {useNavigate, Link} from "react-router-dom";
 
 
 export default function Navbar(){
@@ -33,7 +33,7 @@ KostIn
 <a>Home</a>
 <a>Cari Kost</a>
 <a>Favorit</a>
-<a>Tentang Kami</a>
+<Link to="/tentang-kami">Tentang Kami</Link>
 
 
 </div>
