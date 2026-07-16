@@ -1,0 +1,688 @@
+/* ===================================
+   DETAIL BOOKING PAGE
+=================================== */
+
+.detail-booking-page{
+
+    width:1180px;
+
+    margin:50px auto 90px;
+
+}
+
+/* ===================================
+   BACK BUTTON
+=================================== */
+
+.back-btn{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    background:none;
+
+    border:none;
+
+    color:#2563EB;
+
+    font-size:16px;
+    font-weight:600;
+
+    cursor:pointer;
+
+    margin-bottom:35px;
+
+    transition:.25s;
+
+}
+
+.back-btn:hover{
+
+    color:#1D4ED8;
+
+}
+
+/* ===================================
+   HEADER
+=================================== */
+
+.detail-header{
+
+    margin-bottom:40px;
+
+}
+
+.detail-header h1{
+
+    font-size:46px;
+
+    color:#0F172A;
+
+    margin-bottom:12px;
+
+}
+
+.detail-header p{
+
+    color:#64748B;
+
+    font-size:17px;
+
+    line-height:1.8;
+
+}
+
+/* ===================================
+   GRID
+=================================== */
+
+.detail-grid{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr;
+
+    gap:30px;
+
+}
+
+.detail-left,
+.detail-right{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:28px;
+
+}
+
+/* ===================================
+   CARD
+=================================== */
+
+.booking-card,
+.payment-card,
+.booking-cost-card,
+.booking-action-card,
+.booking-note{
+
+    background:#FFFFFF;
+
+    border-radius:10px;
+
+    padding:30px;
+
+    box-shadow:
+        0 12px 35px rgba(15,23,42,.06);
+
+}
+
+/* ===================================
+   TITLE
+=================================== */
+
+.card-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-bottom:28px;
+
+}
+
+.card-icon{
+
+    width:40px;
+
+    height:40px;
+
+    border-radius:14px;
+
+    background:#EFF6FF;
+
+    color:#2563EB;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.card-title h3{
+
+    font-size:18px;
+
+    color:#0F172A;
+
+}
+/* ===================================
+   BOOKING INFO
+=================================== */
+
+.booking-info-grid{
+
+    display:grid;
+
+    grid-template-columns:1.3fr 1fr;
+
+    gap:50px;
+
+    align-items:flex-start;
+
+}
+
+.booking-left{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:34px;
+
+}
+
+.booking-right{
+
+    display:flex;
+
+    justify-content:flex-start;
+
+}
+
+.booking-item{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.booking-item span{
+
+    color:#64748B;
+
+    font-size:14px;
+
+}
+
+.booking-item h4{
+
+    font-size:18px;
+
+    color:#0F172A;
+
+    font-weight:600;
+
+}
+
+/* ===================================
+   STATUS
+=================================== */
+
+.status{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    width:max-content;
+
+    padding:10px 18px;
+
+    border-radius:999px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+.status-dot{
+
+    width:8px;
+
+    height:8px;
+
+    border-radius:50%;
+
+}
+
+.waiting{
+
+    background:#FEF3C7;
+
+    color:#B45309;
+
+}
+
+.waiting .status-dot{
+
+    background:#F59E0B;
+
+}
+
+.success{
+
+    background:#DCFCE7;
+
+    color:#15803D;
+
+}
+
+.success .status-dot{
+
+    background:#22C55E;
+
+}
+
+.cancel{
+
+    background:#FEE2E2;
+
+    color:#DC2626;
+
+}
+
+.cancel .status-dot{
+
+    background:#EF4444;
+
+}
+
+/* ===================================
+   PAYMENT
+=================================== */
+
+.payment-item{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    margin-bottom:22px;
+
+}
+
+.payment-item:last-child{
+
+    margin-bottom:0;
+
+}
+
+.payment-item span{
+
+    font-size:14px;
+
+    color:#64748B;
+
+}
+
+.payment-item h4{
+
+    color:#0F172A;
+
+    font-size:17px;
+
+    font-weight:600;
+
+}
+
+.payment-method{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.payment-method img{
+
+    width:70px;
+
+    object-fit:contain;
+
+}
+
+/* ===================================
+   PAYMENT NOTE
+=================================== */
+
+.payment-note{
+
+    margin-top:25px;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    background:#EFF6FF;
+
+}
+
+.payment-note p{
+
+    color:#2563EB;
+
+    line-height:1.7;
+
+    font-size:15px;
+
+}
+/* ===================================
+   INFORMASI KOST
+=================================== */
+
+.kost-wrapper{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:28px;
+
+}
+
+.kost-image{
+
+    width:100%;
+
+    height:330px;
+
+    object-fit:cover;
+
+    border-radius:20px;
+
+}
+
+.kost-info h2{
+
+    font-size:32px;
+
+    color:#0F172A;
+
+    margin-bottom:12px;
+
+}
+
+.kost-address{
+
+    color:#64748B;
+
+    font-size:17px;
+
+    line-height:1.8;
+
+    margin-bottom:35px;
+
+}
+
+.kost-detail-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:28px 40px;
+
+}
+
+.detail-item{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+
+}
+
+.detail-item span{
+
+    color:#64748B;
+
+    font-size:14px;
+
+}
+
+.detail-item h4{
+
+    color:#0F172A;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    line-height:1.5;
+
+}
+
+/* ===================================
+   ACTION CARD
+=================================== */
+
+.booking-action-card h3{
+
+    font-size:24px;
+
+    color:#0F172A;
+
+    margin-bottom:30px;
+
+}
+
+.detail-kost-btn,
+.pay-btn{
+
+    width:100%;
+
+    height:52px;
+
+    border-radius:14px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    margin-bottom:16px;
+
+}
+
+.detail-kost-btn{
+
+    background:#FFFFFF;
+
+    color:#2563EB;
+
+    border:1px solid #2563EB;
+
+}
+
+.detail-kost-btn:hover{
+
+    background:#EFF6FF;
+
+}
+
+.pay-btn{
+
+    background:#2563EB;
+
+    color:#FFFFFF;
+
+    border:none;
+
+}
+
+.pay-btn:hover{
+
+    background:#1D4ED8;
+
+}
+
+.secure-box{
+
+    margin-top:20px;
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:12px;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    background:#F8FAFC;
+
+    color:#16A34A;
+
+}
+
+.secure-box p{
+
+    color:#475569;
+
+    line-height:1.7;
+
+    font-size:14px;
+
+}
+/* ===================================
+   BOOKING NOTE
+=================================== */
+
+.note-list{
+
+    margin:0;
+    padding-left:22px;
+
+}
+
+.note-list li{
+
+    color:#475569;
+
+    font-size:16px;
+
+    line-height:2;
+
+    margin-bottom:14px;
+
+}
+
+.note-list li:last-child{
+
+    margin-bottom:0;
+
+}
+
+/* ===================================
+   HOVER EFFECT
+=================================== */
+
+.booking-card,
+.payment-card,
+.booking-cost-card,
+.booking-action-card,
+.booking-note{
+
+    transition:.3s;
+
+}
+
+.booking-card:hover,
+.payment-card:hover,
+.booking-cost-card:hover,
+.booking-action-card:hover,
+.booking-note:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 18px 45px rgba(15,23,42,.08);
+
+}
+
+/* ===================================
+   RESPONSIVE
+=================================== */
+
+@media (max-width:1200px){
+
+    .detail-booking-page{
+
+        width:92%;
+
+    }
+
+}
+
+@media (max-width:992px){
+
+    .detail-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .booking-info-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .kost-detail-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media (max-width:768px){
+
+    .detail-header h1{
+
+        font-size:34px;
+
+    }
+
+    .booking-card,
+    .payment-card,
+    .booking-cost-card,
+    .booking-action-card,
+    .booking-note{
+
+        padding:22px;
+
+    }
+
+    .kost-image{
+
+        height:230px;
+
+    }
+
+}
