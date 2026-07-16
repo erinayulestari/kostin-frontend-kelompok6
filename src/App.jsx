@@ -10,6 +10,7 @@ import CariKost from "./pages/CariKost";
 import DetailKost from "./pages/DetailKost";
 import Favorit from "./pages/Favorit";
 import TentangKami from "./pages/TentangKami";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -44,6 +45,11 @@ function App() {
         <Route
           path="/tentang-kami"
           element={<TentangKami />}
+        />
+
+        <Route
+          path="/profile"
+          element={<Profile />}
         />
 
       </Routes>
