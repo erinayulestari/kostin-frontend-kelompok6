@@ -12,6 +12,7 @@ import Favorit from "./pages/Favorit";
 import TentangKami from "./pages/TentangKami";
 import Profile from "./pages/Profile";
 import BookingSaya from "./pages/BookingSaya";
+import DetailBooking from "./pages/DetailBooking";
 
 function App() {
   return (
@@ -36,6 +37,11 @@ function App() {
         <Route
           path="/detail-kost"
           element={<DetailKost />}
+        />
+
+        <Route
+          path="/detail-booking"
+          element={<DetailBooking />}
         />
 
         <Route
