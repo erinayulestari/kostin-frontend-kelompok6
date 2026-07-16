@@ -5,11 +5,19 @@ import {
   LogOut,
 } from "lucide-react";
 
+import { useNavigate } from "react-router-dom";
+
 export default function ProfileDropdown() {
+
+  const navigate = useNavigate();
+
   return (
     <div className="profile-dropdown">
 
-      <button className="dropdown-item">
+      <button
+        className="dropdown-item"
+        onClick={() => navigate("/profile")}
+      >
 
         <User size={18} />
 
@@ -17,7 +25,10 @@ export default function ProfileDropdown() {
 
       </button>
 
-      <button className="dropdown-item">
+      <button
+        className="dropdown-item"
+        onClick={() => navigate("/booking")}
+      >
 
         <CalendarDays size={18} />
 
@@ -25,7 +36,9 @@ export default function ProfileDropdown() {
 
       </button>
 
-      <button className="dropdown-item">
+      <button
+        className="dropdown-item"
+      >
 
         <Settings size={18} />
 
@@ -35,7 +48,9 @@ export default function ProfileDropdown() {
 
       <div className="dropdown-divider"></div>
 
-      <button className="dropdown-item logout">
+      <button
+        className="dropdown-item logout"
+      >
 
         <LogOut size={18} />
 
