@@ -11,6 +11,7 @@ import DetailKost from "./pages/DetailKost";
 import Favorit from "./pages/Favorit";
 import TentangKami from "./pages/TentangKami";
 import Profile from "./pages/Profile";
+import BookingSaya from "./pages/BookingSaya";
 
 function App() {
   return (
@@ -50,6 +51,11 @@ function App() {
         <Route
           path="/profile"
           element={<Profile />}
+        />
+
+        <Route
+          path="/booking"
+          element={<BookingSaya />}
         />
 
       </Routes>

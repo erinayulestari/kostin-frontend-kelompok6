@@ -1,0 +1,402 @@
+/* ===================================
+   BOOKING PAGE
+=================================== */
+
+.booking-page{
+    width:100%;
+    min-height:100vh;
+
+    background:#F8FAFC;
+
+    padding:50px 0 80px;
+}
+
+/* ===================================
+   HEADER
+=================================== */
+
+.booking-header{
+
+    width:1180px;
+
+    margin:0 auto 40px;
+
+}
+
+.booking-header h1{
+
+    font-size:46px;
+
+    color:#0F172A;
+
+    margin-bottom:10px;
+
+}
+
+.booking-header p{
+
+    font-size:17px;
+
+    color:#64748B;
+
+}
+
+/* ===================================
+   LIST
+=================================== */
+
+.booking-list{
+
+    width:1180px;
+
+    margin:auto;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:28px;
+
+}
+
+/* ===================================
+   CARD
+=================================== */
+
+.booking-card{
+
+    background:#FFFFFF;
+
+    border-radius:22px;
+
+    padding:24px;
+
+    display:flex;
+
+    gap:24px;
+
+    box-shadow:
+        0 10px 35px rgba(15,23,42,.06);
+
+}
+
+.booking-image img{
+
+    width:270px;
+
+    height:200px;
+
+    object-fit:cover;
+
+    border-radius:18px;
+
+}
+
+.booking-content{
+
+    flex:1;
+
+}
+
+.booking-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+}
+
+.booking-top h2{
+
+    font-size:28px;
+
+    color:#0F172A;
+
+    margin-bottom:12px;
+
+}
+
+.booking-location{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    color:#64748B;
+
+    margin-bottom:15px;
+
+}
+
+.booking-top h3{
+
+    color:#2563EB;
+
+    font-size:24px;
+
+}
+
+.booking-content hr{
+
+    margin:24px 0;
+
+    border:none;
+
+    height:1px;
+
+    background:#E2E8F0;
+
+}
+
+/* ===================================
+   STATUS
+=================================== */
+
+.status-pending,
+.status-confirmed,
+.status-active{
+
+    height:38px;
+
+    padding:0 18px;
+
+    border-radius:999px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+.status-pending{
+
+    background:#FEF3C7;
+
+    color:#B45309;
+
+}
+
+.status-confirmed{
+
+    background:#DBEAFE;
+
+    color:#1D4ED8;
+
+}
+
+.status-active{
+
+    background:#DCFCE7;
+
+    color:#15803D;
+
+}
+
+/* ===================================
+   BOTTOM
+=================================== */
+
+.booking-bottom{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-end;
+
+    gap:30px;
+
+}
+
+.booking-info{
+
+    display:flex;
+
+    gap:50px;
+
+}
+
+.booking-info div{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.booking-info small{
+
+    color:#64748B;
+
+    margin-bottom:8px;
+
+}
+
+.booking-info strong{
+
+    color:#0F172A;
+
+    font-size:17px;
+
+}
+
+/* ===================================
+   BUTTON
+=================================== */
+
+.booking-action{
+
+    display:flex;
+
+    gap:14px;
+
+}
+
+.detail-btn{
+
+    width:150px;
+
+    height:46px;
+
+    border:1px solid #2563EB;
+
+    border-radius:12px;
+
+    background:#FFFFFF;
+
+    color:#2563EB;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.detail-btn:hover{
+
+    background:#EFF6FF;
+
+}
+
+.contact-btn{
+
+    width:180px;
+
+    height:46px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#2563EB;
+
+    color:#FFFFFF;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.contact-btn:hover{
+
+    background:#1D4ED8;
+
+}
+
+/* ===================================
+   EMPTY
+=================================== */
+
+.empty-booking{
+
+    width:1180px;
+
+    margin:auto;
+
+    background:#FFFFFF;
+
+    border-radius:22px;
+
+    padding:80px 40px;
+
+    text-align:center;
+
+    box-shadow:
+        0 10px 35px rgba(15,23,42,.06);
+
+}
+
+.empty-booking img{
+
+    width:260px;
+
+    margin-bottom:30px;
+
+}
+
+.empty-booking h2{
+
+    font-size:34px;
+
+    color:#0F172A;
+
+    margin-bottom:18px;
+
+}
+
+.empty-booking p{
+
+    color:#64748B;
+
+    line-height:1.8;
+
+    font-size:17px;
+
+    margin-bottom:32px;
+
+}
+
+.empty-booking button{
+
+    width:180px;
+
+    height:50px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#2563EB;
+
+    color:#FFFFFF;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.empty-booking button:hover{
+
+    background:#1D4ED8;
+
+}

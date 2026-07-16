@@ -1,56 +1,119 @@
-export default function BookingCard() {
+import {
+  MapPin,
+} from "lucide-react";
+
+export default function BookingCard({ booking }) {
+  const statusMap = {
+    pending: {
+      text: "Menunggu Konfirmasi",
+      className: "status-pending",
+    },
+    confirmed: {
+      text: "Dikonfirmasi",
+      className: "status-confirmed",
+    },
+    active: {
+      text: "Sedang Berjalan",
+      className: "status-active",
+    },
+  };
+
+  const status = statusMap[booking.status];
 
   return (
+    <div className="booking-card">
 
-    <aside className="booking-card">
+      {/* ==========================
+          Gambar Kost
+      ========================== */}
 
-      <h5>Harga</h5>
+      <div className="booking-image">
 
-      <h2>
-        Rp850.000
-        <span>/bulan</span>
-      </h2>
-
-      <label>Tanggal Masuk</label>
-
-      <input
-        type="date"
-      />
-
-      <label>Durasi Sewa</label>
-
-      <select>
-
-        <option>1 Bulan</option>
-
-        <option>3 Bulan</option>
-
-        <option>6 Bulan</option>
-
-      </select>
-
-      <div className="total-box">
-
-        <span>Total Harga</span>
-
-        <strong>Rp850.000</strong>
+        <img
+          src={booking.image}
+          alt={booking.name}
+        />
 
       </div>
 
-      <button className="booking-btn">
+      {/* ==========================
+          Informasi
+      ========================== */}
 
-        Booking Sekarang
+      <div className="booking-content">
 
-      </button>
+        <div className="booking-top">
 
-      <button className="chat-btn">
+          <div>
 
-        Chat Pemilik
+            <h2>{booking.name}</h2>
 
-      </button>
+            <p className="booking-location">
 
-    </aside>
+              <MapPin size={16} />
 
+              {booking.location}
+
+            </p>
+
+            <h3>{booking.price}</h3>
+
+          </div>
+
+          <span className={status.className}>
+            {status.text}
+          </span>
+
+        </div>
+
+        <hr />
+
+        <div className="booking-bottom">
+
+          <div className="booking-info">
+
+            <div>
+
+              <small>Tanggal Booking</small>
+
+              <strong>{booking.bookingDate}</strong>
+
+            </div>
+
+            <div>
+
+              <small>Tanggal Masuk</small>
+
+              <strong>{booking.checkIn}</strong>
+
+            </div>
+
+            <div>
+
+              <small>Durasi Sewa</small>
+
+              <strong>{booking.duration}</strong>
+
+            </div>
+
+          </div>
+
+          <div className="booking-action">
+
+            <button className="detail-btn">
+              Lihat Detail
+            </button>
+
+            <button className="contact-btn">
+              Hubungi Pemilik
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
   );
-
 }
