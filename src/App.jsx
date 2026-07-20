@@ -15,6 +15,7 @@ import Favorit from "./pages/Favorit";
 import TentangKami from "./pages/TentangKami";
 import Profile from "./pages/Profile";
 import BookingSaya from "./pages/BookingSaya";
+import OwnerDashboard from "./pages/owner/OwnerDashboard";
 
 function App() {
   return (
@@ -76,6 +77,10 @@ function App() {
           path="/booking"
           element={<BookingSaya />}
         />
+        <Route
+    path="/owner/dashboard"
+    element={<OwnerDashboard/>}
+/>
 
       </Routes>
 
