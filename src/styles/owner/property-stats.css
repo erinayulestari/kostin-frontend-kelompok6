@@ -1,0 +1,85 @@
+/* ==================================
+        PROPERTY STATS
+================================== */
+
+.property-stats{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:22px;
+
+    margin-bottom:35px;
+
+}
+
+/* ============================== */
+
+.property-stat-card{
+
+    background:#FFFFFF;
+
+    border:1px solid #E5E7EB;
+
+    border-radius:18px;
+
+    padding:22px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    box-shadow:0 8px 25px rgba(15,23,42,.05);
+
+    transition:.25s;
+
+}
+
+.property-stat-card:hover{
+
+    transform:translateY(-4px);
+
+}
+
+/* ============================== */
+
+.property-stat-icon{
+
+    width:60px;
+
+    height:60px;
+
+    border-radius:16px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+/* ============================== */
+
+.property-stat-card h2{
+
+    font-size:30px;
+
+    color:#0F172A;
+
+    margin-bottom:4px;
+
+}
+
+/* ============================== */
+
+.property-stat-card p{
+
+    color:#64748B;
+
+    font-size:15px;
+
+}
