@@ -15,13 +15,19 @@ import Favorit from "./pages/Favorit";
 import TentangKami from "./pages/TentangKami";
 import Profile from "./pages/Profile";
 import BookingSaya from "./pages/BookingSaya";
+
 import OwnerDashboard from "./pages/owner/OwnerDashboard";
+import MyProperty from "./pages/owner/MyProperty";
 
 function App() {
   return (
     <BrowserRouter>
 
       <Routes>
+
+        {/* ======================
+              USER
+        ======================= */}
 
         <Route
           path="/"
@@ -77,10 +83,20 @@ function App() {
           path="/booking"
           element={<BookingSaya />}
         />
+
+        {/* ======================
+            OWNER KOST
+        ======================= */}
+
         <Route
-    path="/owner/dashboard"
-    element={<OwnerDashboard/>}
-/>
+          path="/owner/dashboard"
+          element={<OwnerDashboard />}
+        />
+
+        <Route
+          path="/owner/property"
+          element={<MyProperty />}
+        />
 
       </Routes>
 

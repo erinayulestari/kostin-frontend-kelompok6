@@ -1,0 +1,75 @@
+/* ==================================
+        PROPERTY PAGE
+================================== */
+
+.property-page-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
+
+.property-page-header h1{
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:#0F172A;
+
+}
+
+.property-page-header p{
+
+    margin-top:8px;
+
+    color:#64748B;
+
+    font-size:15px;
+
+}
+
+/* ============================ */
+
+.add-property-btn{
+
+    height:50px;
+
+    padding:0 22px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#2563EB;
+
+    color:#FFFFFF;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.add-property-btn:hover{
+
+    background:#1D4ED8;
+
+    transform:translateY(-2px);
+
+}
