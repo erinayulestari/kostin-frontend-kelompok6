@@ -6,6 +6,7 @@ import {
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import CariKost from "./pages/CariKost";
 import DetailKost from "./pages/DetailKost";
 import DetailBooking from "./pages/DetailBooking";
@@ -29,6 +30,11 @@ function App() {
         <Route
           path="/login"
           element={<Login />}
+        />
+
+        <Route
+          path="/register"
+          element={<Register />}
         />
 
         <Route
