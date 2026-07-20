@@ -1,0 +1,191 @@
+/* ===========================
+      BOOKING SECTION
+=========================== */
+
+.booking-section{
+
+    margin-top:35px;
+
+}
+
+.section-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.section-header h2{
+
+    font-size:24px;
+
+    color:#0F172A;
+
+}
+
+.section-header p{
+
+    margin-top:6px;
+
+    color:#64748B;
+
+}
+
+.section-header button{
+
+    height:42px;
+
+    padding:0 20px;
+
+    border:none;
+
+    background:#2563EB;
+
+    color:white;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+}
+
+/* ===========================
+      CARD
+=========================== */
+
+.booking-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:16px;
+
+}
+
+.booking-card{
+
+    display:grid;
+
+    grid-template-columns:
+        70px
+        minmax(180px,2fr)
+        140px
+        120px
+        140px
+        110px;
+
+    gap:20px;
+
+    align-items:center;
+
+    background:#fff;
+
+    padding:22px;
+
+    border-radius:20px;
+
+    border:1px solid #E5E7EB;
+
+    box-shadow:0 8px 25px rgba(15,23,42,.05);
+
+}
+
+.booking-card img{
+
+    width:60px;
+
+    height:60px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+}
+
+.booking-info h4{
+
+    color:#0F172A;
+
+    margin-bottom:6px;
+
+}
+
+.booking-info p{
+
+    color:#64748B;
+
+}
+
+.booking-detail{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.booking-detail strong{
+
+    font-size:13px;
+
+    color:#0F172A;
+
+}
+
+.booking-detail span{
+
+    margin-top:4px;
+
+    color:#64748B;
+
+}
+
+.status{
+
+    padding:8px 14px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.success{
+
+    background:#DCFCE7;
+
+    color:#16A34A;
+
+}
+
+.waiting{
+
+    background:#FEF3C7;
+
+    color:#D97706;
+
+}
+
+.detail-btn{
+
+    height:42px;
+
+    border:none;
+
+    background:#2563EB;
+
+    color:white;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+}
