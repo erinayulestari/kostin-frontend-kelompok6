@@ -1,0 +1,248 @@
+/* ==========================================
+   SETTINGS LAYOUT & CARDS
+   ========================================== */
+.settings-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1000px;
+}
+
+.settings-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.s-card-header {
+  margin-bottom: 20px;
+}
+
+.s-card-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.s-card-header p {
+  font-size: 13px;
+  color: #64748b;
+  margin: 4px 0 0 0;
+}
+
+.s-card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================
+   SETTINGS ROWS & CONTROLS
+   ========================================== */
+.s-row {
+  display: grid;
+  grid-template-columns: 200px 1fr auto;
+  padding: 16px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.s-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.s-row.border-bottom {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.s-row.align-center {
+  align-items: center;
+}
+
+.s-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.s-value {
+  font-size: 13px;
+  color: #334155;
+  font-weight: 500;
+}
+
+.s-value-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.dots-password {
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.s-hint {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 6px 0 0 0;
+}
+
+.mt-2 {
+  margin-top: 6px;
+}
+
+.btn-outline-blue {
+  background: transparent;
+  border: 1px solid #0066ff;
+  color: #0066ff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-outline-blue:hover {
+  background: #eff6ff;
+}
+
+/* Select Box Styling */
+.s-select-box {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0 32px 0 12px;
+  height: 38px;
+  width: fit-content;
+}
+
+.s-select-box select {
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.s-select-box .arrow {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  color: #64748b;
+}
+
+.flag-icon {
+  font-size: 14px;
+}
+
+/* ==========================================
+   NOTIFICATIONS LIST & TOGGLE SWITCH
+   ========================================== */
+.list-body {
+  gap: 16px;
+}
+
+.notif-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.notif-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.n-icon-bg {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.n-icon-bg.blue { background: #eff6ff; }
+.n-icon-bg.green { background: #ecfdf5; }
+.n-icon-bg.orange { background: #fffbeb; }
+.n-icon-bg.purple { background: #f3e8ff; }
+
+.n-info {
+  flex: 1;
+}
+
+.n-info h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.n-info p {
+  font-size: 12px;
+  color: #64748b;
+  margin: 2px 0 0 0;
+}
+
+/* Toggle Switch UI */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .slider {
+  background-color: #0066ff;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
