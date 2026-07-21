@@ -490,3 +490,14 @@ body {
 
 .dropdown-item:hover { background: #f8fafc; }
 .dropdown-item.danger { color: #ef4444; }
+/* Penahan agar Foto Profile / Avatar Header tidak membesar secara liar */
+.header-right img,
+.profile-section img,
+.header img {
+  width: 40px !important;
+  height: 40px !important;
+  max-width: 40px !important;
+  max-height: 40px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+}

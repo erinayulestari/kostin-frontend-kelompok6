@@ -22,6 +22,8 @@ import MyKosts from "./pages/owner/MyKosts";
 import Bookings from "./pages/owner/Bookings";
 import Finance from "./pages/owner/Finance";
 import Reports from "./pages/owner/Reports";
+import Settings from "./pages/owner/Settings";
+
 function App() {
   return (
     <BrowserRouter>
@@ -100,7 +102,7 @@ function App() {
           path="/owner/kost-saya"
           element={<MyKosts />}
         />
-        
+
         <Route 
           path="/owner/booking" 
           element={<Bookings />} 
@@ -110,10 +112,16 @@ function App() {
           path="/owner/keuangan" 
           element={<Finance />} 
         />
+
         <Route 
-  path="/owner/laporan" 
-  element={<Reports />} 
-/>
+          path="/owner/laporan" 
+          element={<Reports />} 
+        />
+
+        <Route 
+          path="/owner/pengaturan" 
+          element={<Settings />} 
+        />
 
       </Routes>
 

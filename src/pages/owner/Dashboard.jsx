@@ -108,7 +108,11 @@ const OwnerDashboard = () => {
       <Sidebar />
       
       <main className="main-content">
-        <Header />
+        <Header 
+          title="Dashboard" 
+          subtitle="Selamat datang kembali di panel kelola Kostin."
+          showProfile={true} 
+        />
 
         {/* Section Cards Stat */}
         <div className="stats-grid">
@@ -121,7 +125,7 @@ const OwnerDashboard = () => {
         <section style={{ marginBottom: '36px' }}>
           <div className="section-header">
             <h2>Booking Terbaru</h2>
-            <a href="#" className="see-all">Lihat Semua Booking <ChevronRight size={14} /></a>
+            <a href="/owner/booking" className="see-all">Lihat Semua Booking <ChevronRight size={14} /></a>
           </div>
           <div className="booking-grid">
             {bookingsData.map((booking, idx) => (
@@ -134,7 +138,7 @@ const OwnerDashboard = () => {
         <section>
           <div className="section-header">
             <h2>Kost Saya</h2>
-            <a href="#" className="see-all">Lihat Semua Kost <ChevronRight size={14} /></a>
+            <a href="/owner/kost-saya" className="see-all">Lihat Semua Kost <ChevronRight size={14} /></a>
           </div>
           <div className="kost-grid">
             {kostsData.map((kost, idx) => (
