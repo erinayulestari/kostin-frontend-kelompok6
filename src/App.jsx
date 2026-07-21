@@ -26,6 +26,8 @@ import Settings from "./pages/owner/Settings";
 import VerifikasiPemilik from "./pages/owner/VerifikasiPemilik";
 import TambahKost from "./pages/owner/TambahKost";
 
+import AdminDashboard from "./pages/admin/AdminDashboard";
+
 function App() {
   return (
     <BrowserRouter>
@@ -132,6 +134,11 @@ function App() {
         <Route 
         path="/owner/tambah-kost" 
         element={<TambahKost />} 
+        />
+
+        <Route
+          path="/admin/dashboard"
+          element={<AdminDashboard />}
         />
 
       </Routes>
