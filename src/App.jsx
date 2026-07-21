@@ -16,7 +16,9 @@ import TentangKami from "./pages/TentangKami";
 import Profile from "./pages/Profile";
 import BookingSaya from "./pages/BookingSaya";
 
+// Import Halaman Owner
 import OwnerDashboard from "./pages/owner/Dashboard";
+import MyKosts from "./pages/owner/MyKosts"; // Import halaman Kost Saya
 
 function App() {
   return (
@@ -84,12 +86,17 @@ function App() {
         />
 
         {/* ======================
-            OWNER KOST
+              OWNER KOST
         ======================= */}
 
         <Route
           path="/owner/dashboard"
           element={<OwnerDashboard />}
+        />
+
+        <Route
+          path="/owner/kost-saya"
+          element={<MyKosts />}
         />
 
       </Routes>

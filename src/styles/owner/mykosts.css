@@ -1,0 +1,321 @@
+/* Button Tambah Kost */
+.btn-primary-add {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.btn-primary-add:hover {
+  background-color: #0052cc;
+}
+
+/* Filter Bar Layout */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 16px;
+  height: 42px; /* Mengunci tinggi agar konsisten */
+  width: 320px; /* Ukuran pas sesuai desain */
+  flex-shrink: 0;
+}
+
+.search-input-wrapper input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.filter-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.select-wrapper {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 36px 0 14px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.select-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.select-wrapper select {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  appearance: none;
+  cursor: pointer;
+  padding-right: 4px;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+  color: #64748b;
+}
+
+/* My Kost Grid */
+.my-kosts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* Detailed Kost Card */
+.kost-detailed-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kost-detailed-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+.kost-card-image-container {
+  position: relative;
+  height: 180px;
+}
+
+.kost-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kost-status-badge {
+  position: absolute;
+  top: 12px;
+  right: 48px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.kost-status-badge.aktif { background: var(--status-active-bg); color: var(--status-active-text); }
+.kost-status-badge.penuh { background: var(--status-full-bg); color: var(--text-full); }
+.kost-status-badge.nonaktif { background: var(--status-inactive-bg); color: var(--text-inactive); }
+
+.more-options-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: #ffffff;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-dropdown-menu {
+  position: absolute;
+  top: 44px;
+  right: 12px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  padding: 8px 0;
+  width: 160px;
+  z-index: 10;
+  border: 1px solid #f1f5f9;
+}
+
+.card-dropdown-menu .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.card-dropdown-menu .dropdown-item:hover {
+  background: #f8fafc;
+}
+
+.card-dropdown-menu .dropdown-item.danger {
+  color: #ef4444;
+}
+
+.kost-card-body {
+  padding: 20px;
+}
+
+.kost-card-body .kost-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.kost-card-body .kost-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.kost-card-body .kost-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 18px;
+}
+
+.kost-card-body .kost-price span {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* Room Info Grid */
+.room-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.room-info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.room-info-item strong {
+  display: block;
+  font-size: 11px;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.room-info-item span {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* Stats Footer */
+.kost-card-stats-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: 14px;
+}
+
+.stat-sub-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-sub-item strong {
+  display: block;
+  font-size: 12px;
+  color: var(--text-main);
+  line-height: 1;
+}
+
+.stat-sub-item span {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* Empty State Styles */
+.empty-kost-state {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  padding: 60px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.empty-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  background: var(--primary-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.empty-kost-state h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+
+.empty-kost-state p {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 440px;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
