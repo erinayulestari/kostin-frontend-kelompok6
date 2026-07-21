@@ -156,13 +156,13 @@ export default function DataPengguna() {
 
         {/* Pagination */}
         <div className="pagination-wrapper">
-          <button className="page-btn flex-btn">&lt; Previous</button>
+          <button className="page-btn flex-btn">&lt;</button>
           <button className="page-btn active">1</button>
           <button className="page-btn">2</button>
           <button className="page-btn">3</button>
           <button className="page-btn">4</button>
           <span className="page-dots">...</span>
-          <button className="page-btn flex-btn">Next &gt;</button>
+          <button className="page-btn flex-btn">&gt;</button>
         </div>
       </div>
     </div>
