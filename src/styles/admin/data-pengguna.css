@@ -1,0 +1,307 @@
+/* Container Utama */
+.data-pengguna-container {
+  padding: 24px 32px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Page Header */
+.data-pengguna-container .page-header-row {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 4px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.data-pengguna-container .page-header-row h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.data-pengguna-container .page-header-row p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Filter Card */
+.data-pengguna-container .filter-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.data-pengguna-container .search-input-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.data-pengguna-container .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 46%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.data-pengguna-container .search-input-wrapper input {
+  width: 100%;
+  height: 42px;
+  padding: 0 16px 0 40px !important;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.data-pengguna-container .search-input-wrapper input:focus {
+  border-color: #0066ff !important;
+  background-color: #ffffff;
+}
+
+.data-pengguna-container .filter-select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.data-pengguna-container .filter-select-wrapper label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.data-pengguna-container .filter-select-wrapper select {
+  height: 42px;
+  padding: 0 32px 0 14px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  cursor: pointer;
+  min-width: 140px;
+}
+
+/* User List & Cards */
+.data-pengguna-container .user-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.data-pengguna-container .user-card-admin {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: grid;
+  grid-template-columns: 50px 2fr 1.2fr 1fr 140px;
+  align-items: center;
+  gap: 20px;
+  transition: box-shadow 0.2s ease;
+}
+
+.data-pengguna-container .user-card-admin:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.data-pengguna-container .user-card-avatar-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.data-pengguna-container .user-card-avatar-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.data-pengguna-container .user-info-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.data-pengguna-container .user-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.data-pengguna-container .user-email {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* Role Pill */
+.data-pengguna-container .user-role-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.data-pengguna-container .role-label,
+.data-pengguna-container .status-label {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.data-pengguna-container .role-pill {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  width: fit-content;
+  background-color: #f1f5f9;
+  color: #0066ff;
+}
+
+/* Status Pill */
+.data-pengguna-container .user-status-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.data-pengguna-container .status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.data-pengguna-container .status-pill.aktif {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.data-pengguna-container .status-pill.nonaktif {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.data-pengguna-container .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+/* Action Button */
+.data-pengguna-container .user-card-action-box {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.data-pengguna-container .btn-action-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.data-pengguna-container .btn-action-status.btn-deactivate {
+  background-color: #ffffff;
+  border: 1px solid #fee2e2;
+  color: #ef4444;
+}
+
+.data-pengguna-container .btn-action-status.btn-deactivate:hover {
+  background-color: #fef2f2;
+}
+
+.data-pengguna-container .btn-action-status.btn-activate {
+  background-color: #ffffff;
+  border: 1px solid #dcfce7;
+  color: #16a34a;
+}
+
+.data-pengguna-container .btn-action-status.btn-activate:hover {
+  background-color: #f0fdf4;
+}
+
+/* Pagination & Empty State */
+.data-pengguna-container .pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.data-pengguna-container .page-btn {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.data-pengguna-container .page-btn.active {
+  background-color: #0066ff;
+  border-color: #0066ff;
+  color: #ffffff;
+}
+
+.data-pengguna-container .page-dots {
+  font-size: 12px;
+  color: #94a3b8;
+  padding: 0 4px;
+}
+
+.data-pengguna-container .empty-state {
+  text-align: center;
+  padding: 40px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  color: #64748b;
+  font-size: 14px;
+}
