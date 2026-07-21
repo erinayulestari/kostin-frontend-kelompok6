@@ -1,0 +1,298 @@
+/* ==========================================================================
+   Filter & Search Bar
+   ========================================================================== */
+.filter-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Search Box (Tinggi & Lebar Dibuat Ramping/Slim) */
+.search-input-box {
+  width: 340px;
+  max-width: 100%;
+  height: 40px; /* Lebar & tinggi terkontrol presisi */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0 14px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.search-input-box:focus-within {
+  border-color: #0066ff;
+}
+
+.search-input-box input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 13px;
+  color: #334155;
+  background: transparent;
+}
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.filter-select {
+  height: 40px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-size: 13px;
+  color: #334155;
+  background-color: #ffffff;
+  outline: none;
+  cursor: pointer;
+  min-width: 140px;
+  box-sizing: border-box;
+}
+
+.filter-select:focus {
+  border-color: #0066ff;
+}
+
+/* ==========================================================================
+   Verification Card List
+   ========================================================================== */
+.verification-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.v-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: 1.2fr 1.2fr 0.9fr 0.9fr;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.2s ease;
+}
+
+.v-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+/* Owner Column */
+.v-owner-col {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.v-owner-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.v-owner-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.v-owner-email, .v-owner-phone {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Kost Column */
+.v-kost-col {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.v-kost-img {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.v-kost-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.v-kost-type, .v-kost-rooms {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Meta Column (Location & Date) */
+.v-meta-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.v-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* ==========================================================================
+   Status Badge & Action Buttons
+   ========================================================================== */
+.v-action-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+/* Badge Status (Diperlebar ke 180px & dipaksa 1 baris) */
+.v-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 180px; /* Cukup lebar untuk 1 baris teks 'Menunggu Verifikasi' */
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap; /* Mencegah teks tertekuk jadi 2 baris */
+  box-sizing: border-box;
+}
+
+.v-status-badge.pending {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.v-status-badge.approved {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.v-status-badge.rejected {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+/* Tombol Detail (Disamakan 180px agar sejajar sempurna) */
+.btn-detail-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 180px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid #0066ff;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #0066ff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.btn-detail-outline:hover {
+  background-color: #0066ff;
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   Pagination Navigation
+   ========================================================================== */
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.page-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.page-btn:hover {
+  border-color: #cbd5e1;
+  background-color: #f8fafc;
+}
+
+.page-btn.active {
+  background-color: #0066ff;
+  color: #ffffff;
+  border-color: #0066ff;
+  font-weight: 700;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-dots {
+  color: #94a3b8;
+  font-size: 14px;
+  padding: 0 4px;
+}
