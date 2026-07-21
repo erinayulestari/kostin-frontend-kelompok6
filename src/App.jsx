@@ -1,9 +1,11 @@
+import React from "react";
 import {
   BrowserRouter,
   Routes,
   Route
 } from "react-router-dom";
 
+// Import Halaman User
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -26,7 +28,9 @@ import Settings from "./pages/owner/Settings";
 import VerifikasiPemilik from "./pages/owner/VerifikasiPemilik";
 import TambahKost from "./pages/owner/TambahKost";
 
+// Import Halaman Super Admin
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminVerifikasiPemilik from "./pages/admin/VerifikasiPemilik";
 
 function App() {
   return (
@@ -35,7 +39,7 @@ function App() {
       <Routes>
 
         {/* ======================
-              USER
+              USER MODULE
         ======================= */}
 
         <Route
@@ -94,7 +98,7 @@ function App() {
         />
 
         {/* ======================
-              OWNER KOST
+              OWNER KOST MODULE
         ======================= */}
 
         <Route
@@ -131,14 +135,24 @@ function App() {
           path="/owner/verifikasi" 
           element={<VerifikasiPemilik />} 
         />
+
         <Route 
-        path="/owner/tambah-kost" 
-        element={<TambahKost />} 
+          path="/owner/tambah-kost" 
+          element={<TambahKost />} 
         />
+
+        {/* ======================
+              SUPER ADMIN MODULE
+        ======================= */}
 
         <Route
           path="/admin/dashboard"
           element={<AdminDashboard />}
+        />
+
+        <Route
+          path="/admin/verifikasi"
+          element={<AdminVerifikasiPemilik />}
         />
 
       </Routes>
