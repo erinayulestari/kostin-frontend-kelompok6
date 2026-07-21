@@ -23,6 +23,7 @@ import Bookings from "./pages/owner/Bookings";
 import Finance from "./pages/owner/Finance";
 import Reports from "./pages/owner/Reports";
 import Settings from "./pages/owner/Settings";
+import VerifikasiPemilik from "./pages/owner/VerifikasiPemilik";
 
 function App() {
   return (
@@ -121,6 +122,11 @@ function App() {
         <Route 
           path="/owner/pengaturan" 
           element={<Settings />} 
+        />
+
+        <Route 
+          path="/owner/verifikasi" 
+          element={<VerifikasiPemilik />} 
         />
 
       </Routes>
