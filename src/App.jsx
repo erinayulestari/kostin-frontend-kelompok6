@@ -16,8 +16,7 @@ import TentangKami from "./pages/TentangKami";
 import Profile from "./pages/Profile";
 import BookingSaya from "./pages/BookingSaya";
 
-import OwnerDashboard from "./pages/owner/OwnerDashboard";
-import MyProperty from "./pages/owner/MyProperty";
+import OwnerDashboard from "./pages/owner/Dashboard";
 
 function App() {
   return (
@@ -91,11 +90,6 @@ function App() {
         <Route
           path="/owner/dashboard"
           element={<OwnerDashboard />}
-        />
-
-        <Route
-          path="/owner/property"
-          element={<MyProperty />}
         />
 
       </Routes>
