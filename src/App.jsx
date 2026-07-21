@@ -33,6 +33,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminVerifikasiPemilik from "./pages/admin/VerifikasiPemilik";
 import DetailVerifikasiPemilik from "./pages/admin/DetailVerifikasiPemilik";
 import DetailVerifikasiPemilik from "./pages/admin/DataPengguna";
+import DetailVerifikasiPemilik from "./pages/admin/Pengaturan";
+import Pengaturan from "./pages/admin/Pengaturan";
 
 
 function App() {
@@ -166,6 +168,11 @@ function App() {
         <Route
           path="/admin/data-pengguna"
           element={<DataPengguna />}
+        />
+
+        <Route
+          path="/admin/pengaturan"
+          element={<Pengaturan />}
         />
 
       </Routes>
