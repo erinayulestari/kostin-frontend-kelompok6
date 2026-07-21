@@ -1,0 +1,496 @@
+/* ==========================================
+   HEADER LAYOUT (MENJAGA CARD KARTU SEJAJAR)
+   ========================================== */
+.main-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+/* Header Stats Group */
+.header-stats-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-stat-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  white-space: nowrap;
+}
+
+.stat-icon-bg {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-icon-bg.blue { background: #eff6ff; }
+.stat-icon-bg.green { background: #ecfdf5; }
+
+.header-stat-card .stat-value {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.header-stat-card .stat-unit {
+  font-size: 13px;
+  font-weight: 400;
+  color: #64748b;
+}
+
+.header-stat-card .stat-title {
+  display: block;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* ==========================================
+   FILTER BAR STYLES
+   ========================================== */
+.bookings-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.booking-search-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 16px;
+  height: 42px;
+  width: 300px;
+}
+
+.booking-search-input input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.booking-filter-options {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.b-select-wrapper {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 32px 0 14px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.b-select-wrapper .label {
+  font-size: 13px;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.b-select-wrapper select {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  appearance: none;
+  cursor: pointer;
+}
+
+.b-select-wrapper .arrow {
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+  color: #64748b;
+}
+
+.icon-filter-btn {
+  width: 42px;
+  height: 42px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ==========================================
+   BOOKINGS LIST & ROW CARDS
+   ========================================== */
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.booking-row-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: 1.2fr 1.6fr 2.2fr 1.1fr 1.3fr auto;
+  align-items: center;
+  gap: 16px;
+  transition: box-shadow 0.2s;
+}
+
+.booking-row-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+/* 1. Tenant */
+.tenant-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tenant-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.tenant-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.tenant-phone {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* 2. Kost */
+.kost-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.kost-thumb {
+  width: 52px;
+  height: 42px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.kost-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.kost-location {
+  font-size: 11px;
+  color: #64748b;
+}
+
+/* 3. Dates */
+.booking-dates {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.date-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.date-item .label {
+  font-size: 10px;
+  color: #64748b;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.date-item .val {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+/* 4. Payment */
+.payment-info .label {
+  display: block;
+  font-size: 10px;
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+.payment-info .val-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0066ff;
+}
+
+/* 5. Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge.warning { background: #fffbeb; color: #d97706; }
+.status-badge.orange { background: #fff7ed; color: #ea580c; }
+.status-badge.success { background: #ecfdf5; color: #059669; }
+.status-badge.info { background: #eff6ff; color: #2563eb; }
+.status-badge.gray { background: #f1f5f9; color: #475569; }
+.status-badge.danger { background: #fef2f2; color: #dc2626; }
+
+/* 6. Actions */
+.action-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-outline-detail {
+  background: transparent;
+  border: 1px solid #0066ff;
+  color: #0066ff;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.btn-outline-detail:hover {
+  background: #0066ff;
+  color: #ffffff;
+}
+
+.more-dropdown-wrapper {
+  position: relative;
+}
+
+.icon-more-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-action-menu {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 6px 0;
+  width: 170px;
+  z-index: 20;
+}
+
+.dropdown-action-menu .menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #1e293b;
+  cursor: pointer;
+}
+
+.dropdown-action-menu .menu-item:hover {
+  background: #f8fafc;
+}
+
+.dropdown-action-menu .menu-item.green { color: #059669; }
+.dropdown-action-menu .menu-item.red { color: #dc2626; }
+.dropdown-action-menu .menu-item.danger { color: #dc2626; border-top: 1px solid #f1f5f9; }
+
+/* ==========================================
+   PAGINATION STYLES
+   ========================================== */
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 32px;
+  width: 100%;
+}
+
+.page-btn {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  outline: none;
+}
+
+.page-btn:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.page-btn-num {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0;
+}
+
+.page-btn-text {
+  height: 40px;
+  padding: 0 16px;
+  width: auto;
+  white-space: nowrap;
+}
+
+.page-btn.active {
+  background-color: #0066ff !important;
+  color: #ffffff !important;
+  border-color: #0066ff !important;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+}
+
+.page-dots {
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0 4px;
+  user-select: none;
+}
+
+/* ==========================================
+   EMPTY STATE STYLES
+   ========================================== */
+.empty-booking-state {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 60px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.empty-icon-box {
+  width: 76px;
+  height: 76px;
+  background: #eff6ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.empty-booking-state h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.empty-booking-state p {
+  font-size: 14px;
+  color: #64748b;
+  max-width: 420px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.btn-reset-filter {
+  background: #f1f5f9;
+  color: #334155;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reset-filter:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}

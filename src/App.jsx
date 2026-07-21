@@ -18,7 +18,8 @@ import BookingSaya from "./pages/BookingSaya";
 
 // Import Halaman Owner
 import OwnerDashboard from "./pages/owner/Dashboard";
-import MyKosts from "./pages/owner/MyKosts"; // Import halaman Kost Saya
+import MyKosts from "./pages/owner/MyKosts";
+import Bookings from "./pages/owner/Bookings";
 
 function App() {
   return (
@@ -97,6 +98,10 @@ function App() {
         <Route
           path="/owner/kost-saya"
           element={<MyKosts />}
+        />
+        <Route 
+          path="/owner/booking" 
+          element={<Bookings />} 
         />
 
       </Routes>
