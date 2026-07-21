@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   Heart,
@@ -11,6 +12,7 @@ import {
 
 export default function KostCardHorizontal({ kost }) {
 
+  const navigate = useNavigate();
   const [favorite, setFavorite] = useState(false);
 
   return (
@@ -156,7 +158,10 @@ export default function KostCardHorizontal({ kost }) {
 
             </button>
 
-            <button className="detail-btn">
+            <button
+              className="detail-btn"
+              onClick={() => navigate("/detail-kost")}
+            >
 
               Lihat Detail
 

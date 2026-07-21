@@ -1,4 +1,5 @@
 import { Star, MapPin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import kost1 from "../assets/premium.jpeg";
 import kost2 from "../assets/melati.jpeg";
@@ -33,6 +34,7 @@ const data = [
 ];
 
 export default function SimilarKost(){
+    const navigate = useNavigate();
 
     return(
 
@@ -100,7 +102,7 @@ export default function SimilarKost(){
 
                                 </div>
 
-                                <button>
+                                <button onClick={() => navigate("/detail-kost")}>
 
                                     Lihat Detail
 

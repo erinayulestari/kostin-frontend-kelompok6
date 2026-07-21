@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {
 Heart,
 MapPin,
@@ -8,11 +9,12 @@ Star
 
 export default function KostCard({data}){
 
+const navigate = useNavigate();
 
 return(
 
 
-<div className="kost-card">
+<div className="kost-card" onClick={() => navigate("/detail-kost")} style={{ cursor: "pointer" }}>
 
 
 
@@ -29,7 +31,7 @@ alt={data.name}
 
 
 
-<button className="favorite">
+<button className="favorite" onClick={(e) => e.stopPropagation()}>
 
 
 <Heart size={20}/>
