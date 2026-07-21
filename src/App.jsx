@@ -31,6 +31,7 @@ import TambahKost from "./pages/owner/TambahKost";
 // Import Halaman Super Admin
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminVerifikasiPemilik from "./pages/admin/VerifikasiPemilik";
+import DetailVerifikasiPemilik from "./pages/admin/DetailVerifikasiPemilik";
 
 function App() {
   return (
@@ -151,8 +152,13 @@ function App() {
         />
 
         <Route
-          path="/admin/verifikasi"
+          path="/admin/verifikasi-pemilik"
           element={<AdminVerifikasiPemilik />}
+        />
+
+        <Route
+          path="/admin/detail-verifikasi-pemilik"
+          element={<DetailVerifikasiPemilik />}
         />
 
       </Routes>
