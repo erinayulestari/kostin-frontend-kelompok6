@@ -1,0 +1,323 @@
+/* Container Utama */
+.data-kost-container {
+  padding: 24px 32px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   HEADER PAGE (Judul & Subtitle)
+   ========================================= */
+.data-kost-container .page-header-row {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 4px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.data-kost-container .page-header-row h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+}
+
+.data-kost-container .page-header-row p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  padding: 0;
+  line-height: 1.4;
+}
+
+/* =========================================
+   FILTER & SEARCH BAR
+   ========================================= */
+.data-kost-container .filter-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 20px;
+  box-shadow: none;
+}
+
+/* Fix Input Search Wrapper */
+.data-kost-container .search-input-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Icon Search dinaikkan ke top: 46% agar presisi */
+.data-kost-container .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 30%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.data-kost-container .search-input-wrapper input {
+  width: 100%;
+  height: 42px;
+  padding: 0 16px 0 40px !important;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  box-shadow: none !important;
+}
+
+.data-kost-container .search-input-wrapper input:focus {
+  border-color: #0066ff !important;
+  background-color: #ffffff;
+}
+
+.data-kost-container .search-input-wrapper input::placeholder {
+  color: #94a3b8;
+}
+
+/* Filter Select Wrapper */
+.data-kost-container .filter-select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.data-kost-container .filter-select-wrapper label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.data-kost-container .filter-select-wrapper select {
+  height: 42px;
+  padding: 0 32px 0 14px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+/* =========================================
+   KOST LIST & CARDS
+   ========================================= */
+.data-kost-container .kost-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.data-kost-container .kost-card-admin {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: grid;
+  grid-template-columns: 140px 1.5fr 1fr 120px 140px;
+  align-items: center;
+  gap: 20px;
+  transition: box-shadow 0.2s ease;
+}
+
+.data-kost-container .kost-card-admin:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.data-kost-container .kost-card-image-box {
+  width: 140px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.data-kost-container .kost-card-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.data-kost-container .kost-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+}
+
+.data-kost-container .kost-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.data-kost-container .meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.data-kost-container .kost-card-price-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.data-kost-container .price-label {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.data-kost-container .price-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Status Pill */
+.data-kost-container .status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.data-kost-container .status-pill.aktif {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.data-kost-container .status-pill.nonaktif {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.data-kost-container .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+/* Action Button Toggle */
+.data-kost-container .kost-card-action-box {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.data-kost-container .btn-action-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.data-kost-container .btn-action-status.btn-deactivate {
+  background-color: #ffffff;
+  border: 1px solid #fee2e2;
+  color: #ef4444;
+}
+
+.data-kost-container .btn-action-status.btn-deactivate:hover {
+  background-color: #fef2f2;
+}
+
+.data-kost-container .btn-action-status.btn-activate {
+  background-color: #ffffff;
+  border: 1px solid #dcfce7;
+  color: #16a34a;
+}
+
+.data-kost-container .btn-action-status.btn-activate:hover {
+  background-color: #f0fdf4;
+}
+
+/* =========================================
+   PAGINATION & EMPTY STATE
+   ========================================= */
+.data-kost-container .pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.data-kost-container .page-btn {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.data-kost-container .page-btn.active {
+  background-color: #0066ff;
+  border-color: #0066ff;
+  color: #ffffff;
+}
+
+.data-kost-container .page-dots {
+  font-size: 12px;
+  color: #94a3b8;
+  padding: 0 4px;
+}
+
+.data-kost-container .empty-state {
+  text-align: center;
+  padding: 40px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  color: #64748b;
+  font-size: 14px;
+}

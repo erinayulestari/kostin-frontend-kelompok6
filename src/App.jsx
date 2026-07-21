@@ -32,6 +32,7 @@ import TambahKost from "./pages/owner/TambahKost";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminVerifikasiPemilik from "./pages/admin/VerifikasiPemilik";
 import DetailVerifikasiPemilik from "./pages/admin/DetailVerifikasiPemilik";
+import DataKost from "./pages/admin/DataKost";
 
 function App() {
   return (
@@ -159,6 +160,11 @@ function App() {
         <Route
           path="/admin/detail-verifikasi-pemilik"
           element={<DetailVerifikasiPemilik />}
+        />
+
+        <Route
+          path="/admin/data-kost"
+          element={<DataKost />}
         />
 
       </Routes>
