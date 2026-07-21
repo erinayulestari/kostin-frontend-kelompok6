@@ -1,0 +1,33 @@
+import React from 'react';
+import { Bell, ChevronDown } from 'lucide-react';
+import avatarImg from '../../assets/avatar.jpg';
+
+const Header = () => {
+  return (
+    <header className="header">
+      <div className="header-title">
+        <h1>Dashboard</h1>
+        <p>Kelola kost dan pantau aktivitas penyewa.</p>
+      </div>
+
+      <div className="header-actions">
+        <button className="icon-btn">
+          <Bell size={20} color="#64748b" />
+          <span className="badge">3</span>
+        </button>
+
+        <div className="user-profile-small" style={{ cursor: 'pointer' }}>
+          <img 
+            src={avatarImg} 
+            alt="Budi Santoso" 
+            className="avatar" 
+          />
+          <span style={{ fontWeight: 600, fontSize: '14px' }}>Budi Santoso</span>
+          <ChevronDown size={16} color="#64748b" />
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Header;
