@@ -20,6 +20,7 @@ import BookingSaya from "./pages/BookingSaya";
 import OwnerDashboard from "./pages/owner/Dashboard";
 import MyKosts from "./pages/owner/MyKosts";
 import Bookings from "./pages/owner/Bookings";
+import Finance from "./pages/owner/Finance";
 
 function App() {
   return (
@@ -99,9 +100,15 @@ function App() {
           path="/owner/kost-saya"
           element={<MyKosts />}
         />
+        
         <Route 
           path="/owner/booking" 
           element={<Bookings />} 
+        />
+
+        <Route 
+          path="/owner/keuangan" 
+          element={<Finance />} 
         />
 
       </Routes>

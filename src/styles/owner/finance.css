@@ -1,0 +1,247 @@
+/* ==========================================
+   HEADER ACTIONS & EXPORT BUTTON
+   ========================================== */
+.btn-export-report {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #0066ff;
+  color: #0066ff;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-export-report:hover {
+  background: #0066ff;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
+}
+
+/* ==========================================
+   FINANCE SUMMARY GRID (4 CARDS)
+   ========================================== */
+.finance-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.finance-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.f-icon-bg {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.f-icon-bg.blue { background: #eff6ff; }
+.f-icon-bg.green { background: #ecfdf5; }
+.f-icon-bg.orange { background: #fffbeb; }
+.f-icon-bg.emerald { background: #e6f4ea; }
+
+.f-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.f-title {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.f-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.f-sub {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* ==========================================
+   FILTER BAR STYLES
+   ========================================== */
+.finance-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.finance-search-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 16px;
+  height: 42px;
+  width: 280px;
+}
+
+.finance-search-input input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.finance-filter-options {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.f-select-wrapper {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 32px 0 14px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.f-select-wrapper .label {
+  font-size: 13px;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.f-select-wrapper select {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  appearance: none;
+  cursor: pointer;
+}
+
+.f-select-wrapper .arrow {
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+  color: #64748b;
+}
+
+/* ==========================================
+   SECTION TITLE BAR
+   ========================================== */
+.section-title-bar {
+  margin-bottom: 16px;
+}
+
+.section-title-bar h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* ==========================================
+   TRANSACTIONS LIST & ROW CARDS
+   ========================================== */
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transaction-row-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: 1.3fr 1.6fr 1.3fr 1.3fr 1.2fr 1.3fr auto;
+  align-items: center;
+  gap: 16px;
+  transition: box-shadow 0.2s;
+}
+
+.transaction-row-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+/* Columns Details */
+.invoice-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.inv-code {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.inv-date {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.method-info .label,
+.price-info .label {
+  display: block;
+  font-size: 10px;
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+.method-info .val {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.price-info .val-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Empty State */
+.empty-finance-state {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 60px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
