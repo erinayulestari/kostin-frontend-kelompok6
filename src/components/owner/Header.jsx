@@ -2,12 +2,12 @@ import React from 'react';
 import { Bell, ChevronDown } from 'lucide-react';
 import avatarImg from '../../assets/avatar.jpg';
 
-const Header = () => {
+const Header = ({ title = "Dashboard", subtitle = "Kelola kost dan pantau aktivitas penyewa.", actionButton }) => {
   return (
     <header className="header">
       <div className="header-title">
-        <h1>Dashboard</h1>
-        <p>Kelola kost dan pantau aktivitas penyewa.</p>
+        <h1>{title}</h1>
+        <p>{subtitle}</p>
       </div>
 
       <div className="header-actions">
@@ -25,6 +25,8 @@ const Header = () => {
           <span style={{ fontWeight: 600, fontSize: '14px' }}>Budi Santoso</span>
           <ChevronDown size={16} color="#64748b" />
         </div>
+
+        {actionButton && actionButton}
       </div>
     </header>
   );
