@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 import GallerySection from "../components/GallerySection";
 import DetailInfo from "../components/DetailInfo";
 import FacilitySection from "../components/FacilitySection";
-import BookingCard from "../components/BookingCard";
+import DetailBookingCard from "../components/DetailBookingCard";
 import LocationSection from "../components/LocationSection";
 import ReviewSection from "../components/ReviewSection";
 import SimilarKost from "../components/SimilarKost";
@@ -57,7 +57,7 @@ export default function DetailKost() {
 
                     </div>
 
-                    <BookingCard />
+                    <DetailBookingCard />
 
                 </div>
                 <LocationSection />

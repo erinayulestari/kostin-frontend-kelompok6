@@ -1,6 +1,9 @@
 import { Heart, MapPin, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function FavoriteCard({ kost }) {
+  const navigate = useNavigate();
+
   return (
     <div className="favorite-card">
 
@@ -55,7 +58,10 @@ export default function FavoriteCard({ kost }) {
 
         <div className="favorite-button-group">
 
-          <button className="detail-btn">
+          <button
+            className="detail-btn"
+            onClick={() => navigate("/detail-kost")}
+          >
             Lihat Detail
           </button>
 
