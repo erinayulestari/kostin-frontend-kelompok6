@@ -21,7 +21,7 @@ import OwnerDashboard from "./pages/owner/Dashboard";
 import MyKosts from "./pages/owner/MyKosts";
 import Bookings from "./pages/owner/Bookings";
 import Finance from "./pages/owner/Finance";
-
+import Reports from "./pages/owner/Reports";
 function App() {
   return (
     <BrowserRouter>
@@ -110,6 +110,10 @@ function App() {
           path="/owner/keuangan" 
           element={<Finance />} 
         />
+        <Route 
+  path="/owner/laporan" 
+  element={<Reports />} 
+/>
 
       </Routes>
 
