@@ -24,6 +24,7 @@ import Finance from "./pages/owner/Finance";
 import Reports from "./pages/owner/Reports";
 import Settings from "./pages/owner/Settings";
 import VerifikasiPemilik from "./pages/owner/VerifikasiPemilik";
+import TambahKost from "./pages/owner/TambahKost";
 
 function App() {
   return (
@@ -127,6 +128,10 @@ function App() {
         <Route 
           path="/owner/verifikasi" 
           element={<VerifikasiPemilik />} 
+        />
+        <Route 
+        path="/owner/tambah-kost" 
+        element={<TambahKost />} 
         />
 
       </Routes>
