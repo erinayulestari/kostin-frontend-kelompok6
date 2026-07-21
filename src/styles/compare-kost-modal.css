@@ -1,0 +1,320 @@
+/* Modal Backdrop Overlay */
+.compare-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* Modal Box Base */
+.compare-modal-box {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 860px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+.compare-modal-box.wide-modal {
+  max-width: 920px;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.compare-modal-header {
+  padding: 20px 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.compare-modal-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.compare-modal-header p {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+.btn-close-modal {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close-modal:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Body Step 1: Selection Cards */
+.step-1-body {
+  padding: 24px;
+}
+
+.kost-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.pick-card {
+  position: relative;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.pick-card:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.pick-card.selected {
+  border: 2px solid #0066ff;
+  background-color: #f8fafc;
+}
+
+.selected-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 20px;
+  height: 20px;
+  background-color: #0066ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.pick-card-img {
+  width: 100%;
+  height: 110px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.pick-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pick-card-info h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.pick-card-info .loc {
+  font-size: 11px;
+  color: #64748b;
+  margin: 0 0 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pick-card-info .price {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.pick-card-info .rating {
+  font-size: 11px;
+  color: #eab308;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+}
+
+.btn-pick-action {
+  width: 100%;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #0066ff;
+  background: #ffffff;
+  color: #0066ff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: auto;
+}
+
+.pick-card.selected .btn-pick-action {
+  background-color: #ffffff;
+  border-color: #0066ff;
+  color: #0066ff;
+}
+
+/* Body Step 2: Comparison Table */
+.step-2-body {
+  padding: 24px;
+}
+
+.comparison-table-wrapper {
+  max-height: 440px;
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 13px;
+}
+
+.comparison-table thead th {
+  background-color: #f8fafc;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.comparison-table .col-feature {
+  width: 30%;
+}
+
+.comparison-table .col-kost {
+  width: 35%;
+}
+
+.col-label {
+  display: block;
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.header-kost-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-kost-card img {
+  width: 42px;
+  height: 42px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.header-kost-card h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.header-kost-card p {
+  font-size: 11px;
+  color: #64748b;
+  margin: 2px 0 0 0;
+}
+
+.feature-title {
+  color: #475569;
+  font-weight: 500;
+}
+
+.comparison-table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+/* Footer & Buttons */
+.compare-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-modal-cancel {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-modal-cancel:hover {
+  background-color: #f8fafc;
+}
+
+.btn-modal-submit {
+  height: 40px;
+  padding: 0 24px;
+  border-radius: 8px;
+  border: none;
+  background-color: #0066ff;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-modal-submit:hover {
+  background-color: #0052cc;
+}
+
+.btn-modal-submit:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}

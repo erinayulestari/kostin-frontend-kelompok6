@@ -1,7 +1,7 @@
-import { Calendar, MessageSquare, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Calendar, MessageSquare, ShieldCheck, CheckCircle2, GitCompare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function DetailBookingCard() {
+export default function DetailBookingCard({ onOpenCompare }) {
   const navigate = useNavigate();
 
   return (
@@ -157,6 +157,30 @@ export default function DetailBookingCard() {
         >
           <MessageSquare size={18} color="#2563EB" />
           Chat Pemilik
+        </button>
+
+        {/* Tombol Bandingkan Kost */}
+        <button
+          onClick={onOpenCompare}
+          style={{
+            width: "100%",
+            height: "48px",
+            background: "#FFFFFF",
+            color: "#1E3A8A",
+            border: "1px solid #CBD5E1",
+            borderRadius: "12px",
+            fontWeight: "600",
+            fontSize: "15px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+            transition: "all 0.2s",
+          }}
+        >
+          <GitCompare size={18} color="#1E3A8A" />
+          Bandingkan Kost
         </button>
       </div>
 
