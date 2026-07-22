@@ -11,7 +11,7 @@ export default function DetailBookingCard({ kos, onOpenCompare }) {
   const [chatting, setChatting] = useState(false);
 
   const rawHarga = kos?.harga_per_bulan || 850000;
-  const hargaPerBulan = typeof rawHarga === "string" ? parseFloat(rawHarga.replace(/[^\d]/g, "")) || 850000 : rawHarga;
+  const hargaPerBulan = typeof rawHarga === "number" ? rawHarga : (parseFloat(String(rawHarga)) || 850000);
   const totalHarga = hargaPerBulan * durasiSewa;
 
   const isAvailable = kos ? kos.jumlah_kamar > kos.kamar_terisi : true;
@@ -43,12 +43,11 @@ export default function DetailBookingCard({ kos, onOpenCompare }) {
       const res = await api.post(`/kos/${kos.id}/tanya`, {
         pesan: "Halo, saya tertarik dengan kos ini. Apakah kamar masih tersedia?"
       });
-      if (res.data?.wa_url) {
-        window.open(res.data.wa_url, "_blank");
-      } else if (res.data?.link) {
-        window.open(res.data.link, "_blank");
+      const waUrl = res.data?.wa_link || res.data?.wa_url || res.data?.link;
+      if (waUrl) {
+        window.open(waUrl, "_blank");
       } else {
-        alert("Pesan berhasil dikirim ke pemilik kos.");
+        alert("Link WhatsApp tidak ditemukan.");
       }
     } catch (e) {
       console.error("Gagal menghubungi pemilik", e);
@@ -57,6 +56,14 @@ export default function DetailBookingCard({ kos, onOpenCompare }) {
       setChatting(false);
     }
   };
+
+  const sisaKamar = kos?.sisa_kamar !== undefined
+    ? kos.sisa_kamar
+    : (kos?.kamar_tersedia !== undefined
+        ? kos.kamar_tersedia
+        : (kos?.jumlah_kamar !== undefined && kos?.kamar_terisi !== undefined
+            ? Math.max(0, kos.jumlah_kamar - kos.kamar_terisi)
+            : 3));
 
   return (
     <div
@@ -70,18 +77,18 @@ export default function DetailBookingCard({ kos, onOpenCompare }) {
         flexDirection: "column",
         gap: "16px",
         width: "100%",
-        maxWidth: "360px",
+        maxWidth: "100%",
       }}
     >
       {/* Top Header */}
       <div>
         <span style={{ color: "#64748B", fontSize: "14px", fontWeight: "500" }}>Harga</span>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px", marginTop: "4px" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: "6px", flexWrap: "wrap" }}>
             <span style={{ fontSize: "26px", fontWeight: "800", color: "#2563EB" }}>
-              Rp{hargaPerBulan.toLocaleString("id-ID")}
+              Rp {hargaPerBulan.toLocaleString("id-ID")}
             </span>
-            <span style={{ fontSize: "13px", color: "#64748B" }}>/ bulan</span>
+            <span style={{ fontSize: "14px", color: "#64748B", whiteSpace: "nowrap" }}>/ bulan</span>
           </div>
           <span
             style={{
@@ -89,15 +96,16 @@ export default function DetailBookingCard({ kos, onOpenCompare }) {
               color: isAvailable ? "#16A34A" : "#EF4444",
               fontSize: "12px",
               fontWeight: "600",
-              padding: "4px 10px",
+              padding: "5px 12px",
               borderRadius: "20px",
               display: "inline-flex",
               alignItems: "center",
               gap: "4px",
+              whiteSpace: "nowrap",
             }}
           >
             <CheckCircle2 size={13} fill={isAvailable ? "#16A34A" : "#EF4444"} color={isAvailable ? "#DCFCE7" : "#FEE2E2"} />
-            {isAvailable ? "Tersedia" : "Penuh"}
+            {isAvailable ? `Sisa ${sisaKamar} Kamar` : "Penuh"}
           </span>
         </div>
       </div>
@@ -160,6 +168,8 @@ export default function DetailBookingCard({ kos, onOpenCompare }) {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          flexWrap: "wrap",
+          gap: "8px",
           marginTop: "4px",
         }}
       >

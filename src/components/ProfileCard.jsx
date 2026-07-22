@@ -46,8 +46,9 @@ export default function ProfileCard() {
     setLoading(true);
     try {
       const res = await api.put("/profile", formData);
-      if (res.data) {
-        updateProfile(res.data);
+      const updatedUser = res.data !== undefined ? res.data : res;
+      if (updatedUser) {
+        updateProfile(updatedUser);
       }
       setIsEditing(false);
       alert("Profil berhasil diperbarui.");
@@ -68,8 +69,9 @@ export default function ProfileCard() {
 
     try {
       const res = await api.post("/profile/photo", data);
-      if (res.data) {
-        updateProfile(res.data);
+      const updatedUser = res.data !== undefined ? res.data : res;
+      if (updatedUser) {
+        updateProfile(updatedUser);
       }
       alert("Foto profil berhasil diperbarui.");
     } catch (err) {
@@ -85,23 +87,20 @@ export default function ProfileCard() {
     <section className="profile-card">
       {/* ================= Header ================= */}
       <div className="profile-top">
-        <div className="profile-avatar" style={{ position: "relative" }}>
+        <div className="profile-avatar">
           <img src={displayAvatar} alt="Profile" onError={(e) => { e.target.src = avatar; }} />
-          <label className="camera-btn" style={{ cursor: "pointer" }}>
-            <Camera size={18} />
-            <input type="file" accept="image/*" onChange={handlePhotoUpload} style={{ display: "none" }} />
-          </label>
         </div>
 
         <div className="profile-info">
           <h2>{user?.nama || "User"}</h2>
-          <span className="profile-role">{roleText}</span>
-
-          <label className="photo-btn" style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}>
-            <Camera size={18} />
-            Ubah Foto
-            <input type="file" accept="image/*" onChange={handlePhotoUpload} style={{ display: "none" }} />
-          </label>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap", marginTop: "8px" }}>
+            <span className="profile-role" style={{ margin: 0 }}>{roleText}</span>
+            <label className="photo-btn" style={{ cursor: "pointer", margin: 0 }}>
+              <Camera size={16} />
+              Ubah Foto
+              <input type="file" accept="image/*" onChange={handlePhotoUpload} style={{ display: "none" }} />
+            </label>
+          </div>
         </div>
       </div>
 

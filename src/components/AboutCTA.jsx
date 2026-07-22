@@ -1,17 +1,15 @@
 import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo kostin.png";
 
 export default function AboutCTA() {
+  const navigate = useNavigate();
+
   return (
     <section className="cta">
-
       <div className="cta-container">
-
         <div className="cta-left">
-
-          <span className="cta-tag">
-            Mulai Sekarang
-          </span>
+          <span className="cta-tag">Mulai Sekarang</span>
 
           <h2>
             Temukan Kost Impianmu
@@ -25,24 +23,16 @@ export default function AboutCTA() {
             dan sesuai kebutuhanmu bersama Kostin.
           </p>
 
-          <button className="cta-btn">
+          <button className="cta-btn" onClick={() => navigate("/carikost")}>
             Cari Kost
-            <ArrowRight size={18}/>
+            <ArrowRight size={18} />
           </button>
-
         </div>
 
         <div className="cta-right">
-
-          <img
-            src={logo}
-            alt="Logo Kostin"
-          />
-
+          <img src={logo} alt="Logo Kostin" />
         </div>
-
       </div>
-
     </section>
   );
 }

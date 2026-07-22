@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Home, ChevronDown } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import avatar from "../assets/avatar.jpg";
@@ -29,10 +29,18 @@ export default function Navbar() {
 
       {/* Menu */}
       <div className="menu">
-        <Link to="/">Home</Link>
-        <Link to="/carikost">Cari Kost</Link>
-        <Link to="/favorit">Favorit</Link>
-        <Link to="/tentang-kami">Tentang Kami</Link>
+        <NavLink to="/" end className={({ isActive }) => (isActive ? "active" : "")}>
+          Home
+        </NavLink>
+        <NavLink to="/carikost" className={({ isActive }) => (isActive ? "active" : "")}>
+          Cari Kost
+        </NavLink>
+        <NavLink to="/favorit" className={({ isActive }) => (isActive ? "active" : "")}>
+          Favorit
+        </NavLink>
+        <NavLink to="/tentang-kami" className={({ isActive }) => (isActive ? "active" : "")}>
+          Tentang Kami
+        </NavLink>
       </div>
 
       {/* Right */}

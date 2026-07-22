@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   ReceiptText,
   Clock3,
@@ -8,6 +9,33 @@ import { useNavigate } from "react-router-dom";
 
 export default function PaymentSummaryCard({ payment, onPayNow, submitting }) {
   const navigate = useNavigate();
+
+  // Dynamic 24-hour countdown timer (86400 seconds)
+  const [timeLeft, setTimeLeft] = useState(86400);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTimeDigits = (seconds) => {
+    if (seconds <= 0) return { h: "00", m: "00", s: "00" };
+    const h = String(Math.floor(seconds / 3600)).padStart(2, "0");
+    const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+    const s = String(seconds % 60).padStart(2, "0");
+    return { h, m, s };
+  };
+
+  const { h, m, s } = formatTimeDigits(timeLeft);
 
   return (
     <aside className="payment-summary">
@@ -26,15 +54,12 @@ export default function PaymentSummaryCard({ payment, onPayNow, submitting }) {
           <strong>{payment?.subtotal}</strong>
         </div>
 
-        <div className="summary-item">
-          <span>Biaya Admin</span>
-          <strong>{payment?.admin}</strong>
-        </div>
-
-        <div className="summary-item">
-          <span>Diskon</span>
-          <strong className="discount">{payment?.discount}</strong>
-        </div>
+        {payment?.discount && payment.discount !== "Rp 0" && (
+          <div className="summary-item">
+            <span>Diskon</span>
+            <strong className="discount">{payment?.discount}</strong>
+          </div>
+        )}
       </div>
 
       <hr />
@@ -45,12 +70,28 @@ export default function PaymentSummaryCard({ payment, onPayNow, submitting }) {
         <h2>{payment?.total}</h2>
       </div>
 
-      {/* Countdown */}
-      <div className="payment-countdown">
-        <Clock3 size={18} />
-        <div>
-          <span>Selesaikan pembayaran dalam</span>
-          <strong>{payment?.countdown || "24 Jam"}</strong>
+      {/* Countdown Box */}
+      <div className="payment-countdown-card">
+        <div className="countdown-header">
+          <Clock3 size={18} />
+          <span>Selesaikan Pembayaran Dalam</span>
+        </div>
+
+        <div className="countdown-boxes">
+          <div className="time-box">
+            <span className="time-num">{h}</span>
+            <span className="time-unit">Jam</span>
+          </div>
+          <span className="time-colon">:</span>
+          <div className="time-box">
+            <span className="time-num">{m}</span>
+            <span className="time-unit">Menit</span>
+          </div>
+          <span className="time-colon">:</span>
+          <div className="time-box">
+            <span className="time-num">{s}</span>
+            <span className="time-unit">Detik</span>
+          </div>
         </div>
       </div>
 
@@ -58,10 +99,10 @@ export default function PaymentSummaryCard({ payment, onPayNow, submitting }) {
       <button
         className="pay-now-btn"
         onClick={onPayNow}
-        disabled={submitting}
+        disabled={submitting || timeLeft <= 0}
       >
         <CreditCard size={20} />
-        {submitting ? "Memproses..." : "Bayar Sekarang"}
+        {submitting ? "Memproses..." : timeLeft <= 0 ? "Waktu Pembayaran Habis" : "Bayar Sekarang"}
       </button>
 
       <button

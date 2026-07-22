@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SearchFilter from "../components/SearchFilter";
@@ -9,11 +10,13 @@ import api from "../api/api";
 import "../styles/carikost.css";
 
 export default function CariKost() {
+  const [searchParams] = useSearchParams();
   const [kostList, setKostList] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     kota: "",
-    tipe: "",
+    tipe: searchParams.get("tipe") || "",
     wifi: false,
     ac: false,
     kamar_mandi_dalam: false,
@@ -23,6 +26,41 @@ export default function CariKost() {
     cctv: false,
     sort: "Terbaru",
   });
+
+  useEffect(() => {
+    const tipeParam = searchParams.get("tipe");
+    if (tipeParam) {
+      setFilters(prev => ({ ...prev, tipe: tipeParam }));
+    }
+  }, [searchParams]);
+
+  const fetchFavorites = async () => {
+    try {
+      const res = await api.get('/favorites');
+      if (res.data) {
+        const favIds = res.data.map(f => f.kos_id || f.kos?.id || f.id);
+        setFavorites(favIds);
+      }
+    } catch (e) {
+      console.log("Belum login atau gagal memuat favorit", e);
+    }
+  };
+
+  const handleToggleFavorite = async (kosId) => {
+    const isFav = favorites.includes(kosId);
+    try {
+      if (isFav) {
+        await api.delete(`/favorites/${kosId}`);
+        setFavorites(prev => prev.filter(id => id !== kosId));
+      } else {
+        await api.post('/favorites', { kos_id: kosId });
+        setFavorites(prev => [...prev, kosId]);
+      }
+    } catch (e) {
+      console.error("Gagal update favorit:", e);
+      alert("Silakan login terlebih dahulu untuk menyukai kos.");
+    }
+  };
 
   const fetchKosData = async () => {
     setLoading(true);
@@ -58,6 +96,7 @@ export default function CariKost() {
 
   useEffect(() => {
     fetchKosData();
+    fetchFavorites();
   }, []);
 
   const handleChangeFilter = (key, value) => {
@@ -129,7 +168,12 @@ export default function CariKost() {
             </div>
           ) : (
             kostList.map((kost) => (
-              <KostCardHorizontal key={kost.id} kost={kost} />
+              <KostCardHorizontal
+                key={kost.id}
+                kost={kost}
+                isFavorite={favorites.includes(kost.id)}
+                onToggleFavorite={handleToggleFavorite}
+              />
             ))
           )}
 

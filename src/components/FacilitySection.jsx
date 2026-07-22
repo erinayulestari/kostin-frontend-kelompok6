@@ -1,168 +1,103 @@
 import {
-    Wifi,
-    Monitor,
-    Bath,
-    CookingPot,
-    CircleParking,
-    WashingMachine,
-    ShieldCheck,
-    Zap,
-    Wallet,
-    Bed,
-    Ruler,
-    Clock3,
-    Moon,
-    LogIn
+  Wifi,
+  Monitor,
+  Bath,
+  CookingPot,
+  CircleParking,
+  WashingMachine,
+  ShieldCheck,
+  Zap,
+  Wallet,
+  Bed,
+  Layers,
+  Tag,
+  Hash
 } from "lucide-react";
 
-export default function FacilitySection(){
+export default function FacilitySection({ kos }) {
+  if (!kos) return null;
 
-    return(
+  const facilities = [];
+  if (kos.wifi) facilities.push({ label: "WiFi Gratis", icon: <Wifi size={22} /> });
+  if (kos.ac) facilities.push({ label: "Pendingin Ruangan (AC)", icon: <Monitor size={22} /> });
+  if (kos.kamar_mandi_dalam) facilities.push({ label: "Kamar Mandi Dalam", icon: <Bath size={22} /> });
+  if (kos.dapur) facilities.push({ label: "Dapur Bersama", icon: <CookingPot size={22} /> });
+  if (kos.parkir) facilities.push({ label: "Area Parkir", icon: <CircleParking size={22} /> });
+  if (kos.laundry) facilities.push({ label: "Layanan Laundry", icon: <WashingMachine size={22} /> });
+  if (kos.security) facilities.push({ label: "Keamanan / Satpam", icon: <ShieldCheck size={22} /> });
+  if (kos.cctv) facilities.push({ label: "Kamera CCTV 24 Jam", icon: <Zap size={22} /> });
 
-        <section className="facility-section">
+  const rawHarga = kos.harga_per_bulan || 0;
+  const hargaFormatted = typeof rawHarga === "number"
+    ? `Rp${rawHarga.toLocaleString("id-ID")}/bulan`
+    : `Rp${rawHarga}/bulan`;
 
-            <h2>Fasilitas</h2>
+  const sisaKamar = kos.sisa_kamar !== undefined
+    ? kos.sisa_kamar
+    : (kos.kamar_tersedia !== undefined
+        ? kos.kamar_tersedia
+        : Math.max(0, (kos.jumlah_kamar || 0) - (kos.kamar_terisi || 0)));
 
-            <div className="facility-grid">
+  return (
+    <section className="facility-section">
+      <h2>Fasilitas Properti</h2>
 
-                <div className="facility-card">
-                    <Wifi size={22}/>
-                    <span>WiFi</span>
-                </div>
-
-                <div className="facility-card">
-                    <Monitor size={22}/>
-                    <span>AC</span>
-                </div>
-
-                <div className="facility-card">
-                    <Bath size={22}/>
-                    <span>Kamar mandi dalam</span>
-                </div>
-
-                <div className="facility-card">
-                    <CookingPot size={22}/>
-                    <span>Dapur</span>
-                </div>
-
-                <div className="facility-card">
-                    <CircleParking size={22}/>
-                    <span>Parkir</span>
-                </div>
-
-                <div className="facility-card">
-                    <WashingMachine size={22}/>
-                    <span>Laundry</span>
-                </div>
-
-                <div className="facility-card">
-                    <ShieldCheck size={22}/>
-                    <span>CCTV</span>
-                </div>
-
-                <div className="facility-card">
-                    <Zap size={22}/>
-                    <span>Listrik 24 Jam</span>
-                </div>
-
+      <div className="facility-grid">
+        {facilities.length > 0 ? (
+          facilities.map((item, idx) => (
+            <div key={idx} className="facility-card">
+              {item.icon}
+              <span>{item.label}</span>
             </div>
+          ))
+        ) : (
+          <p style={{ color: "#64748b", gridColumn: "span 4" }}>Belum ada informasi fasilitas tambahan yang diset.</p>
+        )}
+      </div>
 
-            <h2 className="room-title">
+      <h2 className="room-title">Informasi Properti & Kamar</h2>
 
-                Informasi Kamar
+      <div className="room-grid">
+        <div className="room-item">
+          <Wallet color="#2563EB" />
+          <div>
+            <small>Harga Per Bulan</small>
+            <strong>{hargaFormatted}</strong>
+          </div>
+        </div>
 
-            </h2>
+        <div className="room-item">
+          <Bed color="#2563EB" />
+          <div>
+            <small>Kapasitas Sisa Kamar</small>
+            <strong>{sisaKamar} Kamar Kosong</strong>
+          </div>
+        </div>
 
-            <div className="room-grid">
+        <div className="room-item">
+          <Layers color="#2563EB" />
+          <div>
+            <small>Total Jumlah Kamar</small>
+            <strong>{kos.jumlah_kamar || "-"} Kamar</strong>
+          </div>
+        </div>
 
-                <div className="room-item">
+        <div className="room-item">
+          <Tag color="#2563EB" />
+          <div>
+            <small>Tipe Penghuni</small>
+            <strong>{kos.tipe ? kos.tipe.toUpperCase() : "Campur"}</strong>
+          </div>
+        </div>
 
-                    <Wallet/>
-
-                    <div>
-
-                        <small>Harga</small>
-
-                        <strong>Rp850.000/bulan</strong>
-
-                    </div>
-
-                </div>
-
-                <div className="room-item">
-
-                    <Bed/>
-
-                    <div>
-
-                        <small>Sisa Kamar</small>
-
-                        <strong>3 kamar</strong>
-
-                    </div>
-
-                </div>
-
-                <div className="room-item">
-
-                    <Ruler/>
-
-                    <div>
-
-                        <small>Ukuran</small>
-
-                        <strong>3 x 4 meter</strong>
-
-                    </div>
-
-                </div>
-
-                <div className="room-item">
-
-                    <Clock3/>
-
-                    <div>
-
-                        <small>Minimal Sewa</small>
-
-                        <strong>3 Bulan</strong>
-
-                    </div>
-
-                </div>
-
-                <div className="room-item">
-
-                    <Moon/>
-
-                    <div>
-
-                        <small>Jam Malam</small>
-
-                        <strong>Tidak Ada</strong>
-
-                    </div>
-
-                </div>
-
-                <div className="room-item">
-
-                    <LogIn/>
-
-                    <div>
-
-                        <small>Check In</small>
-
-                        <strong>08.00</strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    )
-
+        <div className="room-item">
+          <Hash color="#2563EB" />
+          <div>
+            <small>Nomor Kamar Spesifik</small>
+            <strong>{kos.ada_nomor_kamar ? "Tersedia" : "Tanpa Nomor"}</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

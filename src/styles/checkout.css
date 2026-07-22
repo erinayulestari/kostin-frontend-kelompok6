@@ -713,52 +713,71 @@
 
 }
 
-.payment-countdown{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-
-    padding:18px;
-
-    border-radius:16px;
-
-    background:#FEF3C7;
-
-    margin-bottom:30px;
-
+.payment-countdown-card {
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
-.payment-countdown svg{
-
-    color:#D97706;
-
-    flex-shrink:0;
-
+.countdown-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #B45309;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-.payment-countdown span{
-
-    display:block;
-
-    color:#92400E;
-
-    font-size:13px;
-
-    margin-bottom:6px;
-
+.countdown-header svg {
+  color: #D97706;
 }
 
-.payment-countdown strong{
+.countdown-boxes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
 
-    color:#B45309;
+.time-box {
+  background: #FFFFFF;
+  border: 1px solid #FCD34D;
+  border-radius: 10px;
+  padding: 8px 12px;
+  min-width: 54px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-    font-size:20px;
+.time-num {
+  font-size: 20px;
+  font-weight: 800;
+  color: #92400E;
+  line-height: 1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
 
-    font-weight:700;
+.time-unit {
+  font-size: 10px;
+  font-weight: 600;
+  color: #D97706;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
 
+.time-colon {
+  font-size: 18px;
+  font-weight: 800;
+  color: #D97706;
 }
 
 /* ===================================

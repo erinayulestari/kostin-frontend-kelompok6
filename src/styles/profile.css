@@ -147,36 +147,26 @@
 
 }
 
-.photo-btn{
-
-    width:160px;
-    height:46px;
-
-    border:1px solid #2563EB;
-
-    border-radius:12px;
-
-    background:#FFFFFF;
-
-    color:#2563EB;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:10px;
-
-    cursor:pointer;
-
-    font-weight:600;
-
-    transition:.25s;
-
+.photo-btn {
+    height: 34px;
+    padding: 0 16px;
+    border: 1px solid #CBD5E1;
+    border-radius: 999px;
+    background: #FFFFFF;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.25s ease;
 }
 
-.photo-btn:hover{
-
-    background:#EFF6FF;
-
+.photo-btn:hover {
+    background: #EFF6FF;
+    border-color: #2563EB;
+    color: #2563EB;
 }
 
 /* ===========================
