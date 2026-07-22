@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SidebarOwner from "../../components/owner/SidebarOwner";
+import api from "../../api/api";
 import "../../styles/owner/tambah-kost.css";
 import { 
   UploadCloud, 
@@ -22,38 +24,131 @@ import {
 } from "lucide-react";
 
 export default function TambahKost() {
-  const [desc, setDesc] = useState("");
+  const navigate = useNavigate();
 
-  // Sample data fasilitas sesuai mockup
-  const facilities = [
-    { id: "wifi", label: "WiFi", icon: Wifi, defaultChecked: true },
-    { id: "ac", label: "AC", icon: Wind, defaultChecked: true },
-    { id: "kamar_mandi", label: "Kamar Mandi Dalam", icon: Bath, defaultChecked: true },
-    { id: "kasur", label: "Kasur", icon: Bed, defaultChecked: true },
-    { id: "lemari", label: "Lemari", icon: Tv, defaultChecked: true },
-    { id: "meja", label: "Meja Belajar", icon: BookOpen, defaultChecked: true },
-    { id: "dapur", label: "Dapur", icon: Utensils, defaultChecked: true },
-    { id: "parkir_motor", label: "Parkir Motor", icon: Bike, defaultChecked: true },
-    { id: "parkir_mobil", label: "Parkir Mobil", icon: Car, defaultChecked: false },
-    { id: "laundry", label: "Laundry", icon: Shirt, defaultChecked: false },
-    { id: "cctv", label: "CCTV", icon: ShieldCheck, defaultChecked: true },
-    { id: "keamanan", label: "Keamanan 24 Jam", icon: ShieldCheck, defaultChecked: true },
-  ];
+  const [namaKos, setNamaKos] = useState("");
+  const [tipe, setTipe] = useState("putri");
+  const [hargaPerBulan, setHargaPerBulan] = useState("");
+  const [provinsi, setProvinsi] = useState("Sulawesi Selatan");
+  const [kota, setKota] = useState("Makassar");
+  const [kecamatan, setKecamatan] = useState("Tamalanrea");
+  const [kodePos, setKodePos] = useState("90245");
+  const [alamat, setAlamat] = useState("");
+  const [desc, setDesc] = useState("");
+  const [jumlahKamar, setJumlahKamar] = useState(10);
+  const [kamarTerisi, setKamarTerisi] = useState(0);
+  const [lat, setLat] = useState("-5.1477");
+  const [lng, setLng] = useState("119.4327");
+
+  const [fotoUtama, setFotoUtama] = useState(null);
+  const [fotoUtamaPreview, setFotoUtamaPreview] = useState(null);
+  const [galeriFoto, setGaleriFoto] = useState([]);
+  const [galeriPreview, setGaleriPreview] = useState([]);
+
+  const [facilities, setFacilities] = useState({
+    wifi: true,
+    ac: true,
+    kamar_mandi_dalam: true,
+    parkir: true,
+    dapur: true,
+    laundry: false,
+    security: true,
+    cctv: true,
+  });
+
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleFotoUtamaChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFotoUtama(file);
+      setFotoUtamaPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleGaleriChange = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setGaleriFoto((prev) => [...prev, ...files]);
+      const previews = files.map((f) => URL.createObjectURL(f));
+      setGaleriPreview((prev) => [...prev, ...previews]);
+    }
+  };
+
+  const removeGaleriFoto = (index) => {
+    setGaleriFoto((prev) => prev.filter((_, i) => i !== index));
+    setGaleriPreview((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const toggleFacility = (key) => {
+    setFacilities((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!fotoUtama) {
+      setError("Foto utama wajib diunggah.");
+      return;
+    }
+
+    setSubmitting(true);
+    const formData = new FormData();
+    formData.append("nama_kos", namaKos);
+    formData.append("tipe", tipe);
+    formData.append("harga_per_bulan", hargaPerBulan);
+    formData.append("provinsi", provinsi);
+    formData.append("kota", kota);
+    formData.append("kecamatan", kecamatan);
+    formData.append("kode_pos", kodePos);
+    formData.append("alamat", alamat);
+    formData.append("deskripsi", desc);
+    formData.append("jumlah_kamar", jumlahKamar);
+    formData.append("kamar_terisi", kamarTerisi);
+    formData.append("lat", lat);
+    formData.append("lng", lng);
+
+    Object.keys(facilities).forEach((key) => {
+      formData.append(key, facilities[key] ? "1" : "0");
+    });
+
+    formData.append("foto_utama", fotoUtama);
+    galeriFoto.forEach((file) => {
+      formData.append("kos_foto[]", file);
+    });
+
+    try {
+      await api.post("/owner/kos", formData);
+      alert("Properti kos berhasil ditambahkan!");
+      navigate("/owner/kost-saya");
+    } catch (err) {
+      console.error("Gagal tambah kos:", err);
+      setError(err.message || "Gagal menyimpan properti kos.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="owner-layout">
       <SidebarOwner />
 
       <main className="main-content">
-        {/* Header Tanpa Tombol Batal */}
         <div className="page-header">
           <h1 className="page-title">Tambah Kost</h1>
           <p className="page-subtitle">Lengkapi informasi kost yang akan dipublikasikan.</p>
         </div>
 
-        <form onSubmit={(e) => e.preventDefault()}>
+        {error && (
+          <div style={{ color: "#ef4444", backgroundColor: "#fee2e2", padding: "1rem", borderRadius: "8px", marginBottom: "1rem" }}>
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
           <div className="tambah-kost-grid">
-            
             {/* ================= KOLOM KIRI ================= */}
             <div>
               {/* 1. Informasi Kost */}
@@ -68,12 +163,21 @@ export default function TambahKost() {
                 <div className="form-row">
                   <div className="form-group">
                     <label>Nama Kost</label>
-                    <input type="text" placeholder="Masukkan nama kost" />
+                    <input
+                      type="text"
+                      placeholder="Masukkan nama kost"
+                      value={namaKos}
+                      onChange={(e) => setNamaKos(e.target.value)}
+                      required
+                    />
                   </div>
                   <div className="form-group">
                     <label>Jenis Kost</label>
-                    <select defaultValue="">
-                      <option value="" disabled>Pilih jenis kost</option>
+                    <select
+                      value={tipe}
+                      onChange={(e) => setTipe(e.target.value)}
+                      required
+                    >
                       <option value="putra">Putra</option>
                       <option value="putri">Putri</option>
                       <option value="campur">Campur</option>
@@ -83,53 +187,71 @@ export default function TambahKost() {
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label>Kategori Kost</label>
-                    <select defaultValue="">
-                      <option value="" disabled>Pilih kategori kost</option>
-                      <option value="bulanan">Bulanan</option>
-                      <option value="tahunan">Tahunan</option>
-                    </select>
+                    <label>Harga Sewa Per Bulan</label>
+                    <input
+                      type="number"
+                      placeholder="Masukkan harga sewa (misal: 1200000)"
+                      value={hargaPerBulan}
+                      onChange={(e) => setHargaPerBulan(e.target.value)}
+                      required
+                    />
                   </div>
-                  <div className="form-group">
-                    <label>Harga Sewa</label>
-                    <input type="text" placeholder="Rp  Masukkan harga sewa" />
-                  </div>
-                </div>
-
-                <div className="form-row">
                   <div className="form-group">
                     <label>Provinsi</label>
-                    <select defaultValue="">
-                      <option value="" disabled>Pilih provinsi</option>
-                      <option value="sulsel">Sulawesi Selatan</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Kota</label>
-                    <select defaultValue="">
-                      <option value="" disabled>Pilih kota</option>
-                      <option value="makassar">Makassar</option>
-                    </select>
+                    <input
+                      type="text"
+                      placeholder="Provinsi"
+                      value={provinsi}
+                      onChange={(e) => setProvinsi(e.target.value)}
+                      required
+                    />
                   </div>
                 </div>
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label>Kecamatan</label>
-                    <select defaultValue="">
-                      <option value="" disabled>Pilih kecamatan</option>
-                      <option value="tamalanrea">Tamalanrea</option>
-                    </select>
+                    <label>Kota</label>
+                    <input
+                      type="text"
+                      placeholder="Kota"
+                      value={kota}
+                      onChange={(e) => setKota(e.target.value)}
+                      required
+                    />
                   </div>
                   <div className="form-group">
+                    <label>Kecamatan</label>
+                    <input
+                      type="text"
+                      placeholder="Kecamatan"
+                      value={kecamatan}
+                      onChange={(e) => setKecamatan(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
                     <label>Kode Pos</label>
-                    <input type="text" placeholder="Masukkan kode pos" />
+                    <input
+                      type="text"
+                      placeholder="Masukkan kode pos"
+                      value={kodePos}
+                      onChange={(e) => setKodePos(e.target.value)}
+                    />
                   </div>
                 </div>
 
                 <div className="form-group">
                   <label>Alamat Lengkap</label>
-                  <textarea rows="3" placeholder="Masukkan alamat lengkap kost"></textarea>
+                  <textarea
+                    rows="3"
+                    placeholder="Masukkan alamat lengkap kost"
+                    value={alamat}
+                    onChange={(e) => setAlamat(e.target.value)}
+                    required
+                  ></textarea>
                 </div>
               </div>
 
@@ -143,8 +265,8 @@ export default function TambahKost() {
                 </div>
 
                 <div className="form-group" style={{ marginBottom: 4 }}>
-                  <textarea 
-                    rows="4" 
+                  <textarea
+                    rows="4"
                     maxLength={1000}
                     placeholder="Jelaskan informasi mengenai kost, peraturan, serta keunggulan kost."
                     value={desc}
@@ -166,198 +288,147 @@ export default function TambahKost() {
                 </div>
 
                 <div className="facilities-grid">
-                  {facilities.map((f) => {
-                    const IconComp = f.icon;
-                    return (
-                      <label key={f.id} className="facility-item">
-                        <input type="checkbox" defaultChecked={f.defaultChecked} />
-                        <IconComp size={14} color="#0066ff" />
-                        <span>{f.label}</span>
-                      </label>
-                    );
-                  })}
+                  <label className="facility-item">
+                    <input type="checkbox" checked={facilities.wifi} onChange={() => toggleFacility('wifi')} />
+                    <Wifi size={14} color="#0066ff" />
+                    <span>WiFi</span>
+                  </label>
+
+                  <label className="facility-item">
+                    <input type="checkbox" checked={facilities.ac} onChange={() => toggleFacility('ac')} />
+                    <Wind size={14} color="#0066ff" />
+                    <span>AC</span>
+                  </label>
+
+                  <label className="facility-item">
+                    <input type="checkbox" checked={facilities.kamar_mandi_dalam} onChange={() => toggleFacility('kamar_mandi_dalam')} />
+                    <Bath size={14} color="#0066ff" />
+                    <span>Kamar Mandi Dalam</span>
+                  </label>
+
+                  <label className="facility-item">
+                    <input type="checkbox" checked={facilities.parkir} onChange={() => toggleFacility('parkir')} />
+                    <Car size={14} color="#0066ff" />
+                    <span>Parkir</span>
+                  </label>
+
+                  <label className="facility-item">
+                    <input type="checkbox" checked={facilities.dapur} onChange={() => toggleFacility('dapur')} />
+                    <Utensils size={14} color="#0066ff" />
+                    <span>Dapur</span>
+                  </label>
+
+                  <label className="facility-item">
+                    <input type="checkbox" checked={facilities.laundry} onChange={() => toggleFacility('laundry')} />
+                    <Shirt size={14} color="#0066ff" />
+                    <span>Laundry</span>
+                  </label>
+
+                  <label className="facility-item">
+                    <input type="checkbox" checked={facilities.security} onChange={() => toggleFacility('security')} />
+                    <ShieldCheck size={14} color="#0066ff" />
+                    <span>Keamanan 24 Jam</span>
+                  </label>
+
+                  <label className="facility-item">
+                    <input type="checkbox" checked={facilities.cctv} onChange={() => toggleFacility('cctv')} />
+                    <ShieldCheck size={14} color="#0066ff" />
+                    <span>CCTV</span>
+                  </label>
                 </div>
               </div>
 
-              {/* 6. Informasi Kamar */}
+              {/* Informasi Kamar */}
               <div className="form-section">
                 <div className="section-head">
                   <div className="section-badge-title">
-                    <span className="badge-number">6</span>
+                    <span className="badge-number">4</span>
                     <span>Informasi Kamar</span>
                   </div>
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                   <div className="form-group">
                     <label>Jumlah Kamar</label>
-                    <input type="number" placeholder="Masukkan jumlah kamar" />
+                    <input
+                      type="number"
+                      placeholder="Jumlah kamar"
+                      value={jumlahKamar}
+                      onChange={(e) => setJumlahKamar(e.target.value)}
+                      required
+                    />
                   </div>
                   <div className="form-group">
-                    <label>Jumlah Kamar Kosong</label>
-                    <input type="number" placeholder="Masukkan kamar kosong" />
+                    <label>Kamar Terisi</label>
+                    <input
+                      type="number"
+                      placeholder="Kamar terisi"
+                      value={kamarTerisi}
+                      onChange={(e) => setKamarTerisi(e.target.value)}
+                    />
                   </div>
-                  <div className="form-group">
-                    <label>Luas Kamar (m²)</label>
-                    <input type="text" placeholder="Masukkan luas kamar" />
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label>Peraturan Kost</label>
-                  <textarea rows="3" placeholder="Contoh: Tamu hanya boleh sampai jam 22.00, Dilarang merokok, dll."></textarea>
                 </div>
               </div>
             </div>
 
             {/* ================= KOLOM KANAN ================= */}
             <div>
-              {/* 4. Foto Kost */}
-              <div className="form-section">
-                <div className="section-head">
-                  <div className="section-badge-title">
-                    <span className="badge-number">4</span>
-                    <span>Foto Kost</span>
-                  </div>
-                  <span style={{ fontSize: "12px", color: "#64748b" }}>Maksimal 10 foto</span>
-                </div>
-
-                <div className="upload-drop-zone">
-                  <UploadCloud size={28} color="#0066ff" style={{ marginBottom: "6px" }} />
-                  <p style={{ margin: 0, fontSize: "13px", fontWeight: "600", color: "#0f172a" }}>
-                    Drag & Drop foto di sini
-                  </p>
-                  <span style={{ fontSize: "11px", color: "#94a3b8" }}>
-                    atau klik untuk memilih file<br />JPG, PNG (maks. 5MB)
-                  </span>
-                </div>
-
-                <div className="photo-preview-grid">
-                  <div className="photo-card">
-                    <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=300" alt="Kost 1" />
-                    <button className="photo-delete-btn"><X size={12} /></button>
-                  </div>
-                  <div className="photo-card">
-                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=300" alt="Kost 2" />
-                    <button className="photo-delete-btn"><X size={12} /></button>
-                  </div>
-                  <div className="photo-card">
-                    <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=300" alt="Kost 3" />
-                    <button className="photo-delete-btn"><X size={12} /></button>
-                  </div>
-                  <div className="photo-card">
-                    <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=300" alt="Kost 4" />
-                    <button className="photo-delete-btn"><X size={12} /></button>
-                  </div>
-                  <div className="photo-card">
-                    <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=300" alt="Kost 5" />
-                    <button className="photo-delete-btn"><X size={12} /></button>
-                  </div>
-                  <div className="photo-card">
-                    <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=300" alt="Kost 6" />
-                    <button className="photo-delete-btn"><X size={12} /></button>
-                  </div>
-                  <div className="photo-card">
-                    <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=300" alt="Kost 7" />
-                    <button className="photo-delete-btn"><X size={12} /></button>
-                  </div>
-                  <div className="add-photo-box">
-                    <Plus size={18} />
-                    <span>Tambah Foto</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 5. Lokasi */}
+              {/* Foto Utama & Galeri */}
               <div className="form-section">
                 <div className="section-head">
                   <div className="section-badge-title">
                     <span className="badge-number">5</span>
-                    <span>Lokasi</span>
+                    <span>Foto Utama Kost</span>
                   </div>
                 </div>
 
-                <div className="map-mock">
-                  <img src="https://via.placeholder.com/600x200/e2e8f0/94a3b8?text=Map+Preview+Location" alt="Map" />
-                </div>
+                <label className="upload-drop-zone" style={{ cursor: "pointer", display: "block" }}>
+                  <UploadCloud size={28} color="#0066ff" style={{ marginBottom: "6px" }} />
+                  <p style={{ margin: 0, fontSize: "13px", fontWeight: "600", color: "#0f172a" }}>
+                    Klik untuk memilih Foto Utama
+                  </p>
+                  <input type="file" accept="image/*" onChange={handleFotoUtamaChange} style={{ display: "none" }} />
+                </label>
 
-                <button type="button" style={{ 
-                  display: "flex", 
-                  alignItems: "center", 
-                  gap: "6px", 
-                  border: "1px solid #0066ff", 
-                  color: "#0066ff", 
-                  background: "#fff", 
-                  padding: "8px 14px", 
-                  borderRadius: "8px", 
-                  fontSize: "12px", 
-                  fontWeight: "600",
-                  cursor: "pointer",
-                  marginBottom: "16px"
-                }}>
-                  <MapPin size={14} /> Pilih Lokasi di Peta
-                </button>
-
-                <div className="form-row" style={{ marginBottom: 0 }}>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label>Latitude</label>
-                    <input type="text" defaultValue="-6.2088" />
+                {fotoUtamaPreview && (
+                  <div style={{ marginTop: "12px" }}>
+                    <p style={{ fontSize: "12px", fontWeight: "600" }}>Preview Foto Utama:</p>
+                    <img src={fotoUtamaPreview} alt="Foto Utama Preview" style={{ width: "100%", maxHeight: "180px", objectFit: "cover", borderRadius: "8px" }} />
                   </div>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label>Longitude</label>
-                    <input type="text" defaultValue="106.8456" />
-                  </div>
-                </div>
+                )}
               </div>
 
-              {/* 7. Kontak */}
               <div className="form-section">
                 <div className="section-head">
                   <div className="section-badge-title">
-                    <span className="badge-number">7</span>
-                    <span>Kontak</span>
+                    <span className="badge-number">6</span>
+                    <span>Galeri Foto Tambahan</span>
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label>Nama Pemilik</label>
-                  <input type="text" placeholder="Masukkan nama pemilik" />
-                </div>
+                <label className="add-photo-box" style={{ cursor: "pointer", width: "100%", height: "80px" }}>
+                  <Plus size={18} />
+                  <span>Tambah Foto Galeri</span>
+                  <input type="file" accept="image/*" multiple onChange={handleGaleriChange} style={{ display: "none" }} />
+                </label>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Nomor Telepon</label>
-                    <input type="text" placeholder="08xxxxxxxxxx" />
-                  </div>
-                  <div className="form-group">
-                    <label>Email</label>
-                    <input type="email" placeholder="nama@email.com" />
-                  </div>
-                </div>
-
-                <div style={{
-                  backgroundColor: "#eff6ff",
-                  border: "1px solid #bfdbfe",
-                  borderRadius: "8px",
-                  padding: "10px 14px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  fontSize: "12px",
-                  color: "#1e40af"
-                }}>
-                  <Info size={16} color="#0066ff" style={{ flexShrink: 0 }} />
-                  <span>Informasi kontak ini akan ditampilkan kepada calon penyewa untuk menghubungi Anda.</span>
+                <div className="photo-preview-grid" style={{ marginTop: "12px" }}>
+                  {galeriPreview.map((src, idx) => (
+                    <div key={idx} className="photo-card">
+                      <img src={src} alt={`Galeri ${idx + 1}`} />
+                      <button type="button" className="photo-delete-btn" onClick={() => removeGaleriFoto(idx)}>
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
-
             </div>
           </div>
 
-          {/* Action Bottom: Tanpa Tombol Draft */}
           <div className="form-actions-bottom">
-            <button type="submit" className="btn-publish">
-              <Send size={16} /> Publikasikan Kost
+            <button type="submit" className="btn-publish" disabled={submitting}>
+              <Send size={16} /> {submitting ? "Memproses..." : "Publikasikan Kost"}
             </button>
           </div>
         </form>

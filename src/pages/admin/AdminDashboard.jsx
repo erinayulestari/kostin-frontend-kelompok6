@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import SidebarAdmin from "../../components/admin/SidebarAdmin";
 import HeaderAdmin from "../../components/admin/HeaderAdmin";
+import api from "../../api/api";
 import "../../styles/admin/admin-dashboard.css";
 import { 
   Users, 
@@ -15,102 +16,44 @@ import {
 } from "lucide-react";
 
 export default function AdminDashboard() {
-  // Data dummy sesuai mockup gambar
-  const activities = [
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchDashboardData() {
+      setLoading(true);
+      try {
+        const res = await api.get('/admin/dashboard');
+        if (res.data) {
+          setStats(res.data);
+        }
+      } catch (err) {
+        console.error("Gagal mengambil data dashboard admin:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchDashboardData();
+  }, []);
+
+  const totalPengguna = stats?.total_pengguna ?? 0;
+  const totalPemilik = stats?.total_pemilik ?? 0;
+  const totalKos = stats?.total_kos ?? 0;
+  const bookingHariIni = stats?.booking_hari_ini ?? 0;
+
+  const activities = stats?.aktivitas_terbaru || [
     {
       id: 1,
-      title: "Pemilik baru mengajukan verifikasi",
-      desc: "Siti Aisyah mengajukan verifikasi untuk Kost Putri Alifia",
-      time: "10 menit yang lalu",
-      icon: UserPlus,
-      iconBg: "#dcfce7",
-      iconColor: "#16a34a"
-    },
-    {
-      id: 2,
-      title: "Booking baru dibuat",
-      desc: "Booking baru di Kost Melati oleh Andi Wijaya",
-      time: "25 menit yang lalu",
-      icon: CalendarCheck,
-      iconBg: "#e0f2fe",
-      iconColor: "#0284c7"
-    },
-    {
-      id: 3,
-      title: "Kost baru ditambahkan",
-      desc: "Kost Green House ditambahkan oleh Andi Wijaya",
-      time: "1 jam yang lalu",
-      icon: PlusCircle,
-      iconBg: "#fef3c7",
-      iconColor: "#d97706"
-    },
-    {
-      id: 4,
-      title: "Pengguna baru mendaftar",
-      desc: "Dewi Lestari mendaftar sebagai pencari kost",
-      time: "2 jam yang lalu",
-      icon: UserPlus,
-      iconBg: "#f3e8ff",
-      iconColor: "#9333ea"
-    },
-    {
-      id: 5,
-      title: "Pemilik berhasil diverifikasi",
-      desc: "Rizky Pratama telah diverifikasi oleh admin",
-      time: "3 jam yang lalu",
+      title: "Sistem Aktif",
+      desc: "Platform Kostin siap digunakan.",
+      time: "Baru saja",
       icon: CheckCircle2,
       iconBg: "#dcfce7",
       iconColor: "#16a34a"
-    },
+    }
   ];
 
-  const verifications = [
-    {
-      id: 1,
-      name: "Siti Aisyah",
-      kost: "Kost Putri Alifia",
-      date: "14 Mei 2024",
-      status: "Menunggu",
-      statusClass: "menunggu",
-      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100"
-    },
-    {
-      id: 2,
-      name: "Rizky Pratama",
-      kost: "Kost Harmoni Residence",
-      date: "14 Mei 2024",
-      status: "Menunggu",
-      statusClass: "menunggu",
-      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100"
-    },
-    {
-      id: 3,
-      name: "Dewi Lestari",
-      kost: "Kost Melati",
-      date: "13 Mei 2024",
-      status: "Dalam Proses",
-      statusClass: "proses",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"
-    },
-    {
-      id: 4,
-      name: "Andi Wijaya",
-      kost: "Kost Green House",
-      date: "13 Mei 2024",
-      status: "Menunggu",
-      statusClass: "menunggu",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100"
-    },
-    {
-      id: 5,
-      name: "Budi Santoso",
-      kost: "Kost Kenanga",
-      date: "12 Mei 2024",
-      status: "Disetujui",
-      statusClass: "disetujui",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100"
-    },
-  ];
+  const verifications = stats?.verifikasi_terbaru || [];
 
   return (
     <div className="admin-layout">
@@ -130,7 +73,7 @@ export default function AdminDashboard() {
             </div>
             <div className="metric-data">
               <span className="metric-label">Total Pengguna</span>
-              <span className="metric-value">2.450</span>
+              <span className="metric-value">{loading ? "..." : totalPengguna}</span>
             </div>
           </div>
 
@@ -140,7 +83,7 @@ export default function AdminDashboard() {
             </div>
             <div className="metric-data">
               <span className="metric-label">Total Pemilik Kost</span>
-              <span className="metric-value">320</span>
+              <span className="metric-value">{loading ? "..." : totalPemilik}</span>
             </div>
           </div>
 
@@ -150,7 +93,7 @@ export default function AdminDashboard() {
             </div>
             <div className="metric-data">
               <span className="metric-label">Total Kost</span>
-              <span className="metric-value">1.120</span>
+              <span className="metric-value">{loading ? "..." : totalKos}</span>
             </div>
           </div>
 
@@ -160,7 +103,7 @@ export default function AdminDashboard() {
             </div>
             <div className="metric-data">
               <span className="metric-label">Booking Hari Ini</span>
-              <span className="metric-value">48</span>
+              <span className="metric-value">{loading ? "..." : bookingHariIni}</span>
             </div>
           </div>
         </div>
@@ -174,24 +117,21 @@ export default function AdminDashboard() {
             </div>
 
             <div className="activity-list">
-              {activities.map((act) => {
-                const IconComponent = act.icon;
-                return (
-                  <div key={act.id} className="activity-item">
-                    <div 
-                      className="activity-icon" 
-                      style={{ backgroundColor: act.iconBg, color: act.iconColor }}
-                    >
-                      <IconComponent size={18} />
-                    </div>
-                    <div className="activity-content">
-                      <h3 className="activity-title">{act.title}</h3>
-                      <p className="activity-desc">{act.desc}</p>
-                    </div>
-                    <span className="activity-time">{act.time}</span>
+              {activities.map((act, index) => (
+                <div key={act.id || index} className="activity-item">
+                  <div 
+                    className="activity-icon" 
+                    style={{ backgroundColor: act.iconBg || "#e0f2fe", color: act.iconColor || "#0284c7" }}
+                  >
+                    <CheckCircle2 size={18} />
                   </div>
-                );
-              })}
+                  <div className="activity-content">
+                    <h3 className="activity-title">{act.title || "Aktivitas Sistem"}</h3>
+                    <p className="activity-desc">{act.desc || act.deskripsi || ""}</p>
+                  </div>
+                  <span className="activity-time">{act.time || "Hari ini"}</span>
+                </div>
+              ))}
             </div>
 
             <button type="button" className="btn-all-activities">
@@ -204,31 +144,35 @@ export default function AdminDashboard() {
           <div className="widget-card">
             <div className="widget-header">
               <h2 className="widget-title">Verifikasi Terbaru</h2>
-              <a href="/admin/verifikasi" className="widget-link">Lihat Semua</a>
+              <a href="/admin/verifikasi-pemilik" className="widget-link">Lihat Semua</a>
             </div>
 
             <div className="verification-list">
-              {verifications.map((v) => (
-                <div key={v.id} className="verification-item">
-                  <div className="verification-user">
-                    <img src={v.avatar} alt={v.name} className="user-avatar" />
-                    <div>
-                      <h3 className="user-name">{v.name}</h3>
-                      <p className="user-kost">{v.kost}</p>
+              {verifications.length === 0 ? (
+                <p style={{ color: "#64748b", padding: "12px 0" }}>Tidak ada antrean verifikasi baru.</p>
+              ) : (
+                verifications.map((v) => (
+                  <div key={v.id} className="verification-item">
+                    <div className="verification-user">
+                      <img src={v.pemilik?.foto_profil_url || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100"} alt={v.nama_kos} className="user-avatar" />
+                      <div>
+                        <h3 className="user-name">{v.pemilik?.nama || "Pemilik Kost"}</h3>
+                        <p className="user-kost">{v.nama_kos}</p>
+                      </div>
+                    </div>
+
+                    <div className="verification-meta">
+                      <span className="verification-date">{v.created_at ? new Date(v.created_at).toLocaleDateString("id-ID") : "Baru"}</span>
+                      <span className={`status-badge ${v.status === 'pending' ? 'menunggu' : 'disetujui'}`}>
+                        {v.status}
+                      </span>
+                      <a href="/admin/verifikasi-pemilik" className="btn-detail" style={{ textDecoration: 'none' }}>
+                        Lihat Detail
+                      </a>
                     </div>
                   </div>
-
-                  <div className="verification-meta">
-                    <span className="verification-date">{v.date}</span>
-                    <span className={`status-badge ${v.statusClass}`}>
-                      {v.status}
-                    </span>
-                    <button type="button" className="btn-detail">
-                      Lihat Detail
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>

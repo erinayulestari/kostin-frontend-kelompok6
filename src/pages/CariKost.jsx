@@ -1,73 +1,143 @@
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-
 import SearchFilter from "../components/SearchFilter";
 import SidebarFilter from "../components/SidebarFilter";
 import KostCardHorizontal from "../components/KostCardHorizontal";
 import Pagination from "../components/Pagination";
-
+import api from "../api/api";
 import "../styles/carikost.css";
-import kostData from "../data/kostData";
 
 export default function CariKost() {
+  const [kostList, setKostList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    kota: "",
+    tipe: "",
+    wifi: false,
+    ac: false,
+    kamar_mandi_dalam: false,
+    parkir: false,
+    laundry: false,
+    dapur: false,
+    cctv: false,
+    sort: "Terbaru",
+  });
 
-    return (
+  const fetchKosData = async () => {
+    setLoading(true);
+    try {
+      const queryParams = new URLSearchParams();
+      if (filters.kota) queryParams.append("kota", filters.kota);
+      if (filters.tipe) queryParams.append("tipe", filters.tipe);
+      if (filters.wifi) queryParams.append("wifi", "1");
+      if (filters.ac) queryParams.append("ac", "1");
+      if (filters.kamar_mandi_dalam) queryParams.append("kamar_mandi_dalam", "1");
+      if (filters.parkir) queryParams.append("parkir", "1");
+      if (filters.laundry) queryParams.append("laundry", "1");
+      if (filters.dapur) queryParams.append("dapur", "1");
+      if (filters.cctv) queryParams.append("cctv", "1");
 
-        <>
+      const res = await api.get(`/kos?${queryParams.toString()}`);
+      let data = res.data || [];
 
-            <Navbar />
+      // Sorting lokal jika diperlukan
+      if (filters.sort === "Harga Termurah") {
+        data = [...data].sort((a, b) => (parseFloat(a.harga_per_bulan) || 0) - (parseFloat(b.harga_per_bulan) || 0));
+      } else if (filters.sort === "Harga Termahal") {
+        data = [...data].sort((a, b) => (parseFloat(b.harga_per_bulan) || 0) - (parseFloat(a.harga_per_bulan) || 0));
+      }
 
-            <SearchFilter />
+      setKostList(data);
+    } catch (err) {
+      console.error("Gagal mengambil data pencarian kos:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            <div className="search-layout">
+  useEffect(() => {
+    fetchKosData();
+  }, []);
 
-                <SidebarFilter />
+  const handleChangeFilter = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
 
-                <div className="search-result">
+  const handleResetFilter = () => {
+    const resetState = {
+      kota: "",
+      tipe: "",
+      wifi: false,
+      ac: false,
+      kamar_mandi_dalam: false,
+      parkir: false,
+      laundry: false,
+      dapur: false,
+      cctv: false,
+      sort: "Terbaru",
+    };
+    setFilters(resetState);
+    fetchKosData();
+  };
 
-                    <div className="kost-header">
+  return (
+    <>
+      <Navbar />
+      <SearchFilter
+        filters={filters}
+        onChangeFilter={handleChangeFilter}
+        onSearch={fetchKosData}
+      />
 
-                        <h2>
+      <div className="search-layout">
+        <SidebarFilter
+          filters={filters}
+          onChangeFilter={handleChangeFilter}
+          onApply={fetchKosData}
+          onReset={handleResetFilter}
+        />
 
-                            <span>{kostData.length}</span> Kost Ditemukan
+        <div className="search-result">
+          <div className="kost-header">
+            <h2>
+              <span>{kostList.length}</span> Kost Ditemukan
+            </h2>
 
-                        </h2>
-
-                        <div className="sort-area">
-
-                            <label>Urutkan :</label>
-
-                            <select>
-
-                                <option>Terbaru</option>
-                                <option>Harga Termurah</option>
-                                <option>Harga Termahal</option>
-
-                            </select>
-
-                        </div>
-
-                    </div>
-
-                    {kostData.map((kost) => (
-
-                        <KostCardHorizontal
-                            key={kost.id}
-                            kost={kost}
-                        />
-
-                    ))}
-
-                    <Pagination />
-
-                </div>
-
+            <div className="sort-area">
+              <label>Urutkan :</label>
+              <select
+                value={filters.sort}
+                onChange={(e) => {
+                  handleChangeFilter("sort", e.target.value);
+                  fetchKosData();
+                }}
+              >
+                <option value="Terbaru">Terbaru</option>
+                <option value="Harga Termurah">Harga Termurah</option>
+                <option value="Harga Termahal">Harga Termahal</option>
+              </select>
             </div>
+          </div>
 
-            <Footer />
+          {loading ? (
+            <p style={{ textAlign: "center", padding: "40px 0" }}>Memuat daftar kos...</p>
+          ) : kostList.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "40px 0", backgroundColor: "#fff", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+              <h3>Tidak ada kost yang sesuai</h3>
+              <p style={{ color: "#64748b", marginTop: "8px" }}>Coba ubah kata kunci atau reset filter pencarian Anda.</p>
+            </div>
+          ) : (
+            kostList.map((kost) => (
+              <KostCardHorizontal key={kost.id} kost={kost} />
+            ))
+          )}
 
-        </>
+          <Pagination />
+        </div>
+      </div>
 
-    );
-
+      <Footer />
+    </>
+  );
 }

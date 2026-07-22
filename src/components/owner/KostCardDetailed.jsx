@@ -12,8 +12,11 @@ import {
   Bed,
   DoorOpen
 } from 'lucide-react';
+import defaultImg from '../../assets/harmoni.jpeg';
+import { useNavigate } from 'react-router-dom';
 
 const KostCardDetailed = ({ 
+  id,
   title, 
   location, 
   price, 
@@ -21,24 +24,37 @@ const KostCardDetailed = ({
   filledRooms, 
   emptyRooms, 
   status, 
-  image 
+  image,
+  onDelete
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
 
   const formatRupiah = (number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
       maximumFractionDigits: 0
-    }).format(number);
+    }).format(number || 0);
   };
+
+  const handleAction = (action) => {
+    setShowDropdown(false);
+    if (action === 'detail' && id) {
+      navigate(`/kost/${id}`);
+    } else if (action === 'delete' && onDelete && id) {
+      onDelete(id);
+    }
+  };
+
+  const displayImg = image || defaultImg;
 
   return (
     <div className="kost-detailed-card">
       <div className="kost-card-image-container">
-        <img src={image} alt={title} className="kost-card-img" />
-        <span className={`kost-status-badge ${status.toLowerCase()}`}>
-          {status}
+        <img src={displayImg} alt={title} className="kost-card-img" onError={(e) => { e.target.src = defaultImg; }} />
+        <span className={`kost-status-badge ${status?.toLowerCase() || 'aktif'}`}>
+          {status || 'Aktif'}
         </span>
         
         {/* Button Dropdown 3 Titik */}
@@ -52,12 +68,8 @@ const KostCardDetailed = ({
         {/* Menu Dropdown */}
         {showDropdown && (
           <div className="card-dropdown-menu">
-            <div className="dropdown-item"><EyeIcon size={14} /> Lihat Detail</div>
-            <div className="dropdown-item"><Edit size={14} /> Edit Kost</div>
-            <div className="dropdown-item"><Grid size={14} /> Kelola Kamar</div>
-            <div className="dropdown-item"><Calendar size={14} /> Lihat Booking</div>
-            <div className="dropdown-item"><Power size={14} /> Nonaktifkan Kost</div>
-            <div className="dropdown-item danger"><Trash2 size={14} /> Hapus Kost</div>
+            <div className="dropdown-item" onClick={() => handleAction('detail')}><EyeIcon size={14} /> Lihat Detail</div>
+            <div className="dropdown-item danger" onClick={() => handleAction('delete')}><Trash2 size={14} /> Hapus Kost</div>
           </div>
         )}
       </div>

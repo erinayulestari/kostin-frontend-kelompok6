@@ -1,8 +1,62 @@
+import { useState } from "react";
 import { Calendar, MessageSquare, ShieldCheck, CheckCircle2, GitCompare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import api from "../api/api";
 
-export default function DetailBookingCard({ onOpenCompare }) {
+export default function DetailBookingCard({ kos, onOpenCompare }) {
   const navigate = useNavigate();
+
+  const [tanggalMasuk, setTanggalMasuk] = useState("");
+  const [durasiSewa, setDurasiSewa] = useState(1);
+  const [chatting, setChatting] = useState(false);
+
+  const rawHarga = kos?.harga_per_bulan || 850000;
+  const hargaPerBulan = typeof rawHarga === "string" ? parseFloat(rawHarga.replace(/[^\d]/g, "")) || 850000 : rawHarga;
+  const totalHarga = hargaPerBulan * durasiSewa;
+
+  const isAvailable = kos ? kos.jumlah_kamar > kos.kamar_terisi : true;
+
+  const handleBooking = () => {
+    if (!tanggalMasuk) {
+      alert("Harap pilih tanggal masuk terlebih dahulu.");
+      return;
+    }
+
+    // Simpan data checkout sementara ke sessionStorage
+    const bookingDraft = {
+      kos_id: kos?.id || 1,
+      kos_nama: kos?.nama_kos || "Kost",
+      harga_per_bulan: hargaPerBulan,
+      tanggal_masuk: tanggalMasuk,
+      durasi_sewa: durasiSewa,
+      total_harga: totalHarga,
+      foto_utama: kos?.foto_utama_url || kos?.foto_utama,
+    };
+    sessionStorage.setItem("checkout_draft", JSON.stringify(bookingDraft));
+    navigate("/checkout");
+  };
+
+  const handleChatPemilik = async () => {
+    if (!kos?.id) return;
+    setChatting(true);
+    try {
+      const res = await api.post(`/kos/${kos.id}/tanya`, {
+        pesan: "Halo, saya tertarik dengan kos ini. Apakah kamar masih tersedia?"
+      });
+      if (res.data?.wa_url) {
+        window.open(res.data.wa_url, "_blank");
+      } else if (res.data?.link) {
+        window.open(res.data.link, "_blank");
+      } else {
+        alert("Pesan berhasil dikirim ke pemilik kos.");
+      }
+    } catch (e) {
+      console.error("Gagal menghubungi pemilik", e);
+      alert("Gagal terhubung dengan pemilik kos. Pastikan Anda sudah login.");
+    } finally {
+      setChatting(false);
+    }
+  };
 
   return (
     <div
@@ -24,13 +78,15 @@ export default function DetailBookingCard({ onOpenCompare }) {
         <span style={{ color: "#64748B", fontSize: "14px", fontWeight: "500" }}>Harga</span>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-            <span style={{ fontSize: "26px", fontWeight: "800", color: "#2563EB" }}>Rp850.000</span>
+            <span style={{ fontSize: "26px", fontWeight: "800", color: "#2563EB" }}>
+              Rp{hargaPerBulan.toLocaleString("id-ID")}
+            </span>
             <span style={{ fontSize: "13px", color: "#64748B" }}>/ bulan</span>
           </div>
           <span
             style={{
-              background: "#DCFCE7",
-              color: "#16A34A",
+              background: isAvailable ? "#DCFCE7" : "#FEE2E2",
+              color: isAvailable ? "#16A34A" : "#EF4444",
               fontSize: "12px",
               fontWeight: "600",
               padding: "4px 10px",
@@ -40,8 +96,8 @@ export default function DetailBookingCard({ onOpenCompare }) {
               gap: "4px",
             }}
           >
-            <CheckCircle2 size={13} fill="#16A34A" color="#DCFCE7" />
-            Tersedia
+            <CheckCircle2 size={13} fill={isAvailable ? "#16A34A" : "#EF4444"} color={isAvailable ? "#DCFCE7" : "#FEE2E2"} />
+            {isAvailable ? "Tersedia" : "Penuh"}
           </span>
         </div>
       </div>
@@ -51,28 +107,20 @@ export default function DetailBookingCard({ onOpenCompare }) {
         <label style={{ fontSize: "14px", fontWeight: "600", color: "#0F172A" }}>Tanggal Masuk</label>
         <div style={{ position: "relative" }}>
           <input
-            type="text"
-            placeholder="Pilih tanggal masuk"
-            onFocus={(e) => (e.target.type = "date")}
-            onBlur={(e) => {
-              if (!e.target.value) e.target.type = "text";
-            }}
+            type="date"
+            value={tanggalMasuk}
+            onChange={(e) => setTanggalMasuk(e.target.value)}
             style={{
               width: "100%",
               height: "46px",
               border: "1px solid #E2E8F0",
               borderRadius: "12px",
-              padding: "0 40px 0 14px",
+              padding: "0 14px",
               fontSize: "14px",
               color: "#0F172A",
               outline: "none",
               background: "#FFFFFF",
             }}
-          />
-          <Calendar
-            size={18}
-            color="#64748B"
-            style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
           />
         </div>
       </div>
@@ -81,7 +129,8 @@ export default function DetailBookingCard({ onOpenCompare }) {
       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
         <label style={{ fontSize: "14px", fontWeight: "600", color: "#0F172A" }}>Durasi Sewa</label>
         <select
-          defaultValue="1 Bulan"
+          value={durasiSewa}
+          onChange={(e) => setDurasiSewa(parseInt(e.target.value))}
           style={{
             width: "100%",
             height: "46px",
@@ -95,10 +144,10 @@ export default function DetailBookingCard({ onOpenCompare }) {
             cursor: "pointer",
           }}
         >
-          <option value="1 Bulan">1 Bulan</option>
-          <option value="3 Bulan">3 Bulan</option>
-          <option value="6 Bulan">6 Bulan</option>
-          <option value="12 Bulan">12 Bulan</option>
+          <option value={1}>1 Bulan</option>
+          <option value={3}>3 Bulan</option>
+          <option value={6}>6 Bulan</option>
+          <option value={12}>12 Bulan</option>
         </select>
       </div>
 
@@ -115,23 +164,26 @@ export default function DetailBookingCard({ onOpenCompare }) {
         }}
       >
         <span style={{ color: "#2563EB", fontSize: "14px", fontWeight: "600" }}>Total Harga</span>
-        <span style={{ color: "#2563EB", fontSize: "22px", fontWeight: "800" }}>Rp850.000</span>
+        <span style={{ color: "#2563EB", fontSize: "22px", fontWeight: "800" }}>
+          Rp{totalHarga.toLocaleString("id-ID")}
+        </span>
       </div>
 
       {/* Action Buttons */}
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         <button
-          onClick={() => navigate("/checkout")}
+          onClick={handleBooking}
+          disabled={!isAvailable}
           style={{
             width: "100%",
             height: "48px",
-            background: "#2563EB",
+            background: isAvailable ? "#2563EB" : "#94A3B8",
             color: "#FFFFFF",
             border: "none",
             borderRadius: "12px",
             fontWeight: "600",
             fontSize: "15px",
-            cursor: "pointer",
+            cursor: isAvailable ? "pointer" : "not-allowed",
             transition: "background 0.2s",
           }}
         >
@@ -139,6 +191,8 @@ export default function DetailBookingCard({ onOpenCompare }) {
         </button>
 
         <button
+          onClick={handleChatPemilik}
+          disabled={chatting}
           style={{
             width: "100%",
             height: "48px",
@@ -156,7 +210,7 @@ export default function DetailBookingCard({ onOpenCompare }) {
           }}
         >
           <MessageSquare size={18} color="#2563EB" />
-          Chat Pemilik
+          {chatting ? "Menghubungi..." : "Chat Pemilik"}
         </button>
 
         {/* Tombol Bandingkan Kost */}

@@ -1,118 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/owner/Sidebar';
 import Header from '../../components/owner/Header';
 import KostCardDetailed from '../../components/owner/KostCardDetailed';
+import api from '../../api/api';
 
 import { Plus, Search, Building2, ChevronDown } from 'lucide-react';
 import '../../styles/owner/dashboard.css';
 import '../../styles/owner/mykosts.css';
 
-// Import Gambar Local
-import harmoniImg from '../../assets/harmoni.jpeg';
-import melatiImg from '../../assets/melati.jpeg';
-import melati1Img from '../../assets/melati1.jpeg';
-import melati2Img from '../../assets/melati2.jpeg';
-
 const MyKosts = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('Semua');
+  const [myKostsData, setMyKostsData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mengisi array data kost secara default
-  const [myKostsData, setMyKostsData] = useState([
-    {
-      id: 1,
-      title: 'Kost Harmoni Residence',
-      location: 'Jl. Kaliurang Km 5, Sleman, Yogyakarta',
-      price: 1500000,
-      totalRooms: 8,
-      filledRooms: 6,
-      emptyRooms: 2,
-      views: 1248,
-      favorites: 256,
-      activeBookings: 12,
-      status: 'Aktif',
-      image: harmoniImg
-    },
-    {
-      id: 2,
-      title: 'Kost Putri Alifia',
-      location: 'Jl. Seturan Raya No. 12, Depok, Sleman',
-      price: 1300000,
-      totalRooms: 12,
-      filledRooms: 12,
-      emptyRooms: 0,
-      views: 2035,
-      favorites: 412,
-      activeBookings: 18,
-      status: 'Penuh',
-      image: melati1Img
-    },
-    {
-      id: 3,
-      title: 'Kost Green House',
-      location: 'Jl. Gejayan No. 45, Sleman, Yogyakarta',
-      price: 1200000,
-      totalRooms: 10,
-      filledRooms: 6,
-      emptyRooms: 4,
-      views: 856,
-      favorites: 132,
-      activeBookings: 5,
-      status: 'Nonaktif',
-      image: melati2Img
-    },
-    {
-      id: 4,
-      title: 'Kost Melati',
-      location: 'Jl. Palagan Tentara Pelajar No. 88, Sleman',
-      price: 950000,
-      totalRooms: 6,
-      filledRooms: 4,
-      emptyRooms: 2,
-      views: 642,
-      favorites: 98,
-      activeBookings: 6,
-      status: 'Aktif',
-      image: melatiImg
-    },
-    {
-      id: 5,
-      title: 'Kost Kencana',
-      location: 'Jl. Magelang Km 7, Sleman, Yogyakarta',
-      price: 1100000,
-      totalRooms: 7,
-      filledRooms: 5,
-      emptyRooms: 2,
-      views: 911,
-      favorites: 143,
-      activeBookings: 8,
-      status: 'Aktif',
-      image: harmoniImg
-    },
-    {
-      id: 6,
-      title: 'Kost Cendana',
-      location: 'Jl. Affandi No. 20, Sleman, Yogyakarta',
-      price: 1400000,
-      totalRooms: 9,
-      filledRooms: 9,
-      emptyRooms: 0,
-      views: 1105,
-      favorites: 211,
-      activeBookings: 14,
-      status: 'Penuh',
-      image: melati1Img
+  const fetchOwnerKosts = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/owner/kos');
+      if (res.data) {
+        setMyKostsData(res.data);
+      }
+    } catch (err) {
+      console.error("Gagal mengambil daftar kos pemilik:", err);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  useEffect(() => {
+    fetchOwnerKosts();
+  }, []);
+
+  const handleDeleteKost = async (id) => {
+    if (!window.confirm("Apakah Anda yakin ingin menghapus properti kos ini?")) return;
+    try {
+      await api.delete(`/owner/kos/${id}`);
+      alert("Properti kos berhasil dihapus.");
+      fetchOwnerKosts();
+    } catch (err) {
+      console.error("Gagal menghapus kos:", err);
+      alert(err.message || "Gagal menghapus kos.");
+    }
+  };
 
   const filteredKosts = myKostsData.filter(kost => {
-    const matchesSearch = kost.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'Semua' || kost.status === statusFilter;
+    const title = kost.nama_kos || kost.title || "";
+    const matchesSearch = title.toLowerCase().includes(searchTerm.toLowerCase());
+    const status = kost.status || "aktif";
+    const matchesStatus = statusFilter === 'Semua' || status.toLowerCase() === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
   });
 
   const AddKostButton = (
-    <button className="btn-primary-add">
+    <button className="btn-primary-add" onClick={() => navigate('/owner/tambah-kost')}>
       <Plus size={18} />
       <span>Tambah Kost</span>
     </button>
@@ -129,8 +72,11 @@ const MyKosts = () => {
           actionButton={AddKostButton}
         />
 
-        {/* Tampilan jika ADA data kost */}
-        {myKostsData.length > 0 ? (
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '60px', color: '#64748b' }}>
+            Memuat daftar kos Anda...
+          </div>
+        ) : myKostsData.length > 0 ? (
           <>
             {/* Bar Filter & Search */}
             <div className="filter-bar">
@@ -152,19 +98,9 @@ const MyKosts = () => {
                     onChange={(e) => setStatusFilter(e.target.value)}
                   >
                     <option value="Semua">Semua</option>
-                    <option value="Aktif">Aktif</option>
-                    <option value="Penuh">Penuh</option>
-                    <option value="Nonaktif">Nonaktif</option>
-                  </select>
-                  <ChevronDown size={14} className="select-arrow" />
-                </div>
-
-                <div className="select-wrapper">
-                  <span className="select-label">Urutkan</span>
-                  <select defaultValue="Terbaru">
-                    <option value="Terbaru">Terbaru</option>
-                    <option value="Harga Dp">Harga Terendah</option>
-                    <option value="Harga Tg">Harga Tertinggi</option>
+                    <option value="aktif">Aktif</option>
+                    <option value="pending">Pending</option>
+                    <option value="penuh">Penuh</option>
                   </select>
                   <ChevronDown size={14} className="select-arrow" />
                 </div>
@@ -178,21 +114,38 @@ const MyKosts = () => {
               </div>
             ) : (
               <div className="my-kosts-grid">
-                {filteredKosts.map(kost => (
-                  <KostCardDetailed key={kost.id} {...kost} />
-                ))}
+                {filteredKosts.map(kost => {
+                  const total = kost.jumlah_kamar || 0;
+                  const terisi = kost.kamar_terisi || 0;
+                  const kosong = Math.max(0, total - terisi);
+                  return (
+                    <KostCardDetailed
+                      key={kost.id}
+                      id={kost.id}
+                      title={kost.nama_kos}
+                      location={`${kost.alamat || ''}, ${kost.kota || ''}`}
+                      price={parseFloat(kost.harga_per_bulan) || 0}
+                      totalRooms={total}
+                      filledRooms={terisi}
+                      emptyRooms={kosong}
+                      status={kost.status}
+                      image={kost.foto_utama_url || kost.foto_utama}
+                      onDelete={handleDeleteKost}
+                    />
+                  );
+                })}
               </div>
             )}
           </>
         ) : (
-          /* Tampilan Empty State jika myKostsData = [] */
+          /* Tampilan Empty State */
           <div className="empty-kost-state">
             <div className="empty-icon-wrapper">
               <Building2 size={48} color="#0066ff" />
             </div>
             <h3>Belum Ada Kost yang Didaftarkan</h3>
             <p>Anda belum memiliki properti kost. Mulai tambahkan properti kost pertama Anda untuk mengelola kamar dan booking.</p>
-            <button className="btn-primary-add" style={{ padding: '12px 24px' }}>
+            <button className="btn-primary-add" style={{ padding: '12px 24px' }} onClick={() => navigate('/owner/tambah-kost')}>
               <Plus size={18} />
               <span>Tambah Kost Sekarang</span>
             </button>
