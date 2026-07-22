@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Home, ChevronDown } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 import avatar from "../assets/avatar.jpg";
 import ProfileDropdown from "./ProfileDropdown";
@@ -8,107 +9,59 @@ import ProfileDropdown from "./ProfileDropdown";
 import "../styles/navbar.css";
 
 export default function Navbar() {
-
   const navigate = useNavigate();
-
+  const { user, isAuthenticated } = useAuth();
   const [openDropdown, setOpenDropdown] = useState(false);
 
-  // ===========================
-  // Dummy User
-  // Nanti diganti backend
-  // ===========================
-
-  const user = {
-    isLogin: true,
-    name: "erintooo",
-    avatar: avatar,
+  const displayUser = {
+    isLogin: isAuthenticated,
+    name: user?.nama || user?.email || "User",
+    avatar: user?.foto_profil_url || avatar,
   };
 
   return (
     <nav className="navbar">
-
       {/* Logo */}
-
-      <Link
-        to="/"
-        className="logo-home"
-      >
+      <Link to="/" className="logo-home">
         <Home size={25} />
-
         <span>KostIn</span>
-
       </Link>
 
       {/* Menu */}
-
       <div className="menu">
-
         <Link to="/">Home</Link>
-
         <Link to="/carikost">Cari Kost</Link>
-
         <Link to="/favorit">Favorit</Link>
-
-        <Link to="/tentang-kami">
-          Tentang Kami
-        </Link>
-
+        <Link to="/tentang-kami">Tentang Kami</Link>
       </div>
 
       {/* Right */}
-
       <div className="nav-btn">
-
-        {!user.isLogin ? (
-
+        {!displayUser.isLogin ? (
           <>
-
-            <button
-              onClick={() => navigate("/login")}
-            >
-              Masuk
-            </button>
-
-            <button
-              className="register"
-              onClick={() => navigate("/login")}
-            >
+            <button onClick={() => navigate("/login")}>Masuk</button>
+            <button className="register" onClick={() => navigate("/register")}>
               Daftar
             </button>
-
           </>
-
         ) : (
-
           <div className="profile-wrapper">
-
             <button
               className="profile-btn"
               onClick={() => setOpenDropdown(!openDropdown)}
             >
-
-              <img
-                src={user.avatar}
-                alt={user.name}
-              />
-
-              <span>{user.name}</span>
-
+              <img src={displayUser.avatar} alt={displayUser.name} />
+              <span>{displayUser.name}</span>
               <ChevronDown
                 size={18}
                 className={openDropdown ? "rotate" : ""}
               />
-
             </button>
 
-            {openDropdown && <ProfileDropdown />}
-
+            {openDropdown && <ProfileDropdown onClose={() => setOpenDropdown(false)} />}
           </div>
-
         )}
-
       </div>
-
     </nav>
   );
 }

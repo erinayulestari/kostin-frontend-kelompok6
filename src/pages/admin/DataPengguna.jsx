@@ -1,103 +1,76 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/admin/SidebarAdmin";
 import UserCardAdmin from "../../components/admin/UserCardAdmin";
+import api from "../../api/api";
 import "../../styles/admin/data-pengguna.css";
 
-// Data Dummy Pengguna
-const INITIAL_USERS_DATA = [
-  {
-    id: 1,
-    nama: "Siti Aisyah",
-    email: "siti.aisyah@email.com",
-    role: "Pencari Kost",
-    status: "Aktif",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150"
-  },
-  {
-    id: 2,
-    nama: "Budi Santoso",
-    email: "budi.santoso@email.com",
-    role: "Pemilik Kost",
-    status: "Aktif",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150"
-  },
-  {
-    id: 3,
-    nama: "Dewi Lestari",
-    email: "dewi.lestari@email.com",
-    role: "Pencari Kost",
-    status: "Nonaktif",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150"
-  },
-  {
-    id: 4,
-    nama: "Rahmat Hidayat",
-    email: "rahmat.hidayat@email.com",
-    role: "Pemilik Kost",
-    status: "Aktif",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150"
-  },
-  {
-    id: 5,
-    nama: "Anita Putri",
-    email: "anita.putri@email.com",
-    role: "Pencari Kost",
-    status: "Aktif",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"
-  }
-];
-
 export default function DataPengguna() {
-  const [users, setUsers] = useState(INITIAL_USERS_DATA);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("Semua");
   const [filterStatus, setFilterStatus] = useState("Semua");
 
-  // Handler Status Toggle
-  const handleToggleStatus = (id) => {
-    setUsers((prev) =>
-      prev.map((item) => {
-        if (item.id === id) {
-          const newStatus = item.status === "Aktif" ? "Nonaktif" : "Aktif";
-          return { ...item, status: newStatus };
-        }
-        return item;
-      })
-    );
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/admin/users');
+      if (res.data) {
+        setUsers(res.data);
+      }
+    } catch (err) {
+      console.error("Gagal mengambil data pengguna admin:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Filter Data
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleToggleStatus = async (id, currentStatus) => {
+    const nextStatus = currentStatus === "aktif" ? "nonaktif" : "aktif";
+    try {
+      await api.put(`/admin/users/${id}/status`, { status: nextStatus });
+      setUsers((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, status: nextStatus } : u))
+      );
+    } catch (err) {
+      console.error("Gagal mengupdate status user:", err);
+      alert(err.message || "Gagal mengubah status pengguna.");
+    }
+  };
+
   const filteredUsers = users.filter((item) => {
+    const name = item.nama || item.name || "";
+    const email = item.email || "";
     const matchSearch =
-      item.nama.toLowerCase().includes(search.toLowerCase()) ||
-      item.email.toLowerCase().includes(search.toLowerCase());
+      name.toLowerCase().includes(search.toLowerCase()) ||
+      email.toLowerCase().includes(search.toLowerCase());
 
-    const matchRole =
-      filterRole === "Semua" || item.role === filterRole;
+    const itemRole = item.role === "pencari" ? "Pencari Kost" : item.role === "pemilik" ? "Pemilik Kost" : item.role;
+    const matchRole = filterRole === "Semua" || itemRole === filterRole;
 
-    const matchStatus =
-      filterStatus === "Semua" || item.status === filterStatus;
+    const itemStatus = item.status === "aktif" ? "Aktif" : "Nonaktif";
+    const matchStatus = filterStatus === "Semua" || itemStatus === filterStatus;
 
     return matchSearch && matchRole && matchStatus;
   });
 
   return (
     <div className="admin-layout" style={{ display: "flex", minHeight: "100vh" }}>
-      {/* Sidebar */}
       <Sidebar />
 
-      {/* Main Container */}
       <div
         className="data-pengguna-container"
         style={{ flex: 1, minWidth: 0, marginLeft: "250px" }}
       >
-        {/* Header */}
         <div className="page-header-row">
           <h1>Data Pengguna</h1>
           <p>Lihat seluruh pengguna yang terdaftar pada platform Kostin.</p>
         </div>
 
-        {/* Filter Bar */}
         <div className="filter-card">
           <div className="search-input-wrapper">
             <span className="search-icon">
@@ -139,30 +112,30 @@ export default function DataPengguna() {
           </div>
         </div>
 
-        {/* User Cards List */}
         <div className="user-list-wrapper">
-          {filteredUsers.length > 0 ? (
-            filteredUsers.map((user) => (
-              <UserCardAdmin
-                key={user.id}
-                user={user}
-                onToggleStatus={handleToggleStatus}
-              />
-            ))
+          {loading ? (
+            <p style={{ textAlign: "center", padding: "30px 0" }}>Memuat pengguna...</p>
+          ) : filteredUsers.length > 0 ? (
+            filteredUsers.map((userObj) => {
+              const formattedUser = {
+                id: userObj.id,
+                nama: userObj.nama || "Pengguna",
+                email: userObj.email,
+                role: userObj.role === "pencari" ? "Pencari Kost" : userObj.role === "pemilik" ? "Pemilik Kost" : "Admin",
+                status: userObj.status === "aktif" ? "Aktif" : "Nonaktif",
+                avatar: userObj.foto_profil_url || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150"
+              };
+              return (
+                <UserCardAdmin
+                  key={userObj.id}
+                  user={formattedUser}
+                  onToggleStatus={() => handleToggleStatus(userObj.id, userObj.status)}
+                />
+              );
+            })
           ) : (
             <div className="empty-state">Data pengguna tidak ditemukan.</div>
           )}
-        </div>
-
-        {/* Pagination */}
-        <div className="pagination-wrapper">
-          <button className="page-btn flex-btn">&lt;</button>
-          <button className="page-btn active">1</button>
-          <button className="page-btn">2</button>
-          <button className="page-btn">3</button>
-          <button className="page-btn">4</button>
-          <span className="page-dots">...</span>
-          <button className="page-btn flex-btn">&gt;</button>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import { FiMapPin } from "react-icons/fi";
+import { MapPin } from "lucide-react";
 
 export default function MapLokasiCard({ lat, lng }) {
   const mapUrl = `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
@@ -8,7 +8,7 @@ export default function MapLokasiCard({ lat, lng }) {
     <div className="detail-card">
       <h2 className="card-title">
         <span className="card-title-icon">
-          <FiMapPin />
+          <MapPin size={18} />
         </span>
         Lokasi Kost
       </h2>

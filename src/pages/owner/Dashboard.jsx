@@ -1,112 +1,63 @@
-import React from 'react';
-
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/owner/Sidebar';
 import Header from '../../components/owner/Header';
 import StatCard from '../../components/owner/StatCard';
 import BookingCard from '../../components/owner/BookingCard';
 import KostCard from '../../components/owner/KostCard';
+import api from '../../api/api';
 
 import { Home, Calendar, BedDouble, Wallet, ChevronRight } from 'lucide-react';
 import '../../styles/owner/dashboard.css';
 
-// Import aset gambar dari src/assets/
 import avatarImg from '../../assets/avatar.jpg';
-import harmoniImg from '../../assets/harmoni.jpeg';
-import melatiImg from '../../assets/melati.jpeg';
-import melati1Img from '../../assets/melati1.jpeg';
-import melati2Img from '../../assets/melati2.jpeg';
+import defaultKostImg from '../../assets/harmoni.jpeg';
 
 const OwnerDashboard = () => {
+  const [ownerKosts, setOwnerKosts] = useState([]);
+  const [ownerBookings, setOwnerBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      try {
+        const [resKosts, resBookings] = await Promise.allSettled([
+          api.get('/owner/kos'),
+          api.get('/bookings'),
+        ]);
+
+        if (resKosts.status === 'fulfilled' && resKosts.value.data) {
+          setOwnerKosts(resKosts.value.data);
+        }
+        if (resBookings.status === 'fulfilled' && resBookings.value.data) {
+          setOwnerBookings(resBookings.value.data);
+        }
+      } catch (err) {
+        console.error("Gagal memuat data dashboard pemilik:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  const totalKost = ownerKosts.length;
+  const bookingAktif = ownerBookings.filter(b => b.status === 'aktif' || b.status === 'active' || b.status === 'pending').length;
+  const totalKamar = ownerKosts.reduce((acc, k) => acc + (parseInt(k.jumlah_kamar) || 0), 0);
+  const kamarTerisi = ownerKosts.reduce((acc, k) => acc + (parseInt(k.kamar_terisi) || 0), 0);
+  const kamarKosong = Math.max(0, totalKamar - kamarTerisi);
+
   const statsData = [
-    { title: 'Total Kost', value: '5', unit: 'Kost', icon: Home, iconBg: '#e6f0ff', iconColor: '#0066ff', linkText: 'Lihat semua kost' },
-    { title: 'Booking Aktif', value: '12', unit: 'Booking', icon: Calendar, iconBg: '#dcfce7', iconColor: '#16a34a', linkText: 'Lihat semua booking' },
-    { title: 'Kamar Kosong', value: '8', unit: 'Kamar', icon: BedDouble, iconBg: '#fef3c7', iconColor: '#d97706', linkText: 'Lihat semua kamar' },
-    { title: 'Pendapatan Bulan Ini', value: 'Rp18.500.000', unit: '', icon: Wallet, iconBg: '#f3e8ff', iconColor: '#9333ea', linkText: 'Lihat laporan' },
-  ];
-
-  const bookingsData = [
-    {
-      name: 'Rizky Pratama',
-      kostName: 'Kost Harmoni Residence',
-      avatar: avatarImg,
-      checkIn: '20 Mei 2024',
-      duration: '6 Bulan',
-      status: 'active',
-      statusText: 'Sedang Berjalan',
-      actionText: 'Lihat Detail'
-    },
-    {
-      name: 'Siti Aisyah',
-      kostName: 'Kost Putri Alifia',
-      avatar: avatarImg,
-      checkIn: '25 Mei 2024',
-      duration: '3 Bulan',
-      status: 'pending',
-      statusText: 'Menunggu Konfirmasi',
-      actionText: 'Lihat Detail'
-    },
-    {
-      name: 'Andi Wijaya',
-      kostName: 'Kost Green House',
-      avatar: avatarImg,
-      checkIn: '01 Juni 2024',
-      duration: '12 Bulan',
-      status: 'active',
-      statusText: 'Dikonfirmasi',
-      actionText: 'Lihat Detail'
-    },
-    {
-      name: 'Nadia Putri',
-      kostName: 'Kost Melati',
-      avatar: avatarImg,
-      checkIn: '05 Juni 2024',
-      duration: '6 Bulan',
-      status: 'completed',
-      statusText: 'Selesai',
-      actionText: 'Lihat Detail'
-    },
-  ];
-
-  const kostsData = [
-    {
-      title: 'Kost Harmoni Residence',
-      location: 'Jl. Kaliurang Km 5, Sleman, Yogyakarta',
-      price: 1500000,
-      roomAvailable: 3,
-      status: 'Aktif',
-      image: harmoniImg
-    },
-    {
-      title: 'Kost Putri Alifia',
-      location: 'Jl. Seturan Raya No. 12, Depok, Sleman',
-      price: 1300000,
-      roomAvailable: 0,
-      status: 'Aktif',
-      image: melati1Img
-    },
-    {
-      title: 'Kost Green House',
-      location: 'Jl. Gejayan No. 45, Sleman, Yogyakarta',
-      price: 1200000,
-      roomAvailable: 0,
-      status: 'Penuh',
-      image: melati2Img
-    },
-    {
-      title: 'Kost Melati',
-      location: 'Jl. Palagan Tentara Pelajar No...',
-      price: 950000,
-      roomAvailable: 2,
-      status: 'Nonaktif',
-      showDropdownMock: true,
-      image: melatiImg
-    },
+    { title: 'Total Kost', value: `${totalKost}`, unit: 'Kost', icon: Home, iconBg: '#e6f0ff', iconColor: '#0066ff', linkText: 'Lihat semua kost' },
+    { title: 'Booking Aktif', value: `${bookingAktif}`, unit: 'Booking', icon: Calendar, iconBg: '#dcfce7', iconColor: '#16a34a', linkText: 'Lihat semua booking' },
+    { title: 'Kamar Kosong', value: `${kamarKosong}`, unit: 'Kamar', icon: BedDouble, iconBg: '#fef3c7', iconColor: '#d97706', linkText: 'Lihat semua kamar' },
+    { title: 'Pendapatan Bulan Ini', value: `Rp ${(kamarTerisi * 1200000).toLocaleString('id-ID')}`, unit: '', icon: Wallet, iconBg: '#f3e8ff', iconColor: '#9333ea', linkText: 'Lihat laporan' },
   ];
 
   return (
     <div className="dashboard-container">
       <Sidebar />
-      
+
       <main className="main-content">
         <Header 
           title="Dashboard" 
@@ -128,9 +79,29 @@ const OwnerDashboard = () => {
             <a href="/owner/booking" className="see-all">Lihat Semua Booking <ChevronRight size={14} /></a>
           </div>
           <div className="booking-grid">
-            {bookingsData.map((booking, idx) => (
-              <BookingCard key={idx} {...booking} />
-            ))}
+            {loading ? (
+              <p>Memuat data booking...</p>
+            ) : ownerBookings.length === 0 ? (
+              <p style={{ color: "#64748b" }}>Belum ada booking masuk.</p>
+            ) : (
+              ownerBookings.slice(0, 4).map((b, idx) => {
+                const userObj = b.user || {};
+                const kosObj = b.kos || {};
+                return (
+                  <BookingCard
+                    key={b.id || idx}
+                    name={userObj.nama || "Penyewa"}
+                    kostName={kosObj.nama_kos || "Properti Kost"}
+                    avatar={userObj.foto_profil_url || avatarImg}
+                    checkIn={b.tanggal_masuk || "-"}
+                    duration={`${b.durasi_bulan || 1} Bulan`}
+                    status={b.status === 'pending' ? 'pending' : 'active'}
+                    statusText={b.status === 'pending' ? 'Menunggu Konfirmasi' : 'Sedang Berjalan'}
+                    actionText="Lihat Detail"
+                  />
+                );
+              })
+            )}
           </div>
         </section>
 
@@ -141,9 +112,28 @@ const OwnerDashboard = () => {
             <a href="/owner/kost-saya" className="see-all">Lihat Semua Kost <ChevronRight size={14} /></a>
           </div>
           <div className="kost-grid">
-            {kostsData.map((kost, idx) => (
-              <KostCard key={idx} {...kost} />
-            ))}
+            {loading ? (
+              <p>Memuat daftar kos...</p>
+            ) : ownerKosts.length === 0 ? (
+              <p style={{ color: "#64748b" }}>Belum ada kos terdaftar.</p>
+            ) : (
+              ownerKosts.slice(0, 4).map((k, idx) => {
+                const total = parseInt(k.jumlah_kamar) || 0;
+                const terisi = parseInt(k.kamar_terisi) || 0;
+                const kosong = Math.max(0, total - terisi);
+                return (
+                  <KostCard
+                    key={k.id || idx}
+                    title={k.nama_kos}
+                    location={`${k.alamat || ''}, ${k.kota || ''}`}
+                    price={parseFloat(k.harga_per_bulan) || 0}
+                    roomAvailable={kosong}
+                    status={k.status || 'Aktif'}
+                    image={k.foto_utama_url || k.foto_utama || defaultKostImg}
+                  />
+                );
+              })
+            )}
           </div>
         </section>
       </main>

@@ -1,20 +1,14 @@
 import HeroSection from "../components/HeroSection";
 import LoginForm from "../components/LoginForm";
-import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 
-export default function Login(){
-    const navigate = useNavigate();
-return(
-<div className="page">
-<div className="login-container">
-
-<HeroSection/>
-<LoginForm/>
-
-</div>
-</div>
-
-)
-
+export default function Login({ isAdminLogin = false }) {
+  return (
+    <div className="page">
+      <div className="login-container">
+        <HeroSection isAdminLogin={isAdminLogin} />
+        <LoginForm isAdminLogin={isAdminLogin} />
+      </div>
+    </div>
+  );
 }

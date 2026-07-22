@@ -5,6 +5,9 @@ import {
   Route,
 } from "react-router-dom";
 
+// Protected Route Component
+import ProtectedRoute from "./components/ProtectedRoute";
+
 // ======================
 // Import Halaman User
 // ======================
@@ -36,6 +39,7 @@ import TambahKost from "./pages/owner/TambahKost";
 // Import Halaman Super Admin
 // ======================
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminLogin from "./pages/admin/AdminLogin";
 import AdminVerifikasiPemilik from "./pages/admin/VerifikasiPemilik";
 import DetailVerifikasiPemilik from "./pages/admin/DetailVerifikasiPemilik";
 import DataPengguna from "./pages/admin/DataPengguna";
@@ -47,62 +51,50 @@ function App() {
       <Routes>
 
         {/* ======================
-              USER MODULE
+              PUBLIC & USER MODULE
         ======================= */}
 
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/carikost" element={<CariKost />} />
+        <Route path="/kost/:id" element={<DetailKost />} />
         <Route path="/detail-kost" element={<DetailKost />} />
+        <Route path="/detail-booking/:id" element={<DetailBooking />} />
         <Route path="/detail-booking" element={<DetailBooking />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/favorit" element={<Favorit />} />
+        <Route path="/checkout" element={<ProtectedRoute allowedRoles={['pencari', 'pemilik', 'admin']}><Checkout /></ProtectedRoute>} />
+        <Route path="/favorit" element={<ProtectedRoute allowedRoles={['pencari', 'pemilik', 'admin']}><Favorit /></ProtectedRoute>} />
         <Route path="/tentang-kami" element={<TentangKami />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/booking" element={<BookingSaya />} />
+        <Route path="/profile" element={<ProtectedRoute allowedRoles={['pencari', 'pemilik', 'admin']}><Profile /></ProtectedRoute>} />
+        <Route path="/booking" element={<ProtectedRoute allowedRoles={['pencari', 'pemilik', 'admin']}><BookingSaya /></ProtectedRoute>} />
 
         {/* ======================
               OWNER MODULE
         ======================= */}
 
-        <Route path="/owner/dashboard" element={<OwnerDashboard />} />
-        <Route path="/owner/kost-saya" element={<MyKosts />} />
-        <Route path="/owner/booking" element={<Bookings />} />
-        <Route path="/owner/keuangan" element={<Finance />} />
-        <Route path="/owner/laporan" element={<Reports />} />
-        <Route path="/owner/pengaturan" element={<Settings />} />
-        <Route path="/owner/verifikasi" element={<VerifikasiPemilik />} />
-        <Route path="/owner/tambah-kost" element={<TambahKost />} />
+        <Route path="/owner/dashboard" element={<ProtectedRoute allowedRoles={['pemilik', 'admin']}><OwnerDashboard /></ProtectedRoute>} />
+        <Route path="/owner/kost-saya" element={<ProtectedRoute allowedRoles={['pemilik', 'admin']}><MyKosts /></ProtectedRoute>} />
+        <Route path="/owner/booking" element={<ProtectedRoute allowedRoles={['pemilik', 'admin']}><Bookings /></ProtectedRoute>} />
+        <Route path="/owner/keuangan" element={<ProtectedRoute allowedRoles={['pemilik', 'admin']}><Finance /></ProtectedRoute>} />
+        <Route path="/owner/laporan" element={<ProtectedRoute allowedRoles={['pemilik', 'admin']}><Reports /></ProtectedRoute>} />
+        <Route path="/owner/pengaturan" element={<ProtectedRoute allowedRoles={['pemilik', 'admin']}><Settings /></ProtectedRoute>} />
+        <Route path="/owner/verifikasi" element={<ProtectedRoute allowedRoles={['pemilik', 'admin']}><VerifikasiPemilik /></ProtectedRoute>} />
+        <Route path="/owner/tambah-kost" element={<ProtectedRoute allowedRoles={['pemilik', 'admin']}><TambahKost /></ProtectedRoute>} />
 
         {/* ======================
               SUPER ADMIN MODULE
         ======================= */}
 
-        <Route
-          path="/admin/dashboard"
-          element={<AdminDashboard />}
-        />
+        {/* Dedicated Hidden Admin Login Route (Unlinked from public navigation) */}
+        <Route path="/superadmin/login" element={<AdminLogin />} />
 
-        <Route
-          path="/admin/verifikasi-pemilik"
-          element={<AdminVerifikasiPemilik />}
-        />
-
-        <Route
-          path="/admin/detail-verifikasi-pemilik"
-          element={<DetailVerifikasiPemilik />}
-        />
-
-        <Route
-          path="/admin/data-pengguna"
-          element={<DataPengguna />}
-        />
-
-        <Route
-          path="/admin/pengaturan"
-          element={<Pengaturan />}
-        />
+        {/* Protected Super Admin Dashboard Routes */}
+        <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/verifikasi-pemilik" element={<ProtectedRoute allowedRoles={['admin']}><AdminVerifikasiPemilik /></ProtectedRoute>} />
+        <Route path="/admin/detail-verifikasi-pemilik" element={<ProtectedRoute allowedRoles={['admin']}><DetailVerifikasiPemilik /></ProtectedRoute>} />
+        <Route path="/admin/data-pengguna" element={<ProtectedRoute allowedRoles={['admin']}><DataPengguna /></ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><DataPengguna /></ProtectedRoute>} />
+        <Route path="/admin/pengaturan" element={<ProtectedRoute allowedRoles={['admin']}><Pengaturan /></ProtectedRoute>} />
 
       </Routes>
     </BrowserRouter>

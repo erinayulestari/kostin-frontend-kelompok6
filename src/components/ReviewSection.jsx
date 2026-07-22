@@ -1,190 +1,85 @@
+import { useState } from "react";
 import { Star } from "lucide-react";
 
-export default function ReviewSection() {
-    return (
+export default function ReviewSection({ reviews = [], kosId, onAddReview }) {
+  const [newRating, setNewRating] = useState(5);
+  const [newKomentar, setNewKomentar] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-        <section className="review-section">
+  const avgRating = reviews.length > 0
+    ? (reviews.reduce((acc, r) => acc + (parseFloat(r.rating) || 0), 0) / reviews.length).toFixed(1)
+    : "4.8";
 
-            <h2>Review Penghuni</h2>
+  const counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  reviews.forEach(r => {
+    const star = Math.round(r.rating || 5);
+    if (counts[star] !== undefined) counts[star]++;
+  });
 
-            <div className="review-wrapper">
+  const total = reviews.length || 1;
 
-                {/* Rating Summary */}
+  return (
+    <section className="review-section">
+      <h2>Review Penghuni</h2>
 
-                <div className="rating-summary">
+      <div className="review-wrapper">
+        {/* Rating Summary */}
+        <div className="rating-summary">
+          <h1>{avgRating} ⭐</h1>
+          <p>Berdasarkan {reviews.length} review</p>
 
-                    <h1>4.8 ⭐</h1>
-
-                    <p>Berdasarkan 128 review</p>
-
-                    <div className="rating-bars">
-
-                        <div className="bar">
-
-                            <span>5 ★</span>
-
-                            <div className="line">
-                                <div style={{ width: "90%" }}></div>
-                            </div>
-
-                            <strong>106</strong>
-
-                        </div>
-
-                        <div className="bar">
-
-                            <span>4 ★</span>
-
-                            <div className="line">
-                                <div style={{ width: "20%" }}></div>
-                            </div>
-
-                            <strong>16</strong>
-
-                        </div>
-
-                        <div className="bar">
-
-                            <span>3 ★</span>
-
-                            <div className="line">
-                                <div style={{ width: "8%" }}></div>
-                            </div>
-
-                            <strong>4</strong>
-
-                        </div>
-
-                        <div className="bar">
-
-                            <span>2 ★</span>
-
-                            <div className="line">
-                                <div style={{ width: "4%" }}></div>
-                            </div>
-
-                            <strong>1</strong>
-
-                        </div>
-
-                        <div className="bar">
-
-                            <span>1 ★</span>
-
-                            <div className="line">
-                                <div style={{ width: "2%" }}></div>
-                            </div>
-
-                            <strong>1</strong>
-
-                        </div>
-
-                    </div>
-
+          <div className="rating-bars">
+            {[5, 4, 3, 2, 1].map((star) => {
+              const count = counts[star] || 0;
+              const pct = Math.round((count / total) * 100);
+              return (
+                <div key={star} className="bar">
+                  <span>{star} ★</span>
+                  <div className="line">
+                    <div style={{ width: `${pct}%` }}></div>
+                  </div>
+                  <strong>{count}</strong>
                 </div>
+              );
+            })}
+          </div>
+        </div>
 
-                {/* Review List */}
+        {/* Review List */}
+        <div className="review-list">
+          {reviews.length === 0 ? (
+            <p style={{ color: "#64748b" }}>Belum ada ulasan untuk kos ini. Jadilah yang pertama memberikan ulasan!</p>
+          ) : (
+            reviews.map((rev, index) => {
+              const userName = rev.user?.nama || rev.user?.name || "Penghuni Kost";
+              const initials = userName.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase();
+              const dateStr = rev.created_at ? new Date(rev.created_at).toLocaleDateString("id-ID") : "Baru saja";
+              const starCount = Math.round(rev.rating || 5);
 
-                <div className="review-list">
+              return (
+                <div key={rev.id || index} className="review-card">
+                  <div className="review-avatar">{initials}</div>
+                  <h4>{userName}</h4>
+                  <small>{dateStr}</small>
 
-                    <div className="review-card">
+                  <div className="stars">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        size={16}
+                        fill={i < starCount ? "#FACC15" : "none"}
+                        color={i < starCount ? "#FACC15" : "#CBD5E1"}
+                      />
+                    ))}
+                  </div>
 
-                        <div className="review-avatar">
-                            RP
-                        </div>
-
-                        <h4>Rizky Pratama</h4>
-
-                        <small>12 Mei 2024</small>
-
-                        <div className="stars">
-
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-
-                        </div>
-
-                        <p>
-
-                            Tempatnya nyaman, bersih, dan fasilitas lengkap.
-                            Sangat cocok untuk mahasiswa maupun pekerja.
-
-                        </p>
-
-                    </div>
-
-                    <div className="review-card">
-
-                        <div className="review-avatar">
-                            MP
-                        </div>
-
-                        <h4>Mega Putri</h4>
-
-                        <small>8 Mei 2024</small>
-
-                        <div className="stars">
-
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-
-                        </div>
-
-                        <p>
-
-                            Lokasi strategis dekat kampus dan pusat kuliner.
-                            Lingkungan aman dan tenang.
-
-                        </p>
-
-                    </div>
-
-                    <div className="review-card">
-
-                        <div className="review-avatar">
-                            AS
-                        </div>
-
-                        <h4>Andi Saputra</h4>
-
-                        <small>3 Mei 2024</small>
-
-                        <div className="stars">
-
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-                            <Star size={16} fill="#FACC15" color="#FACC15" />
-
-                        </div>
-
-                        <p>
-
-                            Pengelola ramah, fasilitas selalu bersih,
-                            dan proses check-in sangat mudah.
-
-                        </p>
-
-                    </div>
-
+                  <p>{rev.komentar || rev.comment || "Fasilitas bersih dan sangat nyaman."}</p>
                 </div>
-
-            </div>
-
-            <button className="review-btn">
-
-                Lihat Semua Review
-
-            </button>
-
-        </section>
-
-    );
+              );
+            })
+          )}
+        </div>
+      </div>
+    </section>
+  );
 }

@@ -1,0 +1,8 @@
+# robots.txt untuk Kostin Platform
+User-agent: *
+Disallow: /admin/
+Disallow: /superadmin/
+Disallow: /owner/
+Disallow: /checkout
+Disallow: /booking
+Disallow: /profile

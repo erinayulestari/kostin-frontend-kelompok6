@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  FiClock,
-  FiUser,
-  FiHome,
-  FiFileText,
-  FiInfo,
-  FiCheckCircle,
-  FiXCircle,
-  FiArrowLeft
-} from "react-icons/fi";
+  Clock as FiClock,
+  User as FiUser,
+  Home as FiHome,
+  FileText as FiFileText,
+  Info as FiInfo,
+  CheckCircle2 as FiCheckCircle,
+  XCircle as FiXCircle,
+  ArrowLeft as FiArrowLeft
+} from "lucide-react";
 
 import { InfoCard, DataRow } from "../../components/admin/InfoCard";
 import DokumenCard from "../../components/admin/DokumenCard";
