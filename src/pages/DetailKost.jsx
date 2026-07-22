@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -80,10 +80,10 @@ export default function DetailKost() {
       <div className="detail-container">
         {/* Breadcrumb */}
         <div className="breadcrumb">
-          <span>Beranda</span>
-          <span>›</span>
-          <span>Cari Kost</span>
-          <span>›</span>
+          <Link to="/">Beranda</Link>
+          <span className="separator">›</span>
+          <Link to="/carikost">Cari Kost</Link>
+          <span className="separator">›</span>
           <span className="active">{kosName}</span>
         </div>
 
@@ -109,13 +109,14 @@ export default function DetailKost() {
 
         <LocationSection kos={kos} />
         <ReviewSection reviews={reviews} kosId={kosId} />
-        <SimilarKost />
+        <SimilarKost currentKosId={kosId} />
       </div>
 
       {/* Component Modal Bandingkan Kost */}
       <CompareKostModal
         isOpen={isCompareOpen}
         onClose={() => setIsCompareOpen(false)}
+        currentKos={kos}
       />
 
       <Footer />

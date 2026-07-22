@@ -13,9 +13,8 @@ export default function FavoriteCard({ favItem, onRemove }) {
   const image = kos?.foto_utama_url || kos?.foto_utama || kos?.image || defaultImg;
 
   const rawHarga = kos?.harga_per_bulan || kos?.harga || 0;
-  const formattedHarga = typeof rawHarga === "number"
-    ? `Rp${rawHarga.toLocaleString("id-ID")}`
-    : rawHarga.toString().startsWith("Rp") ? rawHarga : `Rp${rawHarga}`;
+  const numHarga = typeof rawHarga === "number" ? rawHarga : (parseFloat(String(rawHarga)) || 0);
+  const formattedHarga = `Rp ${Math.round(numHarga).toLocaleString("id-ID")}`;
 
   const rating = kos?.rating || "4.8";
 

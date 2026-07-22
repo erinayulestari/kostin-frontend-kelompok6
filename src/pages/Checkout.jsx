@@ -5,7 +5,6 @@ import Footer from "../components/Footer";
 
 import TenantInfoCard from "../components/TenantInfoCard";
 import BookingSummaryCard from "../components/BookingSummaryCard";
-import PaymentMethodCard from "../components/PaymentMethodCard";
 import PaymentSummaryCard from "../components/PaymentSummaryCard";
 
 import { useAuth } from "../context/AuthContext";
@@ -15,9 +14,24 @@ import "../styles/checkout.css";
 export default function Checkout() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [tenantOverride, setTenantOverride] = useState(null);
   const [draft, setDraft] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const snapUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
+    const clientKey = import.meta.env.VITE_MIDTRANS_CLIENT_KEY || "Mid-client-8akLAXtH58wvLwIi";
+
+    let scriptTag = document.querySelector(`script[src="${snapUrl}"]`);
+    if (!scriptTag) {
+      scriptTag = document.createElement("script");
+      scriptTag.src = snapUrl;
+      scriptTag.setAttribute("data-client-key", clientKey);
+      scriptTag.async = true;
+      document.body.appendChild(scriptTag);
+    }
+  }, []);
 
   useEffect(() => {
     const storedDraft = sessionStorage.getItem("checkout_draft");
@@ -50,16 +64,24 @@ export default function Checkout() {
       };
 
       const res = await api.post("/bookings", payload);
+      const createdBooking = res.data?.data || res.data || res;
+      const bookingId = createdBooking?.id;
 
       sessionStorage.removeItem("checkout_draft");
 
-      const snapToken = res.data?.snap_token || res.data?.payment?.snap_token;
+      const snapToken = res.data?.snap_token || res.snap_token || res.data?.payment?.snap_token || createdBooking?.snap_token;
       if (snapToken && window.snap) {
         window.snap.pay(snapToken, {
-          onSuccess: function () {
+          onSuccess: async function () {
+            if (bookingId) {
+              try { await api.post(`/bookings/${bookingId}/verify-payment`); } catch(e) {}
+            }
             navigate("/booking");
           },
-          onPending: function () {
+          onPending: async function () {
+            if (bookingId) {
+              try { await api.post(`/bookings/${bookingId}/verify-payment`); } catch(e) {}
+            }
             navigate("/booking");
           },
           onError: function () {
@@ -70,6 +92,9 @@ export default function Checkout() {
           }
         });
       } else {
+        if (bookingId) {
+          try { await api.post(`/bookings/${bookingId}/verify-payment`); } catch(e) {}
+        }
         alert("Booking berhasil dibuat!");
         navigate("/booking");
       }
@@ -80,22 +105,38 @@ export default function Checkout() {
     }
   };
 
+  const handleUpdateTenantInfo = (updated) => {
+    setTenantOverride(updated);
+    if (draft) {
+      const newDraft = {
+        ...draft,
+        tanggal_masuk: updated.tanggal_masuk || draft.tanggal_masuk,
+        durasi_sewa: Number(updated.durasi_sewa) || draft.durasi_sewa,
+      };
+      setDraft(newDraft);
+      sessionStorage.setItem("checkout_draft", JSON.stringify(newDraft));
+    }
+  };
+
   const tenantData = {
-    name: user?.nama || "Penyewa",
-    email: user?.email || "user@email.com",
-    phone: user?.no_hp || "081234567890",
+    name: tenantOverride?.name || user?.nama || "Penyewa",
+    email: tenantOverride?.email || user?.email || "user@email.com",
+    phone: tenantOverride?.phone || user?.no_hp || "-",
+    raw_tanggal_masuk: draft?.tanggal_masuk || new Date().toISOString().split("T")[0],
+    checkin: draft?.tanggal_masuk ? new Date(draft.tanggal_masuk).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }) : "Segera",
+    durasi_sewa: draft?.durasi_sewa || 1,
+    duration: `${draft?.durasi_sewa || 1} Bulan`,
   };
 
   const hargaBulan = draft?.harga_per_bulan || 1500000;
   const durasiBulan = draft?.durasi_sewa || 1;
   const subtotalNum = hargaBulan * durasiBulan;
-  const adminFee = 50000;
   const discount = 0;
-  const totalNum = subtotalNum + adminFee - discount;
+  const totalNum = subtotalNum - discount;
 
   const kostData = {
     name: draft?.kos_nama || "Kost Melati",
-    address: draft?.alamat || "Jl. Melati No. 45, Tamalate, Makassar",
+    address: draft?.alamat || "Lokasi Kos",
     image: draft?.foto_utama || "/src/assets/harmoni.jpeg",
     price: `Rp ${hargaBulan.toLocaleString("id-ID")}`,
     duration: `${durasiBulan} Bulan`,
@@ -105,10 +146,8 @@ export default function Checkout() {
 
   const paymentData = {
     subtotal: `Rp ${subtotalNum.toLocaleString("id-ID")}`,
-    admin: `Rp ${adminFee.toLocaleString("id-ID")}`,
     discount: discount > 0 ? `- Rp ${discount.toLocaleString("id-ID")}` : "Rp 0",
     total: `Rp ${totalNum.toLocaleString("id-ID")}`,
-    countdown: "23 : 59 : 45",
   };
 
   return (
@@ -130,9 +169,8 @@ export default function Checkout() {
         <div className="checkout-grid">
           {/* LEFT */}
           <div className="checkout-left">
-            <TenantInfoCard tenant={tenantData} />
+            <TenantInfoCard tenant={tenantData} onUpdateTenantInfo={handleUpdateTenantInfo} />
             <BookingSummaryCard booking={kostData} />
-            <PaymentMethodCard />
           </div>
 
           {/* RIGHT */}

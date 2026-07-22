@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Heart,
@@ -15,6 +15,10 @@ export default function KostCardHorizontal({ kost, onToggleFavorite, isFavorite 
   const navigate = useNavigate();
   const [favorite, setFavorite] = useState(isFavorite);
 
+  useEffect(() => {
+    setFavorite(isFavorite);
+  }, [isFavorite]);
+
   const id = kost.id;
   const name = kost.nama_kos || kost.nama || kost.name || "Kos";
   const location = kost.kota || kost.lokasi || kost.location || "Indonesia";
@@ -22,26 +26,38 @@ export default function KostCardHorizontal({ kost, onToggleFavorite, isFavorite 
   const description = kost.deskripsi || "Kost nyaman dengan fasilitas lengkap, lingkungan aman dan bersih.";
 
   const rawPrice = kost.harga_per_bulan || kost.harga || 0;
-  const formattedPrice = typeof rawPrice === "number"
-    ? `Rp${rawPrice.toLocaleString("id-ID")}`
-    : rawPrice.toString().startsWith("Rp") ? rawPrice : `Rp${rawPrice}`;
+  const numPrice = typeof rawPrice === "number" ? rawPrice : (parseFloat(String(rawPrice)) || 0);
+  const formattedPrice = `Rp ${Math.round(numPrice).toLocaleString("id-ID")}`;
 
-  const rating = kost.rating || kost.reviews_avg_rating || "4.8";
+  const rawRating = kost.rating || kost.reviews_avg_rating;
+  const rating = (rawRating && Number(rawRating) > 0) ? Number(rawRating).toFixed(1) : "0.0";
 
-  const handleFavorite = async () => {
-    try {
-      if (favorite) {
-        await api.delete(`/favorites/${id}`);
-        setFavorite(false);
-      } else {
-        await api.post('/favorites', { kos_id: id });
-        setFavorite(true);
+  const handleFavorite = async (e) => {
+    if (e) e.stopPropagation();
+    if (onToggleFavorite) {
+      onToggleFavorite(id);
+    } else {
+      try {
+        if (favorite) {
+          await api.delete(`/favorites/${id}`);
+          setFavorite(false);
+        } else {
+          await api.post('/favorites', { kos_id: id });
+          setFavorite(true);
+        }
+      } catch (err) {
+        console.error("Failed toggle favorite", err);
       }
-      if (onToggleFavorite) onToggleFavorite(id, !favorite);
-    } catch (e) {
-      console.error("Failed toggle favorite", e);
     }
   };
+
+  const sisaKamar = kost.sisa_kamar !== undefined
+    ? kost.sisa_kamar
+    : (kost.kamar_tersedia !== undefined
+        ? kost.kamar_tersedia
+        : (kost.jumlah_kamar !== undefined && kost.kamar_terisi !== undefined
+            ? Math.max(0, kost.jumlah_kamar - kost.kamar_terisi)
+            : 3));
 
   return (
     <div className="kost-horizontal">
@@ -86,7 +102,7 @@ export default function KostCardHorizontal({ kost, onToggleFavorite, isFavorite 
             </span>
           )}
           <span className="available">
-            {kost.jumlah_kamar > kost.kamar_terisi ? "Tersedia" : "Penuh"}
+            Sisa {sisaKamar} Kamar
           </span>
         </div>
 

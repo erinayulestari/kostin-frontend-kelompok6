@@ -50,31 +50,45 @@
    MENU
 =========================== */
 
-.menu{
-
-    display:flex;
-    align-items:center;
-    gap:40px;
-
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 36px;
 }
 
-.menu a{
-
-    text-decoration:none;
-
-    color:#475569;
-
-    font-size:16px;
-    font-weight:500;
-
-    transition:.25s;
-
+.menu a {
+    text-decoration: none;
+    color: #64748B;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 6px 0;
+    position: relative;
+    transition: color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.menu a:hover{
+.menu a:hover {
+    color: #2563EB;
+}
 
-    color:#2563EB;
+.menu a.active {
+    color: #2563EB;
+    font-weight: 600;
+}
 
+.menu a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0%;
+    height: 2.5px;
+    background: #2563EB;
+    border-radius: 4px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu a.active::after {
+    width: 100%;
 }
 
 /* ===========================
@@ -134,64 +148,51 @@
    PROFILE
 =========================== */
 
-.profile-wrapper{
-
-    position:relative;
-
+.profile-wrapper {
+    position: relative;
 }
 
-.profile-btn{
-
-    display:flex;
-    align-items:center;
-    gap:12px;
-
-    padding:8px 14px;
-
-    background:#FFFFFF;
-
-    border:none;
-
-    border-radius:14px;
-
-    cursor:pointer;
-
-    transition:.25s;
-
+.profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 16px 6px 8px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
 }
 
-.profile-btn:hover{
-
-    background:#F8FAFC;
-
+.profile-btn:hover {
+    background: #F8FAFC;
+    border-color: #CBD5E1;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
 }
 
-.profile-btn img{
-
-    width:42px;
-    height:42px;
-
-    border-radius:50%;
-
-    object-fit:cover;
-
+.profile-btn img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid #2563EB;
+    flex-shrink: 0;
 }
 
-.profile-btn span{
-
-    color:#0F172A;
-
-    font-size:15px;
-    font-weight:600;
-
+.profile-btn span {
+    color: #0F172A;
+    font-size: 14px;
+    font-weight: 600;
 }
 
-.rotate{
+.profile-btn svg {
+    color: #64748B;
+    transition: transform 0.25s ease;
+}
 
-    transform:rotate(180deg);
-
-    transition:.25s;
-
+.rotate {
+    transform: rotate(180deg);
 }
 
 /* ===========================

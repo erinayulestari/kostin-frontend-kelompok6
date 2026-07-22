@@ -72,9 +72,13 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const updateProfile = async (updatedUser) => {
-    setUserState(updatedUser);
-    setUserData(updatedUser);
+  const updateProfile = (updatedUser) => {
+    if (!updatedUser) return;
+    setUserState((prevUser) => {
+      const merged = { ...(prevUser || {}), ...updatedUser };
+      setUserData(merged);
+      return merged;
+    });
   };
 
   const value = {
