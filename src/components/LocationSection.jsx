@@ -1,5 +1,18 @@
 import { MapPin, Navigation, Building2, Map } from "lucide-react";
-import mapImage from "../assets/map.jpg";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+
+// Fix Leaflet default marker icon path issue with Vite bundler
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 export default function LocationSection({ kos }) {
   if (!kos) return null;
@@ -24,13 +37,39 @@ export default function LocationSection({ kos }) {
     window.open(mapsUrl, "_blank");
   };
 
+  const hasCoordinates = kos.lat && kos.lng && !isNaN(Number(kos.lat)) && !isNaN(Number(kos.lng));
+
   return (
     <section className="location-section">
       <h2>Lokasi Kost</h2>
 
       <div className="location-wrapper">
         <div className="map-card">
-          <img src={mapImage} alt="Peta Lokasi Kos" onError={(e) => { e.target.src = mapImage; }} />
+          {hasCoordinates ? (
+            <MapContainer
+              center={[Number(kos.lat), Number(kos.lng)]}
+              zoom={16}
+              scrollWheelZoom={false}
+              style={{ height: "350px", width: "100%", borderRadius: "12px" }}
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              />
+              <Marker position={[Number(kos.lat), Number(kos.lng)]}>
+                <Popup>
+                  <strong>{kos.nama_kos}</strong><br />
+                  {kos.alamat}<br />
+                  <span>Rp {Number(kos.harga_per_bulan)?.toLocaleString("id-ID")}/bulan</span>
+                </Popup>
+              </Marker>
+            </MapContainer>
+          ) : (
+            <div className="map-fallback">
+              <MapPin size={36} color="#94a3b8" />
+              <p>Koordinat peta belum diatur oleh pemilik.</p>
+            </div>
+          )}
         </div>
 
         <div className="location-info">

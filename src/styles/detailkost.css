@@ -397,11 +397,34 @@ FACILITY
     align-items:start;
 }
 
-.map-card img{
-    width:100%;
-    height:350px;
-    object-fit:cover;
-    border-radius:20px;
+.map-card {
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.map-card .leaflet-container {
+    border-radius: 12px;
+}
+
+.map-fallback {
+    width: 100%;
+    height: 350px;
+    background: #f1f5f9;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: 2px dashed #cbd5e1;
+}
+
+.map-fallback p {
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
 }
 
 .location-info{
