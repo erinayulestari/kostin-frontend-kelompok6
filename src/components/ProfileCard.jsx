@@ -6,6 +6,11 @@ import {
   Phone,
   Calendar,
   MapPin,
+  CreditCard,
+  Upload,
+  CheckCircle2,
+  AlertCircle,
+  FileImage,
 } from "lucide-react";
 import avatar from "../assets/avatar.jpg";
 import { useAuth } from "../context/AuthContext";
@@ -15,14 +20,16 @@ export default function ProfileCard() {
   const { user, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [ktpUploading, setKtpUploading] = useState(false);
 
   const [formData, setFormData] = useState({
     nama: "",
     email: "",
     no_hp: "",
-    jenis_kelamin: "Perempuan",
+    jenis_kelamin: "",
     tanggal_lahir: "",
     alamat: "",
+    nik: "",
   });
 
   useEffect(() => {
@@ -31,9 +38,10 @@ export default function ProfileCard() {
         nama: user.nama || "",
         email: user.email || "",
         no_hp: user.no_hp || "",
-        jenis_kelamin: user.jenis_kelamin || "Perempuan",
+        jenis_kelamin: user.jenis_kelamin || "",
         tanggal_lahir: user.tanggal_lahir || "",
         alamat: user.alamat || "",
+        nik: user.nik || "",
       });
     }
   }, [user]);
@@ -80,8 +88,32 @@ export default function ProfileCard() {
     }
   };
 
+  const handleKtpUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setKtpUploading(true);
+    const data = new FormData();
+    data.append("foto_ktp", file);
+
+    try {
+      const res = await api.post("/profile/ktp", data);
+      const updatedUser = res.data !== undefined ? res.data : res;
+      if (updatedUser) {
+        updateProfile(updatedUser);
+      }
+      alert("Foto KTP berhasil diunggah.");
+    } catch (err) {
+      console.error("Gagal mengunggah foto KTP:", err);
+      alert(err.message || "Gagal mengunggah foto KTP.");
+    } finally {
+      setKtpUploading(false);
+    }
+  };
+
   const displayAvatar = user?.foto_profil_url || avatar;
   const roleText = user?.role === "pemilik" ? "Pemilik Kost" : user?.role === "admin" ? "Super Admin" : "Pencari Kost";
+  const isPemilik = user?.role === "pemilik";
 
   return (
     <section className="profile-card">
@@ -173,11 +205,12 @@ export default function ProfileCard() {
                   onChange={handleChange}
                   style={{ width: "100%", padding: "6px 10px", marginTop: "4px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
                 >
+                  <option value="">-- Pilih Jenis Kelamin --</option>
                   <option value="Laki-laki">Laki-laki</option>
                   <option value="Perempuan">Perempuan</option>
                 </select>
               ) : (
-                <h4>{user?.jenis_kelamin || "Perempuan"}</h4>
+                <h4>{user?.jenis_kelamin || "-"}</h4>
               )}
             </div>
           </div>
@@ -224,8 +257,103 @@ export default function ProfileCard() {
               )}
             </div>
           </div>
+
+          {/* NIK - Hanya untuk Pemilik Kost */}
+          {isPemilik && (
+            <div className="profile-item">
+              <div className="profile-icon">
+                <CreditCard size={20} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <span>Nomor KTP / NIK</span>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    name="nik"
+                    value={formData.nik}
+                    onChange={handleChange}
+                    placeholder="Masukkan 16 digit NIK"
+                    maxLength={16}
+                    style={{ width: "100%", padding: "6px 10px", marginTop: "4px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                  />
+                ) : (
+                  <h4>{user?.nik || "-"}</h4>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* ================= KTP Upload Section (Pemilik Only) ================= */}
+      {isPemilik && (
+        <>
+          <hr />
+          <div style={{ padding: "0 0 8px 0" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+              <FileImage size={18} color="#0066ff" />
+              <span style={{ fontSize: "15px", fontWeight: "700", color: "#0f172a" }}>Dokumen KTP</span>
+              {user?.foto_ktp_url ? (
+                <span style={{
+                  display: "inline-flex", alignItems: "center", gap: "4px",
+                  fontSize: "11px", fontWeight: "600", color: "#16a34a",
+                  backgroundColor: "#f0fdf4", padding: "3px 10px", borderRadius: "20px",
+                  border: "1px solid #bbf7d0"
+                }}>
+                  <CheckCircle2 size={12} /> Sudah Diunggah
+                </span>
+              ) : (
+                <span style={{
+                  display: "inline-flex", alignItems: "center", gap: "4px",
+                  fontSize: "11px", fontWeight: "600", color: "#ea580c",
+                  backgroundColor: "#fff7ed", padding: "3px 10px", borderRadius: "20px",
+                  border: "1px solid #fed7aa"
+                }}>
+                  <AlertCircle size={12} /> Belum Diunggah
+                </span>
+              )}
+            </div>
+
+            {/* Preview KTP */}
+            {user?.foto_ktp_url && (
+              <div style={{
+                marginBottom: "16px", borderRadius: "12px", overflow: "hidden",
+                border: "1px solid #e2e8f0", maxWidth: "400px"
+              }}>
+                <img
+                  src={user.foto_ktp_url}
+                  alt="Foto KTP"
+                  style={{ width: "100%", height: "auto", display: "block", objectFit: "cover" }}
+                  onError={(e) => { e.target.style.display = "none"; }}
+                />
+              </div>
+            )}
+
+            {/* Upload Button */}
+            <label style={{
+              display: "inline-flex", alignItems: "center", gap: "8px",
+              padding: "10px 20px", borderRadius: "10px", cursor: "pointer",
+              backgroundColor: "#eff6ff", border: "1.5px dashed #93c5fd",
+              color: "#2563eb", fontSize: "13px", fontWeight: "600",
+              transition: "all 0.2s ease",
+              opacity: ktpUploading ? 0.6 : 1,
+            }}>
+              <Upload size={16} />
+              {ktpUploading ? "Mengunggah..." : user?.foto_ktp_url ? "Ganti Foto KTP" : "Upload Foto KTP"}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/jpg"
+                onChange={handleKtpUpload}
+                disabled={ktpUploading}
+                style={{ display: "none" }}
+              />
+            </label>
+            <p style={{ fontSize: "11px", color: "#94a3b8", marginTop: "8px" }}>
+              Format: JPG, PNG. Maksimal 5MB. Pastikan foto jelas dan tidak buram.
+            </p>
+          </div>
+        </>
+      )}
 
       <hr />
 

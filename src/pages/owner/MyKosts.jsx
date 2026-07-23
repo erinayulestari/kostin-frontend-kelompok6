@@ -5,6 +5,7 @@ import Header from '../../components/owner/Header';
 import KostCardDetailed from '../../components/owner/KostCardDetailed';
 import ModalDetailKostOwner from '../../components/owner/ModalDetailKostOwner';
 import CustomStatusSelect from '../../components/owner/CustomStatusSelect';
+import Pagination from '../../components/Pagination';
 import api from '../../api/api';
 
 import { Plus, Search, Building2, ChevronDown } from 'lucide-react';
@@ -18,6 +19,9 @@ const MyKosts = () => {
   const [myKostsData, setMyKostsData] = useState([]);
   const [selectedKosId, setSelectedKosId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 5;
 
   const fetchOwnerKosts = async () => {
     setLoading(true);
@@ -36,6 +40,10 @@ const MyKosts = () => {
   useEffect(() => {
     fetchOwnerKosts();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter]);
 
   const handleDeleteKost = async (id) => {
     if (!window.confirm("Apakah Anda yakin ingin menghapus properti kos ini?")) return;
@@ -56,6 +64,11 @@ const MyKosts = () => {
     const matchesStatus = statusFilter === 'Semua' || status.toLowerCase() === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
   });
+
+  const totalPages = Math.ceil(filteredKosts.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentKosts = filteredKosts.slice(indexOfFirstItem, indexOfLastItem);
 
   const AddKostButton = (
     <button className="btn-primary-add" onClick={() => navigate('/owner/tambah-kost')}>
@@ -101,29 +114,37 @@ const MyKosts = () => {
                 Kost dengan kata kunci atau filter tersebut tidak ditemukan.
               </div>
             ) : (
-              <div className="my-kosts-grid">
-                {filteredKosts.map(kost => {
-                  const total = kost.jumlah_kamar || 0;
-                  const terisi = kost.kamar_terisi || 0;
-                  const kosong = Math.max(0, total - terisi);
-                  return (
-                    <KostCardDetailed
-                      key={kost.id}
-                      id={kost.id}
-                      title={kost.nama_kos}
-                      location={`${kost.alamat || ''}, ${kost.kota || ''}`}
-                      price={parseFloat(kost.harga_per_bulan) || 0}
-                      totalRooms={total}
-                      filledRooms={terisi}
-                      emptyRooms={kosong}
-                      status={kost.status}
-                      image={kost.foto_utama_url || kost.foto_utama}
-                      onDelete={handleDeleteKost}
-                      onViewDetail={(id) => setSelectedKosId(id)}
-                    />
-                  );
-                })}
-              </div>
+              <>
+                <div className="my-kosts-grid">
+                  {currentKosts.map(kost => {
+                    const total = kost.jumlah_kamar || 0;
+                    const terisi = kost.kamar_terisi || 0;
+                    const kosong = Math.max(0, total - terisi);
+                    return (
+                      <KostCardDetailed
+                        key={kost.id}
+                        id={kost.id}
+                        title={kost.nama_kos}
+                        location={`${kost.alamat || ''}, ${kost.kota || ''}`}
+                        price={parseFloat(kost.harga_per_bulan) || 0}
+                        totalRooms={total}
+                        filledRooms={terisi}
+                        emptyRooms={kosong}
+                        status={kost.status}
+                        image={kost.foto_utama_url || kost.foto_utama}
+                        onDelete={handleDeleteKost}
+                        onViewDetail={(id) => setSelectedKosId(id)}
+                      />
+                    );
+                  })}
+                </div>
+
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => setCurrentPage(page)}
+                />
+              </>
             )}
           </>
         ) : (

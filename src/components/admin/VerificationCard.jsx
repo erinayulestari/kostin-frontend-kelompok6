@@ -1,5 +1,6 @@
 import React from "react";
-import { MapPin, Calendar, Clock, CheckCircle2, XCircle, ChevronRight } from "lucide-react";
+import { MapPin, Calendar, Clock, CheckCircle2, XCircle, Eye } from "lucide-react";
+import { Link } from "react-router-dom";
 import defaultAvatar from "../../assets/avatar.jpg";
 import defaultKostImg from "../../assets/harmoni.jpeg";
 
@@ -82,12 +83,12 @@ export default function VerificationCard({ data, onDetailClick, onUpdateStatus }
       {/* Col 4: Status & Action */}
       <div className="v-action-col">
         {renderStatusBadge(statusKey, statusText)}
-        <div style={{ display: "flex", gap: "6px", marginTop: "8px" }}>
+        
+        <div className="v-btn-group">
           {statusKey !== "approved" && (
             <button
               type="button"
-              className="btn-detail-outline"
-              style={{ backgroundColor: "#10b981", color: "#fff", borderColor: "#10b981", padding: "4px 8px", fontSize: "12px" }}
+              className="btn-v-action btn-v-approve"
               onClick={() => onUpdateStatus && onUpdateStatus(data.id, "aktif")}
             >
               Setujui
@@ -96,13 +97,19 @@ export default function VerificationCard({ data, onDetailClick, onUpdateStatus }
           {statusKey !== "rejected" && (
             <button
               type="button"
-              className="btn-detail-outline"
-              style={{ backgroundColor: "#ef4444", color: "#fff", borderColor: "#ef4444", padding: "4px 8px", fontSize: "12px" }}
-              onClick={() => onUpdateStatus && onUpdateStatus(data.id, "nonaktif")}
+              className="btn-v-action btn-v-reject"
+              onClick={() => onUpdateStatus && onUpdateStatus(data.id, "ditolak")}
             >
               Tolak
             </button>
           )}
+          <Link
+            to={`/admin/detail-verifikasi-pemilik/${data.id}`}
+            className="btn-v-action btn-v-detail"
+          >
+            <Eye size={14} />
+            <span>Detail</span>
+          </Link>
         </div>
       </div>
     </div>

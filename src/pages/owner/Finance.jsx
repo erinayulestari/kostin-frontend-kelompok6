@@ -5,6 +5,7 @@ import TransactionRowCard from '../../components/owner/TransactionRowCard';
 import CustomSelect from '../../components/owner/CustomSelect';
 import ModalInvoiceOwner from '../../components/owner/ModalInvoiceOwner';
 import ModalDetailBookingOwner from '../../components/owner/ModalDetailBookingOwner';
+import Pagination from '../../components/Pagination';
 import api from '../../api/api';
 
 import { 
@@ -36,6 +37,9 @@ const Finance = () => {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 5;
 
   useEffect(() => {
     async function loadFinanceData() {
@@ -60,6 +64,10 @@ const Finance = () => {
     loadFinanceData();
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, kostFilter, periodFilter]);
+
   const formatRupiah = (num) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num || 0);
   };
@@ -79,7 +87,10 @@ const Finance = () => {
     }
 
     const gross = parseFloat(b.total_harga) || 0;
-    const jatahPemilik = b.jatah_pemilik !== undefined ? parseFloat(b.jatah_pemilik) : (b.pembagian_dana?.jatah_pemilik !== undefined ? parseFloat(b.pembagian_dana.jatah_pemilik) : gross * 0.97);
+    const pd = b.pembagian_dana || b.pembagianDana || {};
+    const jatahPemilik = pd.jatah_pemilik !== undefined ? parseFloat(pd.jatah_pemilik) : (b.jatah_pemilik !== undefined ? parseFloat(b.jatah_pemilik) : gross * 0.97);
+    const statusDisbursement = (pd.status_disbursement || b.status_disbursement || 'pending').toLowerCase();
+    const statusTransfer = statusDisbursement === 'selesai' ? 'Sudah Ditransfer' : statusDisbursement === 'diproses' ? 'Diproses Admin' : 'Belum Ditransfer';
 
     return {
       id: b.id,
@@ -95,6 +106,8 @@ const Finance = () => {
       amount: jatahPemilik,
       grossAmount: gross,
       status: mappedStatus,
+      statusDisbursement: statusDisbursement,
+      statusTransfer: statusTransfer,
       rawBooking: b
     };
   });
@@ -106,7 +119,7 @@ const Finance = () => {
   const totalTransaksi = transactionsData.length;
 
   const totalSudahDitransferAdmin = transactionsData
-    .filter(t => t.status === 'Berhasil' && t.statusTransfer === 'Sudah Ditransfer')
+    .filter(t => t.status === 'Berhasil' && (t.statusDisbursement === 'selesai' || t.statusTransfer === 'Sudah Ditransfer'))
     .reduce((sum, t) => sum + t.amount, 0);
 
   const totalBerhasilCount = transactionsData
@@ -119,6 +132,11 @@ const Finance = () => {
     const matchesKost = kostFilter === 'Semua Kost' || item.kostName === kostFilter;
     return matchesSearch && matchesStatus && matchesKost;
   });
+
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentTransactions = filteredTransactions.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div className="dashboard-container">
@@ -264,7 +282,7 @@ const Finance = () => {
         {filteredTransactions.length > 0 ? (
           <>
             <div className="transactions-list">
-              {filteredTransactions.map(item => (
+              {currentTransactions.map(item => (
                 <TransactionRowCard 
                   key={item.id} 
                   transaction={item} 
@@ -274,6 +292,12 @@ const Finance = () => {
                 />
               ))}
             </div>
+
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
           </>
         ) : (
           <div className="empty-finance-state">

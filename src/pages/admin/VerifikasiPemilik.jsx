@@ -5,6 +5,8 @@ import FilterBar from "../../components/admin/FilterBar";
 import VerificationCard from "../../components/admin/VerificationCard";
 import Pagination from "../../components/admin/Pagination";
 import api from "../../api/api";
+import defaultAvatar from "../../assets/avatar.jpg";
+import defaultKostImg from "../../assets/harmoni.jpeg";
 import "../../styles/admin/admin-dashboard.css";
 import "../../styles/admin/verifikasi-pemilik.css";
 
@@ -15,6 +17,8 @@ export default function VerifikasiPemilik() {
   const [currentPage, setCurrentPage] = useState(1);
   const [kosList, setKosList] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const itemsPerPage = 5;
 
   const fetchAdminKos = async () => {
     setLoading(true);
@@ -34,6 +38,10 @@ export default function VerifikasiPemilik() {
     fetchAdminKos();
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, sortOrder]);
+
   const handleUpdateStatus = async (kosId, newStatus) => {
     try {
       await api.put(`/admin/kos/${kosId}/status`, { status: newStatus });
@@ -47,12 +55,17 @@ export default function VerifikasiPemilik() {
 
   const filteredKos = kosList.filter((item) => {
     const name = item.nama_kos || "";
-    const ownerName = item.pemilik?.nama || "";
+    const ownerName = item.pemilik?.nama || item.pemilik?.name || "";
     const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || ownerName.toLowerCase().includes(searchTerm.toLowerCase());
     const status = item.status || "pending";
     const matchesStatus = statusFilter === "Semua" || status.toLowerCase() === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
   });
+
+  const totalPages = Math.ceil(filteredKos.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentKosItems = filteredKos.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div className="admin-layout">
@@ -81,20 +94,20 @@ export default function VerifikasiPemilik() {
           </div>
         ) : (
           <div className="verification-card-list">
-            {filteredKos.map((item) => {
+            {currentKosItems.map((item) => {
               const formattedData = {
                 id: item.id,
                 owner: {
-                  name: item.pemilik?.nama || "Pemilik Kost",
+                  name: item.pemilik?.nama || item.pemilik?.name || "Pemilik Kost",
                   email: item.pemilik?.email || "-",
                   phone: item.pemilik?.no_hp || "-",
-                  avatar: item.pemilik?.foto_profil_url || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150"
+                  avatar: item.pemilik?.foto_profil_url || defaultAvatar
                 },
                 kost: {
                   name: item.nama_kos,
                   type: item.tipe ? item.tipe.toUpperCase() : "KOST",
                   rooms: `${item.jumlah_kamar || 0} Kamar`,
-                  image: item.foto_utama_url || item.foto_utama
+                  image: item.foto_utama_url || item.foto_utama || defaultKostImg
                 },
                 location: item.kota || item.alamat || "Indonesia",
                 date: item.created_at ? new Date(item.created_at).toLocaleDateString("id-ID") : "Baru saja",
@@ -115,7 +128,7 @@ export default function VerifikasiPemilik() {
 
         <Pagination 
           currentPage={currentPage}
-          totalPages={1}
+          totalPages={totalPages}
           onPageChange={(page) => setCurrentPage(page)}
         />
       </main>

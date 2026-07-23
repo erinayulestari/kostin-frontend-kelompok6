@@ -4,6 +4,7 @@ import Header from '../../components/owner/Header';
 import BookingRowCard from '../../components/owner/BookingRowCard';
 import ModalDetailBookingOwner from '../../components/owner/ModalDetailBookingOwner';
 import CustomStatusSelect from '../../components/owner/CustomStatusSelect';
+import Pagination from '../../components/Pagination';
 import api from '../../api/api';
 
 import { 
@@ -25,6 +26,9 @@ const Bookings = () => {
   const [bookingsData, setBookingsData] = useState([]);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 5;
 
   const fetchOwnerBookings = async () => {
     setLoading(true);
@@ -43,6 +47,10 @@ const Bookings = () => {
   useEffect(() => {
     fetchOwnerBookings();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, kostFilter]);
 
   const handleCompleteBooking = async (bookingId) => {
     if (!window.confirm("Tandai sewa booking ini sebagai Selesai?")) return;
@@ -75,6 +83,11 @@ const Bookings = () => {
     const matchesKost = kostFilter === 'Semua Kost' || kosName === kostFilter;
     return matchesSearch && matchesStatus && matchesKost;
   });
+
+  const totalPages = Math.ceil(filteredBookings.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentBookings = filteredBookings.slice(indexOfFirstItem, indexOfLastItem);
 
   const StatsHeaderGroup = (
     <div className="header-stats-group">
@@ -161,16 +174,24 @@ const Bookings = () => {
 
             {/* Render List atau Empty Search State */}
             {filteredBookings.length > 0 ? (
-              <div className="bookings-list">
-                {filteredBookings.map(item => (
-                  <BookingRowCard
-                    key={item.id}
-                    booking={item}
-                    onComplete={handleCompleteBooking}
-                    onViewDetail={(b) => setSelectedBooking(b)}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="bookings-list">
+                  {currentBookings.map(item => (
+                    <BookingRowCard
+                      key={item.id}
+                      booking={item}
+                      onComplete={handleCompleteBooking}
+                      onViewDetail={(b) => setSelectedBooking(b)}
+                    />
+                  ))}
+                </div>
+
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => setCurrentPage(page)}
+                />
+              </>
             ) : (
               <div className="empty-booking-state">
                 <div className="empty-icon-box">

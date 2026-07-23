@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 
 import FavoriteHero from "../components/FavoriteHero";
 import FavoriteCard from "../components/FavoriteCard";
+import Pagination from "../components/Pagination";
 import api from "../api/api";
 
 import "../styles/favorite.css";
@@ -11,6 +12,9 @@ import "../styles/favorite.css";
 export default function Favorit() {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 5;
 
   const fetchFavorites = async () => {
     setLoading(true);
@@ -40,6 +44,11 @@ export default function Favorit() {
     }
   };
 
+  const totalPages = Math.ceil(favorites.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentFavorites = favorites.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
     <>
       <Navbar />
@@ -62,15 +71,23 @@ export default function Favorit() {
             </p>
           </div>
         ) : (
-          <div className="favorite-grid">
-            {favorites.map((fav) => (
-              <FavoriteCard
-                key={fav.id || fav.kos_id}
-                favItem={fav}
-                onRemove={handleRemoveFavorite}
-              />
-            ))}
-          </div>
+          <>
+            <div className="favorite-grid">
+              {currentFavorites.map((fav) => (
+                <FavoriteCard
+                  key={fav.id || fav.kos_id}
+                  favItem={fav}
+                  onRemove={handleRemoveFavorite}
+                />
+              ))}
+            </div>
+
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+          </>
         )}
       </section>
 

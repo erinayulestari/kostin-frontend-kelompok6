@@ -37,6 +37,7 @@ import VerifikasiPemilik from "./pages/owner/VerifikasiPemilik";
 import TambahKost from "./pages/owner/TambahKost";
 
 // ======================
+// ======================
 // Import Halaman Super Admin
 // ======================
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -45,6 +46,8 @@ import AdminVerifikasiPemilik from "./pages/admin/VerifikasiPemilik";
 import DetailVerifikasiPemilik from "./pages/admin/DetailVerifikasiPemilik";
 import DataPengguna from "./pages/admin/DataPengguna";
 import Pengaturan from "./pages/admin/Pengaturan";
+import ModerasiUlasan from "./pages/admin/ModerasiUlasan";
+import PencairanDana from "./pages/admin/PencairanDana";
 
 function App() {
   return (
@@ -86,15 +89,19 @@ function App() {
               SUPER ADMIN MODULE
         ======================= */}
 
-        {/* Dedicated Hidden Admin Login Route (Unlinked from public navigation) */}
+        {/* Dedicated Hidden Admin Login Route */}
         <Route path="/superadmin/login" element={<AdminLogin />} />
 
         {/* Protected Super Admin Dashboard Routes */}
         <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/admin/verifikasi-pemilik" element={<ProtectedRoute allowedRoles={['admin']}><AdminVerifikasiPemilik /></ProtectedRoute>} />
-        <Route path="/admin/detail-verifikasi-pemilik" element={<ProtectedRoute allowedRoles={['admin']}><DetailVerifikasiPemilik /></ProtectedRoute>} />
-        <Route path="/admin/data-pengguna" element={<ProtectedRoute allowedRoles={['admin']}><DataPengguna /></ProtectedRoute>} />
         <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><DataPengguna /></ProtectedRoute>} />
+        <Route path="/admin/data-pengguna" element={<ProtectedRoute allowedRoles={['admin']}><DataPengguna /></ProtectedRoute>} />
+        <Route path="/admin/verifikasi-pemilik" element={<ProtectedRoute allowedRoles={['admin']}><AdminVerifikasiPemilik /></ProtectedRoute>} />
+        <Route path="/admin/detail-verifikasi-pemilik/:id" element={<ProtectedRoute allowedRoles={['admin']}><DetailVerifikasiPemilik /></ProtectedRoute>} />
+        <Route path="/admin/detail-verifikasi-pemilik" element={<ProtectedRoute allowedRoles={['admin']}><DetailVerifikasiPemilik /></ProtectedRoute>} />
+        <Route path="/admin/moderasi-ulasan" element={<ProtectedRoute allowedRoles={['admin']}><ModerasiUlasan /></ProtectedRoute>} />
+        <Route path="/admin/pencairan-dana" element={<ProtectedRoute allowedRoles={['admin']}><PencairanDana /></ProtectedRoute>} />
+        <Route path="/admin/profil" element={<ProtectedRoute allowedRoles={['admin']}><Pengaturan /></ProtectedRoute>} />
         <Route path="/admin/pengaturan" element={<ProtectedRoute allowedRoles={['admin']}><Pengaturan /></ProtectedRoute>} />
 
       </Routes>

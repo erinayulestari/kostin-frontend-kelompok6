@@ -14,6 +14,7 @@ export default function CariKost() {
   const [kostList, setKostList] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({
     kota: "",
     tipe: searchParams.get("tipe") || "",
@@ -27,12 +28,18 @@ export default function CariKost() {
     sort: "Terbaru",
   });
 
+  const itemsPerPage = 5;
+
   useEffect(() => {
     const tipeParam = searchParams.get("tipe");
     if (tipeParam) {
       setFilters(prev => ({ ...prev, tipe: tipeParam }));
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
 
   const fetchFavorites = async () => {
     try {
@@ -79,7 +86,7 @@ export default function CariKost() {
       const res = await api.get(`/kos?${queryParams.toString()}`);
       let data = res.data || [];
 
-      // Sorting lokal jika diperlukan
+      // Sorting lokal
       if (filters.sort === "Harga Termurah") {
         data = [...data].sort((a, b) => (parseFloat(a.harga_per_bulan) || 0) - (parseFloat(b.harga_per_bulan) || 0));
       } else if (filters.sort === "Harga Termahal") {
@@ -119,6 +126,11 @@ export default function CariKost() {
     setFilters(resetState);
     fetchKosData();
   };
+
+  const totalPages = Math.ceil(kostList.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentKosts = kostList.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <>
@@ -167,7 +179,7 @@ export default function CariKost() {
               <p style={{ color: "#64748b", marginTop: "8px" }}>Coba ubah kata kunci atau reset filter pencarian Anda.</p>
             </div>
           ) : (
-            kostList.map((kost) => (
+            currentKosts.map((kost) => (
               <KostCardHorizontal
                 key={kost.id}
                 kost={kost}
@@ -177,7 +189,11 @@ export default function CariKost() {
             ))
           )}
 
-          <Pagination />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
         </div>
       </div>
 
