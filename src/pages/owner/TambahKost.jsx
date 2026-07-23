@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Sidebar from "../../components/owner/Sidebar";
 import Header from "../../components/owner/Header";
+import MapPicker from "../../components/owner/MapPicker";
 import api from "../../api/api";
 import "../../styles/owner/dashboard.css";
 import "../../styles/owner/tambah-kost.css";
@@ -373,6 +374,18 @@ export default function TambahKost() {
                     onChange={(e) => setAlamat(e.target.value)}
                     required
                   ></textarea>
+                </div>
+
+                {/* Peta Interaktif - Map Picker */}
+                <div className="form-group">
+                  <label>Lokasi di Peta</label>
+                  <MapPicker
+                    value={{ lat, lng }}
+                    onChange={({ lat: newLat, lng: newLng }) => {
+                      setLat(newLat);
+                      setLng(newLng);
+                    }}
+                  />
                 </div>
               </div>
 
