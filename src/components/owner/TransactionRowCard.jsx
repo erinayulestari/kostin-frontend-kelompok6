@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MoreVertical, FileText, Download, MessageSquare } from 'lucide-react';
 
-const TransactionRowCard = ({ transaction }) => {
+const TransactionRowCard = ({ transaction, onViewDetail, onViewInvoice, onDownloadReceipt }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -16,13 +16,25 @@ const TransactionRowCard = ({ transaction }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleContactTenant = () => {
+    setShowDropdown(false);
+    const phone = transaction.tenantPhone || '';
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    if (cleanPhone) {
+      const formatted = cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone;
+      window.open(`https://wa.me/${formatted}`, '_blank');
+    } else {
+      alert(`Nomor telepon penyewa (${transaction.tenantName}): ${phone || 'Tidak tersedia'}`);
+    }
+  };
+
   // Format ke Rupiah
   const formatRupiah = (number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
       maximumFractionDigits: 0
-    }).format(number);
+    }).format(number || 0);
   };
 
   // Status Badge Mapper
@@ -86,7 +98,15 @@ const TransactionRowCard = ({ transaction }) => {
 
       {/* 7. Action Buttons & Dropdown */}
       <div className="action-container" ref={dropdownRef}>
-        <button className="btn-outline-detail">Lihat Detail</button>
+        <button 
+          className="btn-outline-detail"
+          onClick={() => {
+            if (onViewDetail) onViewDetail(transaction);
+            else if (onViewInvoice) onViewInvoice(transaction);
+          }}
+        >
+          Lihat Detail
+        </button>
 
         <div className="more-dropdown-wrapper">
           <button 
@@ -98,17 +118,9 @@ const TransactionRowCard = ({ transaction }) => {
 
           {showDropdown && (
             <div className="dropdown-action-menu">
-              <div className="menu-item" onClick={() => setShowDropdown(false)}>
+              <div className="menu-item" onClick={() => { setShowDropdown(false); if (onViewInvoice) onViewInvoice(transaction); }}>
                 <FileText size={14} />
                 <span>Lihat Invoice</span>
-              </div>
-              <div className="menu-item" onClick={() => setShowDropdown(false)}>
-                <Download size={14} />
-                <span>Unduh Bukti Pembayaran</span>
-              </div>
-              <div className="menu-item" onClick={() => setShowDropdown(false)}>
-                <MessageSquare size={14} />
-                <span>Hubungi Penyewa</span>
               </div>
             </div>
           )}

@@ -25,7 +25,8 @@ const KostCardDetailed = ({
   emptyRooms, 
   status, 
   image,
-  onDelete
+  onDelete,
+  onViewDetail
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
@@ -41,7 +42,13 @@ const KostCardDetailed = ({
   const handleAction = (action) => {
     setShowDropdown(false);
     if (action === 'detail' && id) {
-      navigate(`/kost/${id}`);
+      if (onViewDetail) {
+        onViewDetail(id);
+      } else {
+        navigate(`/owner/tambah-kost?edit=${id}`);
+      }
+    } else if (action === 'edit' && id) {
+      navigate(`/owner/tambah-kost?edit=${id}`);
     } else if (action === 'delete' && onDelete && id) {
       onDelete(id);
     }
@@ -69,6 +76,7 @@ const KostCardDetailed = ({
         {showDropdown && (
           <div className="card-dropdown-menu">
             <div className="dropdown-item" onClick={() => handleAction('detail')}><EyeIcon size={14} /> Lihat Detail</div>
+            <div className="dropdown-item" onClick={() => handleAction('edit')}><Edit size={14} /> Edit Kost</div>
             <div className="dropdown-item danger" onClick={() => handleAction('delete')}><Trash2 size={14} /> Hapus Kost</div>
           </div>
         )}

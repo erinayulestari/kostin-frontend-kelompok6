@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/owner/Sidebar';
 import Header from '../../components/owner/Header';
+import api from '../../api/api';
 
 import { 
   Calendar, 
@@ -20,14 +21,158 @@ import {
 import '../../styles/owner/dashboard.css';
 import '../../styles/owner/reports.css';
 
-// Import Gambar Local
-import harmoniImg from '../../assets/harmoni.jpeg';
-import melatiImg from '../../assets/melati.jpeg';
-import melati1Img from '../../assets/melati1.jpeg';
-import melati2Img from '../../assets/melati2.jpeg';
+import defaultKostImg from '../../assets/harmoni.jpeg';
 
 const Reports = () => {
   const [periodFilter, setPeriodFilter] = useState('Bulan Ini');
+  const [ownerKosts, setOwnerKosts] = useState([]);
+  const [rawBookings, setRawBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadReportsData() {
+      setLoading(true);
+      try {
+        const [resKosts, resBookings] = await Promise.allSettled([
+          api.get('/owner/kos'),
+          api.get('/bookings')
+        ]);
+        if (resKosts.status === 'fulfilled' && resKosts.value.data) {
+          setOwnerKosts(resKosts.value.data);
+        }
+        if (resBookings.status === 'fulfilled' && resBookings.value.data) {
+          setRawBookings(resBookings.value.data);
+        }
+      } catch (err) {
+        console.error("Gagal mengambil data laporan:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadReportsData();
+  }, []);
+
+  const formatRupiah = (num) => {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num || 0);
+  };
+
+  const totalBooking = rawBookings.length;
+  const getNetRevenue = (b) => {
+    const gross = parseFloat(b.total_harga) || 0;
+    return b.jatah_pemilik !== undefined 
+      ? parseFloat(b.jatah_pemilik) 
+      : (b.pembagian_dana?.jatah_pemilik !== undefined 
+        ? parseFloat(b.pembagian_dana.jatah_pemilik) 
+        : gross * 0.97);
+  };
+
+  const totalPendapatan = rawBookings.reduce((sum, b) => {
+    const s = (b.status || '').toLowerCase();
+    if (s === 'selesai' || s === 'aktif' || s === 'active' || s === 'lunas' || s === 'confirmed') {
+      return sum + getNetRevenue(b);
+    }
+    return sum;
+  }, 0);
+
+  const totalKamar = ownerKosts.reduce((sum, k) => sum + (parseInt(k.jumlah_kamar) || 0), 0);
+  const kamarTerisi = ownerKosts.reduce((sum, k) => sum + (parseInt(k.kamar_terisi) || 0), 0);
+  const occupancyRate = totalKamar > 0 ? Math.round((kamarTerisi / totalKamar) * 100) : 0;
+
+  const totalDurasi = rawBookings.reduce((sum, b) => sum + (parseInt(b.durasi_bulan) || 1), 0);
+  const avgDurasi = rawBookings.length > 0 ? Math.round(totalDurasi / rawBookings.length) : 0;
+
+  // === Hitung data bulanan RIIL dari rawBookings ===
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth(); // 0-indexed
+
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+  // Hitung pendapatan & booking per bulan dari data riil
+  const monthlyRevenue = {};
+  const monthlyBookingCount = {};
+  
+  for (let i = 0; i <= currentMonth; i++) {
+    monthlyRevenue[i] = 0;
+    monthlyBookingCount[i] = 0;
+  }
+
+  rawBookings.forEach(b => {
+    if (!b.created_at) return;
+    const d = new Date(b.created_at);
+    if (d.getFullYear() !== currentYear) return;
+    const m = d.getMonth();
+    
+    // Hitung booking count
+    if (monthlyBookingCount[m] !== undefined) {
+      monthlyBookingCount[m] = (monthlyBookingCount[m] || 0) + 1;
+    }
+
+    // Hitung revenue (hanya booking berhasil)
+    const s = (b.status || '').toLowerCase();
+    if (s === 'selesai' || s === 'aktif' || s === 'active' || s === 'lunas' || s === 'confirmed') {
+      if (monthlyRevenue[m] !== undefined) {
+        monthlyRevenue[m] = (monthlyRevenue[m] || 0) + getNetRevenue(b);
+      }
+    }
+  });
+
+  // Buat array bulan yang ditampilkan (dari Jan sampai bulan sekarang)
+  const displayMonths = [];
+  for (let i = 0; i <= currentMonth; i++) {
+    displayMonths.push({
+      label: monthNames[i],
+      revenue: monthlyRevenue[i] || 0,
+      bookings: monthlyBookingCount[i] || 0
+    });
+  }
+
+  // === Generate SVG Line Chart points dari data riil ===
+  const maxRevenue = Math.max(...displayMonths.map(m => m.revenue), 1);
+  const chartWidth = 500;
+  const chartHeight = 160;
+  const chartPadding = 20;
+  const usableWidth = chartWidth - chartPadding * 2;
+  const usableHeight = chartHeight - 20;
+  
+  const linePoints = displayMonths.map((m, i) => {
+    const x = chartPadding + (displayMonths.length > 1 ? (i / (displayMonths.length - 1)) * usableWidth : usableWidth / 2);
+    const y = chartHeight - chartPadding - ((m.revenue / maxRevenue) * usableHeight);
+    return { x: Math.round(x), y: Math.round(Math.max(10, y)) };
+  });
+
+  const polylineStr = linePoints.map(p => `${p.x},${p.y}`).join(' ');
+  const polygonStr = polylineStr + ` ${linePoints[linePoints.length - 1].x},${chartHeight} ${linePoints[0].x},${chartHeight}`;
+
+  // === Generate Bar Chart heights dari data riil ===
+  const maxBookings = Math.max(...displayMonths.map(m => m.bookings), 1);
+
+  // Performa Per Kos
+  const performaList = ownerKosts.map(k => {
+    const kosBookings = rawBookings.filter(b => (b.kos_id === k.id || b.kos?.id === k.id));
+    const revenue = kosBookings.reduce((sum, b) => {
+      const s = (b.status || '').toLowerCase();
+      if (s === 'selesai' || s === 'aktif' || s === 'active' || s === 'lunas' || s === 'confirmed') {
+        return sum + getNetRevenue(b);
+      }
+      return sum;
+    }, 0);
+    const totalR = parseInt(k.jumlah_kamar) || 1;
+    const filledR = parseInt(k.kamar_terisi) || 0;
+    const occ = Math.round((filledR / totalR) * 100);
+
+    return {
+      id: k.id,
+      name: k.nama_kos,
+      address: `${k.alamat || ''}, ${k.kota || ''}`,
+      image: k.foto_utama_url || k.foto_utama || defaultKostImg,
+      bookingCount: kosBookings.length,
+      revenue,
+      occupancy: occ
+    };
+  });
+
+  // Kos Terlaris (Top 3)
+  const terlarisList = [...performaList].sort((a, b) => b.bookingCount - a.bookingCount).slice(0, 3);
 
   // Header Actions (Dropdown Periode & Tombol Export PDF)
   const HeaderActions = (
@@ -42,7 +187,7 @@ const Reports = () => {
         <ChevronDown size={14} className="arrow" />
       </div>
 
-      <button className="btn-export-pdf">
+      <button className="btn-export-pdf" onClick={() => window.print()}>
         <Download size={15} />
         <span>Export PDF</span>
       </button>
@@ -56,9 +201,9 @@ const Reports = () => {
       <main className="main-content">
         <Header 
           title="Laporan" 
-          subtitle="Lihat performa bisnis kost berdasarkan periode tertentu."
+          subtitle="Lihat performa bisnis kost berdasarkan data riil properti Anda."
           actionButton={HeaderActions}
-          showProfile={false}
+          showProfile={true}
         />
 
         {/* 1. Metric Cards Row */}
@@ -69,10 +214,10 @@ const Reports = () => {
             </div>
             <div className="m-info">
               <span className="m-title">Total Booking</span>
-              <h3 className="m-value">126 Booking</h3>
+              <h3 className="m-value">{totalBooking} Booking</h3>
               <div className="m-trend positive">
                 <TrendingUp size={12} />
-                <span>12.5%</span> <span className="m-sub">dari bulan lalu</span>
+                <span>Real Data</span>
               </div>
             </div>
           </div>
@@ -83,10 +228,10 @@ const Reports = () => {
             </div>
             <div className="m-info">
               <span className="m-title">Pendapatan</span>
-              <h3 className="m-value">Rp45.800.000</h3>
+              <h3 className="m-value">{formatRupiah(totalPendapatan)}</h3>
               <div className="m-trend positive">
                 <TrendingUp size={12} />
-                <span>18.7%</span> <span className="m-sub">dari bulan lalu</span>
+                <span>Real Data</span>
               </div>
             </div>
           </div>
@@ -97,10 +242,10 @@ const Reports = () => {
             </div>
             <div className="m-info">
               <span className="m-title">Tingkat Okupansi</span>
-              <h3 className="m-value">86%</h3>
+              <h3 className="m-value">{occupancyRate}%</h3>
               <div className="m-trend positive">
                 <TrendingUp size={12} />
-                <span>8.4%</span> <span className="m-sub">dari bulan lalu</span>
+                <span>Real Data</span>
               </div>
             </div>
           </div>
@@ -111,10 +256,10 @@ const Reports = () => {
             </div>
             <div className="m-info">
               <span className="m-title">Rata-rata Durasi Sewa</span>
-              <h3 className="m-value">8 Bulan</h3>
+              <h3 className="m-value">{avgDurasi} Bulan</h3>
               <div className="m-trend positive">
                 <TrendingUp size={12} />
-                <span>0.5 bulan</span> <span className="m-sub">dari bulan lalu</span>
+                <span>Real Data</span>
               </div>
             </div>
           </div>
@@ -122,20 +267,12 @@ const Reports = () => {
 
         {/* 2. Charts Section Row */}
         <div className="charts-grid-container">
-          {/* Perkembangan Pendapatan (Line Chart) */}
+          {/* Perkembangan Pendapatan (Line Chart - Data Riil) */}
           <div className="chart-card">
             <div className="chart-card-header">
               <h3>Perkembangan Pendapatan</h3>
-              <div className="mini-select">
-                <select defaultValue="Bulan Ini">
-                  <option value="Bulan Ini">Bulan Ini</option>
-                  <option value="Tahun Ini">Tahun Ini</option>
-                </select>
-                <ChevronDown size={12} />
-              </div>
             </div>
             <div className="line-chart-placeholder">
-              {/* SVG Graphic Line Chart Simulation */}
               <svg viewBox="0 0 500 180" className="svg-chart">
                 <defs>
                   <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
@@ -143,69 +280,59 @@ const Reports = () => {
                     <stop offset="100%" stopColor="#0066ff" stopOpacity="0.0" />
                   </linearGradient>
                 </defs>
-                {/* Grid Lines */}
                 <line x1="0" y1="30" x2="500" y2="30" stroke="#f1f5f9" strokeDasharray="3 3" />
                 <line x1="0" y1="70" x2="500" y2="70" stroke="#f1f5f9" strokeDasharray="3 3" />
                 <line x1="0" y1="110" x2="500" y2="110" stroke="#f1f5f9" strokeDasharray="3 3" />
                 <line x1="0" y1="150" x2="500" y2="150" stroke="#f1f5f9" strokeDasharray="3 3" />
 
-                {/* Area Under Line */}
-                <polygon points="20,130 90,105 160,95 230,60 300,85 370,45 450,55 450,160 20,160" fill="url(#chartGrad)" />
-                
-                {/* Main Line */}
-                <polyline 
-                  fill="none" 
-                  stroke="#0066ff" 
-                  strokeWidth="3" 
-                  points="20,130 90,105 160,95 230,60 300,85 370,45 450,55" 
-                />
+                {linePoints.length > 1 && (
+                  <>
+                    <polygon points={polygonStr} fill="url(#chartGrad)" />
+                    <polyline 
+                      fill="none" 
+                      stroke="#0066ff" 
+                      strokeWidth="3" 
+                      points={polylineStr} 
+                    />
+                  </>
+                )}
 
-                {/* Points */}
-                <circle cx="20" cy="130" r="4" fill="#0066ff" />
-                <circle cx="90" cy="105" r="4" fill="#0066ff" />
-                <circle cx="160" cy="95" r="4" fill="#0066ff" />
-                <circle cx="230" cy="60" r="5" fill="#0066ff" stroke="#fff" strokeWidth="2" />
-                <circle cx="300" cy="85" r="4" fill="#0066ff" />
-                <circle cx="370" cy="45" r="4" fill="#0066ff" />
-                <circle cx="450" cy="55" r="4" fill="#0066ff" />
-
-                {/* Tooltip Simulation on April */}
-                <g transform="translate(185, 20)">
-                  <rect width="90" height="34" rx="6" fill="#ffffff" filter="drop-shadow(0px 4px 8px rgba(0,0,0,0.08))" />
-                  <text x="12" y="14" fontSize="9" fill="#64748b" fontWeight="500">Apr</text>
-                  <text x="12" y="26" fontSize="10" fill="#0f172a" fontWeight="700">Rp45.200.000</text>
-                </g>
+                {linePoints.map((p, i) => (
+                  <circle key={i} cx={p.x} cy={p.y} r={4} fill="#0066ff" />
+                ))}
               </svg>
               <div className="chart-months">
-                <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>Mei</span><span>Jun</span><span>Jul</span>
+                {displayMonths.map((m, i) => (
+                  <span key={i}>{m.label}</span>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Booking per Bulan (Bar Chart) */}
+          {/* Booking per Bulan (Bar Chart - Data Riil) */}
           <div className="chart-card">
             <div className="chart-card-header">
               <h3>Booking per Bulan</h3>
-              <div className="mini-select">
-                <select defaultValue="Bulan Ini">
-                  <option value="Bulan Ini">Bulan Ini</option>
-                  <option value="Tahun Ini">Tahun Ini</option>
-                </select>
-                <ChevronDown size={12} />
-              </div>
             </div>
             <div className="bar-chart-placeholder">
               <div className="bar-group">
-                <div className="bar-column"><div className="bar-fill" style={{ height: '42%' }}><span className="bar-tooltip">42</span></div></div>
-                <div className="bar-column"><div className="bar-fill" style={{ height: '56%' }}><span className="bar-tooltip">56</span></div></div>
-                <div className="bar-column"><div className="bar-fill" style={{ height: '68%' }}><span className="bar-tooltip">68</span></div></div>
-                <div className="bar-column"><div className="bar-fill" style={{ height: '82%' }}><span className="bar-tooltip">82</span></div></div>
-                <div className="bar-column"><div className="bar-fill" style={{ height: '74%' }}><span className="bar-tooltip">74</span></div></div>
-                <div className="bar-column"><div className="bar-fill" style={{ height: '90%' }}><span className="bar-tooltip">90</span></div></div>
-                <div className="bar-column"><div className="bar-fill" style={{ height: '76%' }}><span className="bar-tooltip">76</span></div></div>
+                {displayMonths.map((m, i) => {
+                  const heightPct = maxBookings > 0 
+                    ? Math.max(m.bookings > 0 ? 8 : 2, (m.bookings / maxBookings) * 90) 
+                    : 2;
+                  return (
+                    <div className="bar-column" key={i}>
+                      <div className="bar-fill" style={{ height: `${heightPct}%` }}>
+                        <span className="bar-tooltip">{m.bookings}</span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               <div className="chart-months">
-                <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>Mei</span><span>Jun</span><span>Jul</span>
+                {displayMonths.map((m, i) => (
+                  <span key={i}>{m.label}</span>
+                ))}
               </div>
             </div>
           </div>
@@ -217,96 +344,37 @@ const Reports = () => {
           <div className="bottom-card performa-card">
             <div className="b-card-header">
               <h3>Performa Setiap Kost</h3>
-              <button className="btn-link">Lihat Semua</button>
             </div>
             <div className="performa-list">
-              <div className="performa-item">
-                <img src={harmoniImg} alt="Kost Harmoni" />
-                <div className="p-details">
-                  <h4 className="p-name">Kost Harmoni Residence</h4>
-                  <p className="p-address">Jl. Kaliurang Km 5, Sleman</p>
-                </div>
-                <div className="p-stats">
-                  <div className="p-stat-col">
-                    <span className="p-label">Booking</span>
-                    <span className="p-val">48</span>
+              {loading ? (
+                <p>Memuat data performa kos...</p>
+              ) : performaList.length === 0 ? (
+                <p style={{ color: "#64748b" }}>Belum ada kos terdaftar.</p>
+              ) : (
+                performaList.map(item => (
+                  <div className="performa-item" key={item.id}>
+                    <img src={item.image} alt={item.name} onError={(e) => { e.target.src = defaultKostImg; }} />
+                    <div className="p-details">
+                      <h4 className="p-name">{item.name}</h4>
+                      <p className="p-address">{item.address}</p>
+                    </div>
+                    <div className="p-stats">
+                      <div className="p-stat-col">
+                        <span className="p-label">Booking</span>
+                        <span className="p-val">{item.bookingCount}</span>
+                      </div>
+                      <div className="p-stat-col">
+                        <span className="p-label">Pendapatan</span>
+                        <span className="p-val bold">{formatRupiah(item.revenue)}</span>
+                      </div>
+                      <div className="p-stat-col">
+                        <span className="p-label">Okupansi</span>
+                        <span className="p-val green">{item.occupancy}%</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-stat-col">
-                    <span className="p-label">Pendapatan</span>
-                    <span className="p-val bold">Rp18.600.000</span>
-                  </div>
-                  <div className="p-stat-col">
-                    <span className="p-label">Okupansi</span>
-                    <span className="p-val green">92%</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="performa-item">
-                <img src={melati1Img} alt="Kost Putri Alifia" />
-                <div className="p-details">
-                  <h4 className="p-name">Kost Putri Alifia</h4>
-                  <p className="p-address">Jl. Seturan Raya No. 12, Depok</p>
-                </div>
-                <div className="p-stats">
-                  <div className="p-stat-col">
-                    <span className="p-label">Booking</span>
-                    <span className="p-val">36</span>
-                  </div>
-                  <div className="p-stat-col">
-                    <span className="p-label">Pendapatan</span>
-                    <span className="p-val bold">Rp12.400.000</span>
-                  </div>
-                  <div className="p-stat-col">
-                    <span className="p-label">Okupansi</span>
-                    <span className="p-val green">88%</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="performa-item">
-                <img src={melati2Img} alt="Kost Green House" />
-                <div className="p-details">
-                  <h4 className="p-name">Kost Green House</h4>
-                  <p className="p-address">Jl. Gejayan No. 45, Sleman</p>
-                </div>
-                <div className="p-stats">
-                  <div className="p-stat-col">
-                    <span className="p-label">Booking</span>
-                    <span className="p-val">28</span>
-                  </div>
-                  <div className="p-stat-col">
-                    <span className="p-label">Pendapatan</span>
-                    <span className="p-val bold">Rp8.900.000</span>
-                  </div>
-                  <div className="p-stat-col">
-                    <span className="p-label">Okupansi</span>
-                    <span className="p-val orange">78%</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="performa-item">
-                <img src={melatiImg} alt="Kost Melati" />
-                <div className="p-details">
-                  <h4 className="p-name">Kost Melati</h4>
-                  <p className="p-address">Jl. Palagan Tentara Pelajar No. 88, Sleman</p>
-                </div>
-                <div className="p-stats">
-                  <div className="p-stat-col">
-                    <span className="p-label">Booking</span>
-                    <span className="p-val">14</span>
-                  </div>
-                  <div className="p-stat-col">
-                    <span className="p-label">Pendapatan</span>
-                    <span className="p-val bold">Rp5.900.000</span>
-                  </div>
-                  <div className="p-stat-col">
-                    <span className="p-label">Okupansi</span>
-                    <span className="p-val orange">64%</span>
-                  </div>
-                </div>
-              </div>
+                ))
+              )}
             </div>
           </div>
 
@@ -314,44 +382,27 @@ const Reports = () => {
           <div className="bottom-card terlaris-card">
             <div className="b-card-header">
               <h3>Kost Terlaris</h3>
-              <button className="btn-link">Lihat Semua</button>
             </div>
             <div className="terlaris-list">
-              <div className="terlaris-item">
-                <span className="rank-badge rank-1">1</span>
-                <img src={harmoniImg} alt="Kost Harmoni" />
-                <div className="t-info">
-                  <h4>Kost Harmoni Residence</h4>
-                  <div className="t-sub">
-                    <span>48 Booking</span>
-                    <span className="t-price">Rp18.600.000</span>
+              {loading ? (
+                <p>Memuat data kos terlaris...</p>
+              ) : terlarisList.length === 0 ? (
+                <p style={{ color: "#64748b" }}>Belum ada kos terdaftar.</p>
+              ) : (
+                terlarisList.map((item, idx) => (
+                  <div className="terlaris-item" key={item.id}>
+                    <span className={`rank-badge rank-${idx + 1}`}>{idx + 1}</span>
+                    <img src={item.image} alt={item.name} onError={(e) => { e.target.src = defaultKostImg; }} />
+                    <div className="t-info">
+                      <h4>{item.name}</h4>
+                      <div className="t-sub">
+                        <span>{item.bookingCount} Booking</span>
+                        <span className="t-price">{formatRupiah(item.revenue)}</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-
-              <div className="terlaris-item">
-                <span className="rank-badge rank-2">2</span>
-                <img src={melati1Img} alt="Kost Putri Alifia" />
-                <div className="t-info">
-                  <h4>Kost Putri Alifia</h4>
-                  <div className="t-sub">
-                    <span>36 Booking</span>
-                    <span className="t-price">Rp12.400.000</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="terlaris-item">
-                <span className="rank-badge rank-3">3</span>
-                <img src={melati2Img} alt="Kost Green House" />
-                <div className="t-info">
-                  <h4>Kost Green House</h4>
-                  <div className="t-sub">
-                    <span>28 Booking</span>
-                    <span className="t-price">Rp8.900.000</span>
-                  </div>
-                </div>
-              </div>
+                ))
+              )}
             </div>
           </div>
 
@@ -359,63 +410,48 @@ const Reports = () => {
           <div className="bottom-card aktivitas-card">
             <div className="b-card-header">
               <h3>Aktivitas Terbaru</h3>
-              <button className="btn-link">Lihat Semua</button>
             </div>
             <div className="aktivitas-list">
-              <div className="aktivitas-item">
-                <div className="act-icon green">
-                  <CalendarCheck size={16} color="#10b981" />
-                </div>
-                <div className="act-info">
-                  <h4>Booking baru diterima</h4>
-                  <p>Kost Melati – Nadia Putri</p>
-                </div>
-                <span className="act-time">10 menit yang lalu</span>
-              </div>
+              {loading ? (
+                <p>Memuat aktivitas...</p>
+              ) : rawBookings.length === 0 ? (
+                <p style={{ color: "#64748b" }}>Belum ada aktivitas booking.</p>
+              ) : (
+                rawBookings.slice(0, 5).map(b => {
+                  const userObj = b.user || {};
+                  const kosObj = b.kos || {};
+                  const statusStr = (b.status || '').toLowerCase();
+                  
+                  let icon = <CalendarCheck size={16} color="#10b981" />;
+                  let iconClass = 'green';
+                  let text = 'Booking masuk';
 
-              <div className="aktivitas-item">
-                <div className="act-icon blue">
-                  <CheckCircle2 size={16} color="#0066ff" />
-                </div>
-                <div className="act-info">
-                  <h4>Pembayaran berhasil</h4>
-                  <p>Kost Harmoni Residence – Rizky Pratama</p>
-                </div>
-                <span className="act-time">2 jam yang lalu</span>
-              </div>
+                  if (statusStr === 'selesai' || statusStr === 'lunas') {
+                    icon = <CheckCircle2 size={16} color="#0066ff" />;
+                    iconClass = 'blue';
+                    text = 'Booking selesai / lunas';
+                  } else if (statusStr === 'dibatalkan') {
+                    icon = <XCircle size={16} color="#ef4444" />;
+                    iconClass = 'red';
+                    text = 'Booking dibatalkan';
+                  }
 
-              <div className="aktivitas-item">
-                <div className="act-icon orange">
-                  <Clock3 size={16} color="#f59e0b" />
-                </div>
-                <div className="act-info">
-                  <h4>Booking diperpanjang</h4>
-                  <p>Kost Putri Alifia – Siti Aisyah</p>
-                </div>
-                <span className="act-time">5 jam yang lalu</span>
-              </div>
-
-              <div className="aktivitas-item">
-                <div className="act-icon gray">
-                  <UserCheck size={16} color="#64748b" />
-                </div>
-                <div className="act-info">
-                  <h4>Penyewa check-out</h4>
-                  <p>Kost Green House – Andi Wijaya</p>
-                </div>
-                <span className="act-time">Kemarin, 11:30</span>
-              </div>
-
-              <div className="aktivitas-item">
-                <div className="act-icon red">
-                  <XCircle size={16} color="#ef4444" />
-                </div>
-                <div className="act-info">
-                  <h4>Booking dibatalkan</h4>
-                  <p>Kost Melati – Dimas Saputra</p>
-                </div>
-                <span className="act-time">Kemarin, 09:15</span>
-              </div>
+                  return (
+                    <div className="aktivitas-item" key={b.id}>
+                      <div className={`act-icon ${iconClass}`}>
+                        {icon}
+                      </div>
+                      <div className="act-info">
+                        <h4>{text}</h4>
+                        <p>{kosObj.nama_kos || 'Kost'} – {userObj.nama || 'Penyewa'}</p>
+                      </div>
+                      <span className="act-time">
+                        {b.created_at ? new Date(b.created_at).toLocaleDateString('id-ID') : '-'}
+                      </span>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         </div>

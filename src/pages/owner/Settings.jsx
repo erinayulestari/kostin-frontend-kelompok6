@@ -1,22 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/owner/Sidebar';
 import Header from '../../components/owner/Header';
 import SettingsCard from '../../components/owner/SettingsCard';
 import ToggleSwitch from '../../components/owner/ToggleSwitch';
+import { useAuth } from '../../context/AuthContext';
+import api from '../../api/api';
 
 import { 
   CalendarCheck, 
   Wallet, 
   XCircle, 
   Megaphone, 
-  Sun, 
-  ChevronDown 
+  User,
+  Save,
+  CheckCircle2
 } from 'lucide-react';
 
 import '../../styles/owner/dashboard.css';
 import '../../styles/owner/settings.css';
 
 const Settings = () => {
+  const { user, updateProfile } = useAuth();
+
+  const [nama, setNama] = useState(user?.nama || '');
+  const [noHp, setNoHp] = useState(user?.no_hp || '');
+  const [namaBank, setNamaBank] = useState(user?.nama_bank || '');
+  const [nomorRekening, setNomorRekening] = useState(user?.nomor_rekening || '');
+  const [namaPemilikRekening, setNamaPemilikRekening] = useState(user?.nama_pemilik_rekening || '');
+  
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+
   const [notifications, setNotifications] = useState({
     bookingBaru: true,
     pembayaranBerhasil: true,
@@ -24,8 +39,44 @@ const Settings = () => {
     promoInformasi: true,
   });
 
-  const [language, setLanguage] = useState('Indonesia');
-  const [theme, setTheme] = useState('Light');
+  useEffect(() => {
+    if (user) {
+      setNama(user.nama || '');
+      setNoHp(user.no_hp || '');
+      setNamaBank(user.nama_bank || '');
+      setNomorRekening(user.nomor_rekening || '');
+      setNamaPemilikRekening(user.nama_pemilik_rekening || '');
+    }
+  }, [user]);
+
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setMessage('');
+    setError('');
+
+    try {
+      const res = await api.put('/profile', {
+        nama,
+        no_hp: noHp,
+        nama_bank: namaBank,
+        nomor_rekening: nomorRekening,
+        nama_pemilik_rekening: namaPemilikRekening,
+      });
+
+      if (res.success && res.data) {
+        updateProfile(res.data);
+        setMessage('Profil berhasil diperbarui!');
+      } else {
+        setMessage('Profil berhasil diperbarui!');
+      }
+    } catch (err) {
+      console.error('Gagal update profile:', err);
+      setError(err.message || 'Gagal memperbarui profil');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleToggle = (key) => {
     setNotifications((prev) => ({
@@ -41,35 +92,94 @@ const Settings = () => {
       <main className="main-content">
         <Header 
           title="Pengaturan" 
-          subtitle="Kelola keamanan akun dan preferensi dashboard Anda."
+          subtitle="Kelola profil, pencairan dana, dan preferensi akun Anda."
           showProfile={false}
         />
 
         <div className="settings-wrapper">
-          {/* 1. Keamanan Akun */}
+          {/* 1. Informasi Profil & Rekening */}
           <SettingsCard 
-            title="Keamanan Akun" 
-            subtitle="Kelola informasi login akun Anda."
+            title="Informasi Profil & Rekening" 
+            subtitle="Kelola nama, kontak, dan informasi rekening pencairan dana sewa."
           >
-            <div className="s-card-body">
+            <form onSubmit={handleSaveProfile} className="s-card-body">
+              {message && (
+                <div style={{ color: '#16a34a', backgroundColor: '#dcfce7', padding: '10px 14px', borderRadius: '8px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <CheckCircle2 size={16} /> {message}
+                </div>
+              )}
+              {error && (
+                <div style={{ color: '#ef4444', backgroundColor: '#fee2e2', padding: '10px 14px', borderRadius: '8px', fontSize: '13px' }}>
+                  {error}
+                </div>
+              )}
+
               <div className="s-row">
                 <div className="s-label">Email</div>
-                <div className="s-value">owner@email.com</div>
+                <div className="s-value" style={{ fontWeight: 600, color: '#334155' }}>{user?.email || 'owner@email.com'}</div>
               </div>
 
-              <div className="s-row align-center">
-                <div className="s-label">Password</div>
-                <div className="s-value-group">
-                  <span className="dots-password">••••••••••••••</span>
-                  <p className="s-hint">
-                    Gunakan password yang kuat dan ubah secara berkala untuk menjaga keamanan akun.
-                  </p>
-                </div>
-                <button className="btn-outline-blue">
-                  Ubah Password
+              <div className="s-row">
+                <div className="s-label">Nama Lengkap</div>
+                <input 
+                  type="text" 
+                  value={nama} 
+                  onChange={(e) => setNama(e.target.value)} 
+                  required 
+                  style={{ width: '100%', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                />
+              </div>
+
+              <div className="s-row">
+                <div className="s-label">Nomor Telepon</div>
+                <input 
+                  type="text" 
+                  value={noHp} 
+                  onChange={(e) => setNoHp(e.target.value)} 
+                  placeholder="08xxxxxxxxxx"
+                  style={{ width: '100%', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                />
+              </div>
+
+              <div className="s-row">
+                <div className="s-label">Nama Bank</div>
+                <input 
+                  type="text" 
+                  value={namaBank} 
+                  onChange={(e) => setNamaBank(e.target.value)} 
+                  placeholder="BCA, Mandiri, BRI, dll."
+                  style={{ width: '100%', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                />
+              </div>
+
+              <div className="s-row">
+                <div className="s-label">Nomor Rekening</div>
+                <input 
+                  type="text" 
+                  value={nomorRekening} 
+                  onChange={(e) => setNomorRekening(e.target.value)} 
+                  placeholder="Masukkan nomor rekening"
+                  style={{ width: '100%', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                />
+              </div>
+
+              <div className="s-row">
+                <div className="s-label">Nama Pemilik Rekening</div>
+                <input 
+                  type="text" 
+                  value={namaPemilikRekening} 
+                  onChange={(e) => setNamaPemilikRekening(e.target.value)} 
+                  placeholder="Nama sesuai buku tabungan"
+                  style={{ width: '100%', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                />
+              </div>
+
+              <div style={{ textAlign: 'right', marginTop: '12px' }}>
+                <button type="submit" className="btn-primary-add" style={{ padding: '8px 20px' }} disabled={saving}>
+                  <Save size={16} /> {saving ? 'Simpan...' : 'Simpan Profil'}
                 </button>
               </div>
-            </div>
+            </form>
           </SettingsCard>
 
           {/* 2. Notifikasi */}
@@ -132,46 +242,6 @@ const Settings = () => {
                   checked={notifications.promoInformasi} 
                   onChange={() => handleToggle('promoInformasi')} 
                 />
-              </div>
-            </div>
-          </SettingsCard>
-
-          {/* 3. Preferensi Dashboard */}
-          <SettingsCard title="Preferensi Dashboard">
-            <div className="s-card-body">
-              <div className="s-row align-center border-bottom">
-                <div className="s-label">Bahasa</div>
-                <div className="s-select-box">
-                  <span className="flag-icon">🇮🇩</span>
-                  <select 
-                    value={language} 
-                    onChange={(e) => setLanguage(e.target.value)}
-                  >
-                    <option value="Indonesia">Indonesia</option>
-                    <option value="English">English</option>
-                  </select>
-                  <ChevronDown size={14} className="arrow" />
-                </div>
-              </div>
-
-              <div className="s-row align-center">
-                <div className="s-label">Tema</div>
-                <div className="s-value-group">
-                  <div className="s-select-box">
-                    <Sun size={15} color="#64748b" />
-                    <select 
-                      value={theme} 
-                      onChange={(e) => setTheme(e.target.value)}
-                    >
-                      <option value="Light">Light</option>
-                      <option value="Dark">Dark</option>
-                    </select>
-                    <ChevronDown size={14} className="arrow" />
-                  </div>
-                  <p className="s-hint mt-2">
-                    Tema akan diterapkan pada seluruh dashboard.
-                  </p>
-                </div>
               </div>
             </div>
           </SettingsCard>

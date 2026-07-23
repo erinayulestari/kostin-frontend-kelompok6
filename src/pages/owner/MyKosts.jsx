@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/owner/Sidebar';
 import Header from '../../components/owner/Header';
 import KostCardDetailed from '../../components/owner/KostCardDetailed';
+import ModalDetailKostOwner from '../../components/owner/ModalDetailKostOwner';
+import CustomStatusSelect from '../../components/owner/CustomStatusSelect';
 import api from '../../api/api';
 
 import { Plus, Search, Building2, ChevronDown } from 'lucide-react';
@@ -14,6 +16,7 @@ const MyKosts = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('Semua');
   const [myKostsData, setMyKostsData] = useState([]);
+  const [selectedKosId, setSelectedKosId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchOwnerKosts = async () => {
@@ -78,33 +81,18 @@ const MyKosts = () => {
           </div>
         ) : myKostsData.length > 0 ? (
           <>
-            {/* Bar Filter & Search */}
-            <div className="filter-bar">
-              <div className="search-input-wrapper">
-                <Search size={18} color="#94a3b8" />
-                <input 
-                  type="text" 
-                  placeholder="Cari nama kost..." 
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-
-              <div className="filter-actions-group">
-                <div className="select-wrapper">
-                  <span className="select-label">Status</span>
-                  <select 
-                    value={statusFilter} 
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                  >
-                    <option value="Semua">Semua</option>
-                    <option value="aktif">Aktif</option>
-                    <option value="pending">Pending</option>
-                    <option value="penuh">Penuh</option>
-                  </select>
-                  <ChevronDown size={14} className="select-arrow" />
-                </div>
-              </div>
+            {/* Bar Filter Status Custom */}
+            <div className="filter-bar" style={{ justifyContent: 'flex-end', marginBottom: '24px' }}>
+              <CustomStatusSelect
+                value={statusFilter}
+                onChange={(val) => setStatusFilter(val)}
+                options={[
+                  { label: 'Semua', value: 'Semua' },
+                  { label: 'Aktif', value: 'aktif' },
+                  { label: 'Pending', value: 'pending' },
+                  { label: 'Penuh', value: 'penuh' },
+                ]}
+              />
             </div>
 
             {/* List Properti / Hasil Filter */}
@@ -131,6 +119,7 @@ const MyKosts = () => {
                       status={kost.status}
                       image={kost.foto_utama_url || kost.foto_utama}
                       onDelete={handleDeleteKost}
+                      onViewDetail={(id) => setSelectedKosId(id)}
                     />
                   );
                 })}
@@ -150,6 +139,14 @@ const MyKosts = () => {
               <span>Tambah Kost Sekarang</span>
             </button>
           </div>
+        )}
+
+        {/* Modal Detail Kost Owner */}
+        {selectedKosId && (
+          <ModalDetailKostOwner 
+            kosId={selectedKosId} 
+            onClose={() => setSelectedKosId(null)} 
+          />
         )}
       </main>
     </div>
