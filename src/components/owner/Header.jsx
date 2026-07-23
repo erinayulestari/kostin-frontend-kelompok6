@@ -1,8 +1,24 @@
-import React from 'react';
-import { Bell, ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
+import { ChevronDown, User, Settings, LogOut } from 'lucide-react';
 import avatarImg from '../../assets/avatar.jpg';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import '../../styles/navbar.css';
 
 const Header = ({ title = "Dashboard", subtitle, showProfile = true }) => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [openDropdown, setOpenDropdown] = useState(false);
+
+  const userName = user?.nama || user?.email || "Pemilik Kost";
+  const userAvatar = user?.foto_profil_url || avatarImg;
+
+  const handleLogout = async () => {
+    setOpenDropdown(false);
+    await logout();
+    navigate('/login');
+  };
+
   return (
     <header style={{
       display: 'flex',
@@ -24,69 +40,51 @@ const Header = ({ title = "Dashboard", subtitle, showProfile = true }) => {
         )}
       </div>
 
-      {/* Sisi Kanan: Notifikasi & Profil */}
+      {/* Sisi Kanan: Profil Dropdown (Sesuai Tampilan Halaman Pencari) */}
       {showProfile && (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '20px'
-        }}>
-          {/* Tombol Lonceng Notifikasi */}
-          <button 
-            type="button" 
-            style={{
-              position: 'relative',
-              background: '#ffffff',
-              border: '1px solid #e2e8f0',
-              borderRadius: '10px',
-              width: '40px',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              padding: 0
-            }}
-          >
-            <Bell size={20} color="#64748b" />
-            {/* Badge Angka Notifikasi */}
-            <span style={{
-              position: 'absolute',
-              top: '-4px',
-              right: '-4px',
-              backgroundColor: '#ef4444',
-              color: '#ffffff',
-              fontSize: '11px',
-              fontWeight: 'bold',
-              borderRadius: '999px',
-              padding: '2px 6px',
-              lineHeight: 1
-            }}>
-              3
-            </span>
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div className="profile-wrapper">
+            <button
+              className="profile-btn"
+              onClick={() => setOpenDropdown(!openDropdown)}
+              type="button"
+            >
+              <img 
+                src={userAvatar} 
+                alt={userName} 
+                onError={(e) => { e.target.src = avatarImg; }}
+              />
+              <span>{userName}</span>
+              <ChevronDown
+                size={18}
+                className={openDropdown ? "rotate" : ""}
+              />
+            </button>
 
-          {/* Area Profil User */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            cursor: 'pointer'
-          }}>
-            <img 
-              src={avatarImg} 
-              alt="Profile Avatar" 
-              style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                objectFit: 'cover'
-              }} 
-            />
-            <span style={{ fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
-              Budi Santoso
-            </span>
-            <ChevronDown size={16} color="#64748b" />
+            {openDropdown && (
+              <div className="profile-dropdown">
+                <button
+                  className="dropdown-item"
+                  onClick={() => {
+                    setOpenDropdown(false);
+                    navigate('/owner/pengaturan');
+                  }}
+                >
+                  <User size={18} />
+                  <span>Pengaturan Profil</span>
+                </button>
+
+                <div className="dropdown-divider"></div>
+
+                <button
+                  className="dropdown-item logout"
+                  onClick={handleLogout}
+                >
+                  <LogOut size={18} />
+                  <span>Keluar</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

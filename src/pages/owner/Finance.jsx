@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/owner/Sidebar';
 import Header from '../../components/owner/Header';
 import TransactionRowCard from '../../components/owner/TransactionRowCard';
+import CustomSelect from '../../components/owner/CustomSelect';
+import ModalInvoiceOwner from '../../components/owner/ModalInvoiceOwner';
+import ModalDetailBookingOwner from '../../components/owner/ModalDetailBookingOwner';
+import api from '../../api/api';
 
 import { 
   Search, 
@@ -11,7 +15,8 @@ import {
   Receipt, 
   Clock, 
   CheckCircle2, 
-  Inbox
+  Inbox,
+  Info
 } from 'lucide-react';
 
 import '../../styles/owner/dashboard.css';
@@ -20,89 +25,92 @@ import '../../styles/owner/finance.css';
 // Import Gambar Local
 import avatarImg from '../../assets/avatar.jpg';
 import harmoniImg from '../../assets/harmoni.jpeg';
-import melatiImg from '../../assets/melati.jpeg';
-import melati1Img from '../../assets/melati1.jpeg';
-import melati2Img from '../../assets/melati2.jpeg';
 
 const Finance = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('Semua');
   const [kostFilter, setKostFilter] = useState('Semua Kost');
   const [periodFilter, setPeriodFilter] = useState('Bulan Ini');
+  const [rawBookings, setRawBookings] = useState([]);
+  const [ownerKosts, setOwnerKosts] = useState([]);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Master Data Transaksi Keuangan
-  const [transactionsData] = useState([
-    {
-      id: 1,
-      tenantName: 'Siti Aisyah',
-      tenantPhone: '0813 9876 5432',
-      tenantAvatar: avatarImg,
-      kostName: 'Kost Putri Alifia',
-      kostLocation: 'Jl. Seturan Raya No. 12, Depok',
-      kostImage: melati1Img,
-      invoiceCode: 'INV-2505-00125',
-      date: '25 Mei 2024',
-      paymentMethod: 'Transfer Bank BCA',
-      amount: 1300000,
-      status: 'Berhasil'
-    },
-    {
-      id: 2,
-      tenantName: 'Rizky Pratama',
-      tenantPhone: '0812 3456 7890',
-      tenantAvatar: avatarImg,
-      kostName: 'Kost Harmoni Residence',
-      kostLocation: 'Jl. Kaliurang Km 5, Sleman',
-      kostImage: harmoniImg,
-      invoiceCode: 'INV-2505-00124',
-      date: '24 Mei 2024',
-      paymentMethod: 'Virtual Account BRI',
-      amount: 1500000,
-      status: 'Menunggu Pembayaran'
-    },
-    {
-      id: 3,
-      tenantName: 'Andi Wijaya',
-      tenantPhone: '0857 1122 3344',
-      tenantAvatar: avatarImg,
-      kostName: 'Kost Green House',
-      kostLocation: 'Jl. Gejayan No. 45, Sleman',
-      kostImage: melati2Img,
-      invoiceCode: 'INV-2505-00123',
-      date: '22 Mei 2024',
-      paymentMethod: 'Transfer Bank Mandiri',
-      amount: 1200000,
-      status: 'Berhasil'
-    },
-    {
-      id: 4,
-      tenantName: 'Nadia Putri',
-      tenantPhone: '0896 5566 7788',
-      tenantAvatar: avatarImg,
-      kostName: 'Kost Melati',
-      kostLocation: 'Jl. Palagan Tentara Pelajar No. 88, Sleman',
-      kostImage: melatiImg,
-      invoiceCode: 'INV-2505-00122',
-      date: '20 Mei 2024',
-      paymentMethod: 'E-Wallet OVO',
-      amount: 950000,
-      status: 'Gagal'
-    },
-    {
-      id: 5,
-      tenantName: 'Dimas Saputra',
-      tenantPhone: '0812 7788 9900',
-      tenantAvatar: avatarImg,
-      kostName: 'Kost Kencana',
-      kostLocation: 'Jl. Magelang Km 7, Sleman',
-      kostImage: harmoniImg,
-      invoiceCode: 'INV-2505-00121',
-      date: '19 Mei 2024',
-      paymentMethod: 'Transfer Bank BCA',
-      amount: 1100000,
-      status: 'Refund'
+  useEffect(() => {
+    async function loadFinanceData() {
+      setLoading(true);
+      try {
+        const [resBookings, resKosts] = await Promise.allSettled([
+          api.get('/bookings'),
+          api.get('/owner/kos')
+        ]);
+        if (resBookings.status === 'fulfilled' && resBookings.value.data) {
+          setRawBookings(resBookings.value.data);
+        }
+        if (resKosts.status === 'fulfilled' && resKosts.value.data) {
+          setOwnerKosts(resKosts.value.data);
+        }
+      } catch (err) {
+        console.error("Gagal mengambil data keuangan:", err);
+      } finally {
+        setLoading(false);
+      }
     }
-  ]);
+    loadFinanceData();
+  }, []);
+
+  const formatRupiah = (num) => {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num || 0);
+  };
+
+  const transactionsData = rawBookings.map(b => {
+    const user = b.penyewa || b.user || {};
+    const kos = b.kos || {};
+    const statusLower = (b.status || '').toLowerCase();
+    
+    let mappedStatus = 'Berhasil';
+    if (statusLower === 'pending' || statusLower.includes('menunggu')) {
+      mappedStatus = 'Menunggu Pembayaran';
+    } else if (statusLower === 'dibatalkan' || statusLower === 'cancelled') {
+      mappedStatus = 'Gagal';
+    } else if (statusLower === 'refund') {
+      mappedStatus = 'Refund';
+    }
+
+    const gross = parseFloat(b.total_harga) || 0;
+    const jatahPemilik = b.jatah_pemilik !== undefined ? parseFloat(b.jatah_pemilik) : (b.pembagian_dana?.jatah_pemilik !== undefined ? parseFloat(b.pembagian_dana.jatah_pemilik) : gross * 0.97);
+
+    return {
+      id: b.id,
+      tenantName: user.nama || user.email || b.tenantName || 'Penyewa',
+      tenantPhone: user.no_hp || b.tenantPhone || '-',
+      tenantAvatar: user.foto_profil_url || b.tenantAvatar || avatarImg,
+      kostName: kos.nama_kos || b.kostName || 'Properti Kost',
+      kostLocation: kos.kota || kos.alamat || b.kostLocation || 'Indonesia',
+      kostImage: kos.foto_utama_url || kos.foto_utama || b.kostImage || harmoniImg,
+      invoiceCode: b.kode_booking || `INV-${b.id}`,
+      date: b.created_at ? new Date(b.created_at).toLocaleDateString('id-ID') : '-',
+      paymentMethod: b.metode_pembayaran || 'Transfer Bank',
+      amount: jatahPemilik,
+      grossAmount: gross,
+      status: mappedStatus,
+      rawBooking: b
+    };
+  });
+
+  const totalPendapatan = transactionsData
+    .filter(t => t.status === 'Berhasil')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalTransaksi = transactionsData.length;
+
+  const totalSudahDitransferAdmin = transactionsData
+    .filter(t => t.status === 'Berhasil' && t.statusTransfer === 'Sudah Ditransfer')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalBerhasilCount = transactionsData
+    .filter(t => t.status === 'Berhasil').length;
 
   // Logika Filter Data
   const filteredTransactions = transactionsData.filter(item => {
@@ -120,8 +128,27 @@ const Finance = () => {
         <Header 
           title="Keuangan" 
           subtitle="Pantau pemasukan dan transaksi seluruh kost Anda."
-          showProfile={false}
+          showProfile={true}
         />
+
+        {/* Info Banner Alur Distribusi Manual Admin */}
+        <div style={{
+          backgroundColor: '#eff6ff',
+          border: '1px solid #bfdbfe',
+          borderRadius: '12px',
+          padding: '14px 18px',
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          fontSize: '13px',
+          color: '#1e40af'
+        }}>
+          <Info size={20} color="#0066ff" style={{ flexShrink: 0 }} />
+          <div>
+            <strong>Alur Distribusi Keuangan:</strong> Seluruh pembayaran penyewa masuk ke sistem Admin Kostin. Admin memotong biaya platform <strong>3%</strong> dan mentransfer jatah bersih <strong>97%</strong> secara manual ke rekening bank Anda yang terdaftar di Pengaturan Profil.
+          </div>
+        </div>
 
         {/* 4 Cards Summary Stat Keuangan */}
         <div className="finance-summary-grid">
@@ -130,9 +157,9 @@ const Finance = () => {
               <Wallet size={20} color="#0066ff" />
             </div>
             <div className="f-info">
-              <span className="f-title">Total Pendapatan Bulan Ini</span>
-              <h3 className="f-value">Rp18.500.000</h3>
-              <span className="f-sub">Dari semua kost Anda</span>
+              <span className="f-title">Total Pendapatan (97%)</span>
+              <h3 className="f-value">{formatRupiah(totalPendapatan)}</h3>
+              <span className="f-sub">Jatah bersih milik Anda</span>
             </div>
           </div>
 
@@ -142,19 +169,19 @@ const Finance = () => {
             </div>
             <div className="f-info">
               <span className="f-title">Total Transaksi</span>
-              <h3 className="f-value">25 Transaksi</h3>
+              <h3 className="f-value">{totalTransaksi} Transaksi</h3>
               <span className="f-sub">Semua transaksi</span>
             </div>
           </div>
 
           <div className="finance-card">
-            <div className="f-icon-bg orange">
-              <Clock size={20} color="#f59e0b" />
+            <div className="f-icon-bg emerald">
+              <CheckCircle2 size={20} color="#059669" />
             </div>
             <div className="f-info">
-              <span className="f-title">Menunggu Pembayaran</span>
-              <h3 className="f-value">Rp3.200.000</h3>
-              <span className="f-sub">Perlu ditindaklanjuti</span>
+              <span className="f-title">Telah Ditransfer Admin</span>
+              <h3 className="f-value">{formatRupiah(totalSudahDitransferAdmin)}</h3>
+              <span className="f-sub">Sudah masuk ke rekening Anda</span>
             </div>
           </div>
 
@@ -164,8 +191,8 @@ const Finance = () => {
             </div>
             <div className="f-info">
               <span className="f-title">Pembayaran Berhasil</span>
-              <h3 className="f-value">22 Transaksi</h3>
-              <span className="f-sub">Transaksi berhasil</span>
+              <h3 className="f-value">{totalBerhasilCount} Transaksi</h3>
+              <span className="f-sub">Telah diterima Admin</span>
             </div>
           </div>
         </div>
@@ -182,42 +209,47 @@ const Finance = () => {
             />
           </div>
 
-          <div className="finance-filter-options">
-            <div className="f-select-wrapper">
-              <span className="label">Status Pembayaran</span>
-              <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                <option value="Semua">Semua</option>
-                <option value="Berhasil">Berhasil</option>
-                <option value="Menunggu Pembayaran">Menunggu Pembayaran</option>
-                <option value="Gagal">Gagal</option>
-                <option value="Refund">Refund</option>
-              </select>
-              <ChevronDown size={14} className="arrow" />
-            </div>
+          <div className="finance-filter-options" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <CustomSelect
+              label="Status Pembayaran"
+              value={statusFilter}
+              onChange={(val) => setStatusFilter(val)}
+              options={[
+                { label: 'Semua', value: 'Semua' },
+                { label: 'Berhasil', value: 'Berhasil' },
+                { label: 'Menunggu Pembayaran', value: 'Menunggu Pembayaran' },
+                { label: 'Gagal', value: 'Gagal' },
+                { label: 'Refund', value: 'Refund' },
+              ]}
+            />
 
-            <div className="f-select-wrapper">
-              <span className="label">Filter Kost</span>
-              <select value={kostFilter} onChange={(e) => setKostFilter(e.target.value)}>
-                <option value="Semua Kost">Semua Kost</option>
-                <option value="Kost Putri Alifia">Kost Putri Alifia</option>
-                <option value="Kost Harmoni Residence">Kost Harmoni Residence</option>
-                <option value="Kost Green House">Kost Green House</option>
-                <option value="Kost Melati">Kost Melati</option>
-              </select>
-              <ChevronDown size={14} className="arrow" />
-            </div>
+            <CustomSelect
+              label="Filter Kost"
+              value={kostFilter}
+              onChange={(val) => setKostFilter(val)}
+              options={[
+                { label: 'Semua Kost', value: 'Semua Kost' },
+                ...ownerKosts.map(k => ({ label: k.nama_kos, value: k.nama_kos }))
+              ]}
+            />
 
-            <div className="f-select-wrapper">
-              <span className="label">Periode</span>
-              <select value={periodFilter} onChange={(e) => setPeriodFilter(e.target.value)}>
-                <option value="Bulan Ini">Bulan Ini</option>
-                <option value="Bulan Lalu">Bulan Lalu</option>
-                <option value="Tahun Ini">Tahun Ini</option>
-              </select>
-              <ChevronDown size={14} className="arrow" />
-            </div>
+            <CustomSelect
+              label="Periode"
+              value={periodFilter}
+              onChange={(val) => setPeriodFilter(val)}
+              options={[
+                { label: 'Bulan Ini', value: 'Bulan Ini' },
+                { label: 'Bulan Lalu', value: 'Bulan Lalu' },
+                { label: 'Tahun Ini', value: 'Tahun Ini' },
+              ]}
+            />
 
-            <button className="icon-filter-btn">
+            <button 
+              type="button"
+              className="icon-filter-btn" 
+              onClick={() => { setSearchTerm(''); setStatusFilter('Semua'); setKostFilter('Semua Kost'); setPeriodFilter('Bulan Ini'); }}
+              title="Reset Filter"
+            >
               <Filter size={16} color="#64748b" />
             </button>
           </div>
@@ -233,19 +265,14 @@ const Finance = () => {
           <>
             <div className="transactions-list">
               {filteredTransactions.map(item => (
-                <TransactionRowCard key={item.id} transaction={item} />
+                <TransactionRowCard 
+                  key={item.id} 
+                  transaction={item} 
+                  onViewDetail={(t) => setSelectedBooking(t.rawBooking || t)}
+                  onViewInvoice={(t) => setSelectedInvoice(t)}
+                  onDownloadReceipt={(t) => setSelectedInvoice(t)}
+                />
               ))}
-            </div>
-
-            {/* Pagination */}
-            <div className="pagination-wrapper">
-              <button className="page-btn page-btn-text">&lt;</button>
-              <button className="page-btn page-btn-num active">1</button>
-              <button className="page-btn page-btn-num">2</button>
-              <button className="page-btn page-btn-num">3</button>
-              <span className="page-dots">...</span>
-              <button className="page-btn page-btn-num">8</button>
-              <button className="page-btn page-btn-text">&gt;</button>
             </div>
           </>
         ) : (
@@ -266,6 +293,22 @@ const Finance = () => {
               Reset Filter
             </button>
           </div>
+        )}
+
+        {/* Modal Invoice Owner */}
+        {selectedInvoice && (
+          <ModalInvoiceOwner 
+            transaction={selectedInvoice} 
+            onClose={() => setSelectedInvoice(null)} 
+          />
+        )}
+
+        {/* Modal Detail Booking Owner */}
+        {selectedBooking && (
+          <ModalDetailBookingOwner 
+            booking={selectedBooking} 
+            onClose={() => setSelectedBooking(null)} 
+          />
         )}
       </main>
     </div>

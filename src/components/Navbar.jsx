@@ -58,7 +58,11 @@ export default function Navbar() {
               className="profile-btn"
               onClick={() => setOpenDropdown(!openDropdown)}
             >
-              <img src={displayUser.avatar} alt={displayUser.name} />
+              <img 
+                src={displayUser.avatar} 
+                alt={displayUser.name} 
+                onError={(e) => { e.target.src = avatar; }} 
+              />
               <span>{displayUser.name}</span>
               <ChevronDown
                 size={18}

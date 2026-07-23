@@ -1,7 +1,8 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const StatCard = ({ title, value, unit, icon: Icon, iconBg, iconColor, linkText }) => {
+const StatCard = ({ title, value, unit, icon: Icon, iconBg, iconColor, linkText, to = "#" }) => {
   return (
     <div className="stat-card">
       <div className="stat-header">
@@ -13,9 +14,9 @@ const StatCard = ({ title, value, unit, icon: Icon, iconBg, iconColor, linkText 
           <h3>{value} {unit && <span style={{ fontSize: '12px', fontWeight: 400, color: '#64748b' }}>{unit}</span>}</h3>
         </div>
       </div>
-      <a href="#" className="stat-link">
+      <Link to={to} className="stat-link">
         {linkText} <ChevronRight size={14} />
-      </a>
+      </Link>
     </div>
   );
 };

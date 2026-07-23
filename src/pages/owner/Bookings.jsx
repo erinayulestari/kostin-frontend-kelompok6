@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/owner/Sidebar';
 import Header from '../../components/owner/Header';
 import BookingRowCard from '../../components/owner/BookingRowCard';
+import ModalDetailBookingOwner from '../../components/owner/ModalDetailBookingOwner';
+import CustomStatusSelect from '../../components/owner/CustomStatusSelect';
 import api from '../../api/api';
 
 import { 
@@ -21,6 +23,7 @@ const Bookings = () => {
   const [statusFilter, setStatusFilter] = useState('Semua');
   const [kostFilter, setKostFilter] = useState('Semua Kost');
   const [bookingsData, setBookingsData] = useState([]);
+  const [selectedBooking, setSelectedBooking] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchOwnerBookings = async () => {
@@ -56,8 +59,18 @@ const Bookings = () => {
   const filteredBookings = bookingsData.filter(item => {
     const tenantName = item.user?.nama || item.tenantName || "";
     const matchesSearch = tenantName.toLowerCase().includes(searchTerm.toLowerCase());
-    const status = item.status || "";
-    const matchesStatus = statusFilter === 'Semua' || status.toLowerCase() === statusFilter.toLowerCase();
+    const status = (item.status || "").toLowerCase();
+    const filter = statusFilter.toLowerCase();
+    
+    let matchesStatus = filter === 'semua';
+    if (!matchesStatus) {
+      if (filter === 'pending') matchesStatus = status === 'pending' || status.includes('menunggu');
+      else if (filter === 'aktif') matchesStatus = status === 'aktif' || status === 'active';
+      else if (filter === 'selesai') matchesStatus = status === 'selesai' || status === 'confirmed';
+      else if (filter === 'dibatalkan') matchesStatus = status === 'dibatalkan' || status === 'cancelled';
+      else matchesStatus = status === filter;
+    }
+    
     const kosName = item.kos?.nama_kos || item.kostName || "";
     const matchesKost = kostFilter === 'Semua Kost' || kosName === kostFilter;
     return matchesSearch && matchesStatus && matchesKost;
@@ -99,7 +112,7 @@ const Bookings = () => {
           title="Booking Masuk" 
           subtitle="Lihat dan kelola seluruh permintaan booking dari calon penyewa."
           actionButton={StatsHeaderGroup}
-          showProfile={false}
+          showProfile={true}
         />
 
         {loading ? (
@@ -121,17 +134,17 @@ const Bookings = () => {
               </div>
 
               <div className="booking-filter-options">
-                <div className="b-select-wrapper">
-                  <span className="label">Status</span>
-                  <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                    <option value="Semua">Semua</option>
-                    <option value="pending">Menunggu Konfirmasi</option>
-                    <option value="aktif">Sedang Berjalan</option>
-                    <option value="selesai">Selesai</option>
-                    <option value="dibatalkan">Dibatalkan</option>
-                  </select>
-                  <ChevronDown size={14} className="arrow" />
-                </div>
+                <CustomStatusSelect
+                  value={statusFilter}
+                  onChange={(val) => setStatusFilter(val)}
+                  options={[
+                    { label: 'Semua', value: 'Semua' },
+                    { label: 'Menunggu Konfirmasi', value: 'pending' },
+                    { label: 'Sedang Berjalan', value: 'aktif' },
+                    { label: 'Selesai', value: 'selesai' },
+                    { label: 'Dibatalkan', value: 'dibatalkan' },
+                  ]}
+                />
 
                 <button 
                   className="icon-filter-btn"
@@ -154,6 +167,7 @@ const Bookings = () => {
                     key={item.id}
                     booking={item}
                     onComplete={handleCompleteBooking}
+                    onViewDetail={(b) => setSelectedBooking(b)}
                   />
                 ))}
               </div>
@@ -185,6 +199,15 @@ const Bookings = () => {
             <h3>Belum Ada Booking Masuk</h3>
             <p>Saat ini belum ada calon penyewa yang melakukan pemesanan kamar di properti kost Anda.</p>
           </div>
+        )}
+
+        {/* Modal Detail Booking Owner */}
+        {selectedBooking && (
+          <ModalDetailBookingOwner 
+            booking={selectedBooking} 
+            onClose={() => setSelectedBooking(null)} 
+            onComplete={handleCompleteBooking} 
+          />
         )}
       </main>
     </div>

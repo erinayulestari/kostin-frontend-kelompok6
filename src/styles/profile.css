@@ -89,6 +89,10 @@
 
     object-fit:cover;
 
+    border: 2.5px solid #2563EB;
+
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.15);
+
 }
 
 .camera-btn{

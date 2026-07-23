@@ -23,55 +23,33 @@
 .filter-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: flex-end;
   margin-bottom: 24px;
   width: 100%;
-}
-
-.search-input-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 0 16px;
-  height: 42px; /* Mengunci tinggi agar konsisten */
-  width: 320px; /* Ukuran pas sesuai desain */
-  flex-shrink: 0;
-}
-
-.search-input-wrapper input {
-  border: none;
-  outline: none;
-  background: transparent;
-  width: 100%;
-  font-size: 14px;
-  color: var(--text-main);
-}
-
-.filter-actions-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
 }
 
 .select-wrapper {
   position: relative;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 0 36px 0 14px;
-  height: 42px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0 34px 0 14px;
+  height: 40px;
   display: flex;
   align-items: center;
   gap: 8px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s;
+}
+
+.select-wrapper:hover {
+  border-color: #0066ff;
 }
 
 .select-label {
   font-size: 13px;
-  color: var(--text-muted);
+  font-weight: 500;
+  color: #64748b;
   white-space: nowrap;
 }
 
@@ -81,17 +59,27 @@
   background: transparent;
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-main);
+  color: #0f172a;
   appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   cursor: pointer;
   padding-right: 4px;
+}
+
+.select-wrapper select option {
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 12px;
 }
 
 .select-arrow {
   position: absolute;
   right: 12px;
   pointer-events: none;
-  color: #64748b;
+  color: #0066ff;
 }
 
 /* My Kost Grid */

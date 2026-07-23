@@ -40,16 +40,6 @@ export default function ProfileDropdown({ onClose }) {
         <span>Booking Saya</span>
       </button>
 
-      {role === "pemilik" && (
-        <button
-          className="dropdown-item"
-          onClick={() => handleNavigate("/owner/dashboard")}
-        >
-          <Settings size={18} />
-          <span>Dashboard Pemilik</span>
-        </button>
-      )}
-
       {role === "admin" && (
         <button
           className="dropdown-item"

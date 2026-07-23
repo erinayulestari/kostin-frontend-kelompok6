@@ -13,12 +13,14 @@ import defaultImg from "../assets/kost1.jpg";
 import bca from "../assets/payment/bca.png";
 import { ArrowLeft } from "lucide-react";
 import api from "../api/api";
+import { useAuth } from "../context/AuthContext";
 
 import "../styles/detailbooking.css";
 
 export default function DetailBooking() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { role } = useAuth();
 
   const [bookingData, setBookingData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -187,9 +189,9 @@ export default function DetailBooking() {
       <Navbar />
 
       <main className="detail-booking-page">
-        <button className="back-btn" onClick={() => navigate("/booking")}>
+        <button className="back-btn" onClick={() => navigate(role === 'pemilik' ? "/owner/booking" : "/booking")}>
           <ArrowLeft size={18} />
-          Kembali ke Booking Saya
+          Kembali ke {role === 'pemilik' ? "Booking Masuk" : "Booking Saya"}
         </button>
 
         <div className="detail-header">

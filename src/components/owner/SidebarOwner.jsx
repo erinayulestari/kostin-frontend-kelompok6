@@ -7,9 +7,7 @@ import {
   CalendarCheck, 
   Wallet, 
   BarChart3, 
-  Settings, 
-  Plus, 
-  LogOut 
+  Plus 
 } from "lucide-react";
 
 export default function SidebarOwner() {
@@ -21,7 +19,6 @@ export default function SidebarOwner() {
     { name: "Booking Masuk", path: "/owner/booking", icon: CalendarCheck },
     { name: "Keuangan", path: "/owner/keuangan", icon: Wallet },
     { name: "Laporan", path: "/owner/laporan", icon: BarChart3 },
-    { name: "Pengaturan", path: "/owner/pengaturan", icon: Settings },
   ];
 
   const isTambahKostActive = location.pathname === "/owner/tambah-kost";
@@ -66,14 +63,6 @@ export default function SidebarOwner() {
           <Plus size={18} />
           <span>Tambah Kost</span>
         </Link>
-      </div>
-
-      {/* Footer / Logout Section */}
-      <div className="sidebar-bottom">
-        <button type="button" className="btn-logout">
-          <LogOut size={18} />
-          <span>Keluar</span>
-        </button>
       </div>
     </aside>
   );

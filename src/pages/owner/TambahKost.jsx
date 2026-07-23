@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import SidebarOwner from "../../components/owner/SidebarOwner";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import Sidebar from "../../components/owner/Sidebar";
+import Header from "../../components/owner/Header";
 import api from "../../api/api";
+import "../../styles/owner/dashboard.css";
 import "../../styles/owner/tambah-kost.css";
 import { 
   UploadCloud, 
@@ -25,20 +27,23 @@ import {
 
 export default function TambahKost() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get("edit");
+  const isEditMode = !!editId;
 
   const [namaKos, setNamaKos] = useState("");
   const [tipe, setTipe] = useState("putri");
   const [hargaPerBulan, setHargaPerBulan] = useState("");
-  const [provinsi, setProvinsi] = useState("Sulawesi Selatan");
-  const [kota, setKota] = useState("Makassar");
-  const [kecamatan, setKecamatan] = useState("Tamalanrea");
-  const [kodePos, setKodePos] = useState("90245");
+  const [provinsi, setProvinsi] = useState("");
+  const [kota, setKota] = useState("");
+  const [kecamatan, setKecamatan] = useState("");
+  const [kodePos, setKodePos] = useState("");
   const [alamat, setAlamat] = useState("");
   const [desc, setDesc] = useState("");
-  const [jumlahKamar, setJumlahKamar] = useState(10);
-  const [kamarTerisi, setKamarTerisi] = useState(0);
-  const [lat, setLat] = useState("-5.1477");
-  const [lng, setLng] = useState("119.4327");
+  const [jumlahKamar, setJumlahKamar] = useState("");
+  const [kamarTerisi, setKamarTerisi] = useState("");
+  const [lat, setLat] = useState("");
+  const [lng, setLng] = useState("");
 
   const [fotoUtama, setFotoUtama] = useState(null);
   const [fotoUtamaPreview, setFotoUtamaPreview] = useState(null);
@@ -46,18 +51,91 @@ export default function TambahKost() {
   const [galeriPreview, setGaleriPreview] = useState([]);
 
   const [facilities, setFacilities] = useState({
-    wifi: true,
-    ac: true,
-    kamar_mandi_dalam: true,
-    parkir: true,
-    dapur: true,
+    wifi: false,
+    ac: false,
+    kamar_mandi_dalam: false,
+    parkir: false,
+    dapur: false,
     laundry: false,
-    security: true,
-    cctv: true,
+    security: false,
+    cctv: false,
   });
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (isEditMode) {
+      async function loadKosDetail() {
+        try {
+          const res = await api.get(`/kos/${editId}`);
+          if (res.data) {
+            const data = res.data;
+            setNamaKos(data.nama_kos || "");
+            setTipe(data.tipe || "putri");
+            setHargaPerBulan(data.harga_per_bulan || "");
+            setProvinsi(data.provinsi || "");
+            setKota(data.kota || "");
+            setKecamatan(data.kecamatan || "");
+            setKodePos(data.kode_pos || "");
+            setAlamat(data.alamat || "");
+            setDesc(data.deskripsi || "");
+            setJumlahKamar(data.jumlah_kamar || 10);
+            setKamarTerisi(data.kamar_terisi || 0);
+            setLat(data.lat || "-5.1477");
+            setLng(data.lng || "119.4327");
+            if (data.foto_utama_url || data.foto_utama) {
+              setFotoUtamaPreview(data.foto_utama_url || data.foto_utama);
+            }
+            setFacilities({
+              wifi: !!data.wifi,
+              ac: !!data.ac,
+              kamar_mandi_dalam: !!data.kamar_mandi_dalam,
+              parkir: !!data.parkir,
+              dapur: !!data.dapur,
+              laundry: !!data.laundry,
+              security: !!data.security,
+              cctv: !!data.cctv,
+            });
+          }
+        } catch (err) {
+          console.error("Gagal mengambil detail kos untuk di-edit:", err);
+          setError("Gagal memuat data kos yang akan di-edit.");
+        }
+      }
+      loadKosDetail();
+    } else {
+      // Reset semua state ke default saat beralih ke mode tambah
+      setNamaKos("");
+      setTipe("putri");
+      setHargaPerBulan("");
+      setProvinsi("");
+      setKota("");
+      setKecamatan("");
+      setKodePos("");
+      setAlamat("");
+      setDesc("");
+      setJumlahKamar("");
+      setKamarTerisi("");
+      setLat("");
+      setLng("");
+      setFotoUtama(null);
+      setFotoUtamaPreview(null);
+      setGaleriFoto([]);
+      setGaleriPreview([]);
+      setFacilities({
+        wifi: false,
+        ac: false,
+        kamar_mandi_dalam: false,
+        parkir: false,
+        dapur: false,
+        laundry: false,
+        security: false,
+        cctv: false,
+      });
+      setError("");
+    }
+  }, [editId, isEditMode]);
 
   const handleFotoUtamaChange = (e) => {
     const file = e.target.files?.[0];
@@ -89,7 +167,7 @@ export default function TambahKost() {
     e.preventDefault();
     setError("");
 
-    if (!fotoUtama) {
+    if (!isEditMode && !fotoUtama) {
       setError("Foto utama wajib diunggah.");
       return;
     }
@@ -98,7 +176,7 @@ export default function TambahKost() {
     const formData = new FormData();
     formData.append("nama_kos", namaKos);
     formData.append("tipe", tipe);
-    formData.append("harga_per_bulan", hargaPerBulan);
+    formData.append("harga_per_bulan", String(hargaPerBulan).replace(/\D/g, ''));
     formData.append("provinsi", provinsi);
     formData.append("kota", kota);
     formData.append("kecamatan", kecamatan);
@@ -114,17 +192,25 @@ export default function TambahKost() {
       formData.append(key, facilities[key] ? "1" : "0");
     });
 
-    formData.append("foto_utama", fotoUtama);
+    if (fotoUtama) {
+      formData.append("foto_utama", fotoUtama);
+    }
     galeriFoto.forEach((file) => {
       formData.append("kos_foto[]", file);
     });
 
     try {
-      await api.post("/owner/kos", formData);
-      alert("Properti kos berhasil ditambahkan!");
+      if (isEditMode) {
+        formData.append("_method", "PUT");
+        await api.post(`/owner/kos/${editId}`, formData);
+        alert("Properti kos berhasil diperbarui!");
+      } else {
+        await api.post("/owner/kos", formData);
+        alert("Properti kos berhasil ditambahkan!");
+      }
       navigate("/owner/kost-saya");
     } catch (err) {
-      console.error("Gagal tambah kos:", err);
+      console.error("Gagal menyimpan kos:", err);
       setError(err.message || "Gagal menyimpan properti kos.");
     } finally {
       setSubmitting(false);
@@ -132,14 +218,15 @@ export default function TambahKost() {
   };
 
   return (
-    <div className="owner-layout">
-      <SidebarOwner />
+    <div className="dashboard-container">
+      <Sidebar />
 
       <main className="main-content">
-        <div className="page-header">
-          <h1 className="page-title">Tambah Kost</h1>
-          <p className="page-subtitle">Lengkapi informasi kost yang akan dipublikasikan.</p>
-        </div>
+        <Header 
+          title={isEditMode ? "Edit Kost" : "Tambah Kost"} 
+          subtitle={isEditMode ? "Ubah informasi properti kos Anda." : "Lengkapi informasi kost yang akan dipublikasikan."}
+          showProfile={true}
+        />
 
         {error && (
           <div style={{ color: "#ef4444", backgroundColor: "#fee2e2", padding: "1rem", borderRadius: "8px", marginBottom: "1rem" }}>
@@ -188,13 +275,47 @@ export default function TambahKost() {
                 <div className="form-row">
                   <div className="form-group">
                     <label>Harga Sewa Per Bulan</label>
-                    <input
-                      type="number"
-                      placeholder="Masukkan harga sewa (misal: 1200000)"
-                      value={hargaPerBulan}
-                      onChange={(e) => setHargaPerBulan(e.target.value)}
-                      required
-                    />
+                    <div className="price-input-wrapper" style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      border: '1px solid #cbd5e1',
+                      borderRadius: '8px',
+                      height: '42px',
+                      backgroundColor: '#fff',
+                      paddingLeft: '12px',
+                      paddingRight: '12px',
+                      boxSizing: 'border-box',
+                      gap: '6px'
+                    }}>
+                      <span style={{
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        color: '#0066ff',
+                        flexShrink: 0
+                      }}>Rp</span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="1.500.000"
+                        value={hargaPerBulan ? Number(String(hargaPerBulan).replace(/\D/g, '')).toLocaleString('id-ID') : ''}
+                        onChange={(e) => {
+                          const raw = e.target.value.replace(/\D/g, '');
+                          setHargaPerBulan(raw);
+                        }}
+                        style={{
+                          border: 'none',
+                          outline: 'none',
+                          flex: 1,
+                          fontSize: '13px',
+                          padding: '0',
+                          margin: '0',
+                          height: 'auto',
+                          lineHeight: 'normal',
+                          backgroundColor: 'transparent'
+                        }}
+                        required
+                      />
+                    </div>
                   </div>
                   <div className="form-group">
                     <label>Provinsi</label>
@@ -428,7 +549,7 @@ export default function TambahKost() {
 
           <div className="form-actions-bottom">
             <button type="submit" className="btn-publish" disabled={submitting}>
-              <Send size={16} /> {submitting ? "Memproses..." : "Publikasikan Kost"}
+              <Send size={16} /> {submitting ? "Memproses..." : isEditMode ? "Simpan Perubahan" : "Publikasikan Kost"}
             </button>
           </div>
         </form>
