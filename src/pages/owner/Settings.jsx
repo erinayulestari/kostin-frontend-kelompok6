@@ -13,7 +13,11 @@ import {
   Megaphone, 
   User,
   Save,
-  CheckCircle2
+  CheckCircle2,
+  CreditCard,
+  Upload,
+  AlertCircle,
+  FileImage
 } from 'lucide-react';
 
 import '../../styles/owner/dashboard.css';
@@ -27,8 +31,10 @@ const Settings = () => {
   const [namaBank, setNamaBank] = useState(user?.nama_bank || '');
   const [nomorRekening, setNomorRekening] = useState(user?.nomor_rekening || '');
   const [namaPemilikRekening, setNamaPemilikRekening] = useState(user?.nama_pemilik_rekening || '');
+  const [nik, setNik] = useState(user?.nik || '');
   
   const [saving, setSaving] = useState(false);
+  const [ktpUploading, setKtpUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -46,6 +52,7 @@ const Settings = () => {
       setNamaBank(user.nama_bank || '');
       setNomorRekening(user.nomor_rekening || '');
       setNamaPemilikRekening(user.nama_pemilik_rekening || '');
+      setNik(user.nik || '');
     }
   }, [user]);
 
@@ -62,6 +69,7 @@ const Settings = () => {
         nama_bank: namaBank,
         nomor_rekening: nomorRekening,
         nama_pemilik_rekening: namaPemilikRekening,
+        nik,
       });
 
       if (res.success && res.data) {
@@ -75,6 +83,32 @@ const Settings = () => {
       setError(err.message || 'Gagal memperbarui profil');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleKtpUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setKtpUploading(true);
+    setMessage('');
+    setError('');
+
+    const data = new FormData();
+    data.append('foto_ktp', file);
+
+    try {
+      const res = await api.post('/profile/ktp', data);
+      const updatedUser = res.data !== undefined ? res.data : res;
+      if (updatedUser) {
+        updateProfile(updatedUser);
+      }
+      setMessage('Foto KTP berhasil diunggah!');
+    } catch (err) {
+      console.error('Gagal mengunggah foto KTP:', err);
+      setError(err.message || 'Gagal mengunggah foto KTP.');
+    } finally {
+      setKtpUploading(false);
     }
   };
 
@@ -142,6 +176,20 @@ const Settings = () => {
               </div>
 
               <div className="s-row">
+                <div className="s-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <CreditCard size={14} color="#64748b" /> Nomor KTP / NIK
+                </div>
+                <input 
+                  type="text" 
+                  value={nik} 
+                  onChange={(e) => setNik(e.target.value)} 
+                  placeholder="Masukkan 16 digit NIK"
+                  maxLength={16}
+                  style={{ width: '100%', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                />
+              </div>
+
+              <div className="s-row">
                 <div className="s-label">Nama Bank</div>
                 <input 
                   type="text" 
@@ -182,7 +230,77 @@ const Settings = () => {
             </form>
           </SettingsCard>
 
-          {/* 2. Notifikasi */}
+          {/* 2. Dokumen KTP */}
+          <SettingsCard
+            title="Dokumen Verifikasi KTP"
+            subtitle="Upload foto KTP Anda untuk proses verifikasi pemilik kost."
+          >
+            <div className="s-card-body">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                <FileImage size={18} color="#0066ff" />
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>Foto KTP</span>
+                {user?.foto_ktp_url ? (
+                  <span style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '4px',
+                    fontSize: '11px', fontWeight: '600', color: '#16a34a',
+                    backgroundColor: '#f0fdf4', padding: '3px 10px', borderRadius: '20px',
+                    border: '1px solid #bbf7d0'
+                  }}>
+                    <CheckCircle2 size={12} /> Sudah Diunggah
+                  </span>
+                ) : (
+                  <span style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '4px',
+                    fontSize: '11px', fontWeight: '600', color: '#ea580c',
+                    backgroundColor: '#fff7ed', padding: '3px 10px', borderRadius: '20px',
+                    border: '1px solid #fed7aa'
+                  }}>
+                    <AlertCircle size={12} /> Belum Diunggah
+                  </span>
+                )}
+              </div>
+
+              {/* Preview KTP */}
+              {user?.foto_ktp_url && (
+                <div style={{
+                  marginBottom: '16px', borderRadius: '12px', overflow: 'hidden',
+                  border: '1px solid #e2e8f0', maxWidth: '420px'
+                }}>
+                  <img
+                    src={user.foto_ktp_url}
+                    alt="Foto KTP"
+                    style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                </div>
+              )}
+
+              {/* Upload Button */}
+              <label style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                padding: '10px 20px', borderRadius: '10px', cursor: ktpUploading ? 'not-allowed' : 'pointer',
+                backgroundColor: '#eff6ff', border: '1.5px dashed #93c5fd',
+                color: '#2563eb', fontSize: '13px', fontWeight: '600',
+                transition: 'all 0.2s ease',
+                opacity: ktpUploading ? 0.6 : 1,
+              }}>
+                <Upload size={16} />
+                {ktpUploading ? 'Mengunggah...' : user?.foto_ktp_url ? 'Ganti Foto KTP' : 'Upload Foto KTP'}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg"
+                  onChange={handleKtpUpload}
+                  disabled={ktpUploading}
+                  style={{ display: 'none' }}
+                />
+              </label>
+              <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '8px' }}>
+                Format: JPG, PNG. Maksimal 5MB. Pastikan foto jelas dan tidak buram.
+              </p>
+            </div>
+          </SettingsCard>
+
+          {/* 3. Notifikasi */}
           <SettingsCard 
             title="Notifikasi" 
             subtitle="Pilih notifikasi yang ingin Anda terima."
