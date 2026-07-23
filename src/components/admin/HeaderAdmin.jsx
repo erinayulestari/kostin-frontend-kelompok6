@@ -1,12 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Bell, ChevronDown, User, Settings, LogOut } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import defaultAvatar from "../../assets/avatar.jpg";
 
 export default function HeaderAdmin({ title, subtitle }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
-  // Close dropdown saat klik di luar elemen
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -19,6 +22,18 @@ export default function HeaderAdmin({ title, subtitle }) {
     };
   }, []);
 
+  const handleLogout = async () => {
+    setIsDropdownOpen(false);
+    if (window.confirm("Apakah Anda yakin ingin keluar dari halaman Admin?")) {
+      await logout();
+      navigate("/superadmin/login");
+    }
+  };
+
+  const adminName = user?.nama || user?.name || "Administrator";
+  const adminRole = user?.role ? user.role.toUpperCase() : "ADMIN";
+  const avatarUrl = user?.foto_profil_url || defaultAvatar;
+
   return (
     <header className="admin-header-bar">
       <div className="header-title-area">
@@ -27,12 +42,6 @@ export default function HeaderAdmin({ title, subtitle }) {
       </div>
 
       <div className="header-actions">
-        {/* Notifikasi */}
-        <button className="notification-btn" type="button" aria-label="Notifikasi">
-          <Bell size={20} />
-          <span className="badge-count">3</span>
-        </button>
-
         {/* Profile Dropdown Container */}
         <div className="profile-dropdown-wrapper" ref={dropdownRef}>
           <button 
@@ -41,10 +50,12 @@ export default function HeaderAdmin({ title, subtitle }) {
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
             <img 
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" 
-              alt="Rizky Pratama" 
+              src={avatarUrl} 
+              alt={adminName} 
               className="header-avatar"
+              onError={(e) => { e.target.src = defaultAvatar; }}
             />
+            <span>{adminName}</span>
             <ChevronDown 
               size={16} 
               color="#64748b" 
@@ -56,20 +67,16 @@ export default function HeaderAdmin({ title, subtitle }) {
           {isDropdownOpen && (
             <div className="profile-dropdown-menu">
               <div className="dropdown-header-info">
-                <span className="user-name">Rizky Pratama</span>
-                <span className="user-role">Super Admin</span>
+                <span className="user-name">{adminName}</span>
+                <span className="user-role">{adminRole}</span>
               </div>
               <div className="dropdown-divider" />
               <Link to="/admin/profil" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
                 <User size={16} />
                 <span>Profil Saya</span>
               </Link>
-              <Link to="/admin/pengaturan" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
-                <Settings size={16} />
-                <span>Pengaturan</span>
-              </Link>
               <div className="dropdown-divider" />
-              <button type="button" className="dropdown-item logout" onClick={() => setIsDropdownOpen(false)}>
+              <button type="button" className="dropdown-item logout" onClick={handleLogout}>
                 <LogOut size={16} />
                 <span>Keluar</span>
               </button>

@@ -4,11 +4,9 @@ import {
   Home,
   LayoutGrid,
   ShieldCheck,
-  Building2,
   Users,
-  CalendarCheck,
-  Settings,
-  LogOut,
+  MessageSquare,
+  DollarSign,
 } from "lucide-react";
 
 export default function SidebarAdmin() {
@@ -26,24 +24,19 @@ export default function SidebarAdmin() {
       icon: ShieldCheck,
     },
     {
-      name: "Data Kost",
-      path: "/admin/data-kost",
-      icon: Building2,
-    },
-    {
       name: "Data Pengguna",
-      path: "/admin/data-pengguna",
+      path: "/admin/users",
       icon: Users,
     },
     {
-      name: "Booking",
-      path: "/admin/booking",
-      icon: CalendarCheck,
+      name: "Moderasi Ulasan",
+      path: "/admin/moderasi-ulasan",
+      icon: MessageSquare,
     },
     {
-      name: "Pengaturan",
-      path: "/admin/pengaturan",
-      icon: Settings,
+      name: "Pencairan Dana",
+      path: "/admin/pencairan-dana",
+      icon: DollarSign,
     },
   ];
 
@@ -65,9 +58,9 @@ export default function SidebarAdmin() {
         <nav className="sidebar-menu">
           {menus.map((menu) => {
             const Icon = menu.icon;
-
             const isActive =
-              location.pathname === menu.path;
+              location.pathname === menu.path ||
+              (menu.path === "/admin/users" && location.pathname === "/admin/data-pengguna");
 
             return (
               <Link
@@ -83,17 +76,6 @@ export default function SidebarAdmin() {
             );
           })}
         </nav>
-      </div>
-
-      {/* Footer */}
-      <div className="sidebar-admin-footer">
-        <button
-          type="button"
-          className="btn-logout"
-        >
-          <LogOut size={18} />
-          <span>Keluar</span>
-        </button>
       </div>
     </aside>
   );

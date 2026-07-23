@@ -1,13 +1,22 @@
 import React from "react";
+import defaultAvatar from "../../assets/avatar.jpg";
 
 export default function UserCardAdmin({ user, onToggleStatus }) {
   const isAktif = user.status === "Aktif";
+  const avatarSrc = user.avatar || defaultAvatar;
 
   return (
     <div className="user-card-admin">
       {/* Avatar / Foto Profil */}
       <div className="user-card-avatar-box">
-        <img src={user.avatar} alt={user.nama} />
+        <img
+          src={avatarSrc}
+          alt={user.nama}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = defaultAvatar;
+          }}
+        />
       </div>
 
       {/* Detail Pengguna (Nama & Email) */}
@@ -33,7 +42,7 @@ export default function UserCardAdmin({ user, onToggleStatus }) {
         </span>
       </div>
 
-      {/* Action Button: Toggle Status (Ganti Lihat Detail) */}
+      {/* Action Button: Toggle Status */}
       <div className="user-card-action-box">
         <button
           onClick={() => onToggleStatus(user.id)}

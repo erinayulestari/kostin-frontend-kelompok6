@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Clock as FiClock,
   User as FiUser,
@@ -14,26 +14,82 @@ import {
 import { InfoCard, DataRow } from "../../components/admin/InfoCard";
 import DokumenCard from "../../components/admin/DokumenCard";
 import MapLokasiCard from "../../components/admin/MapLokasiCard";
+import api from "../../api/api";
+import defaultAvatar from "../../assets/avatar.jpg";
+import defaultKostImg from "../../assets/harmoni.jpeg";
 
 import "../../styles/admin/detail-verifikasi.css";
 
 export default function DetailVerifikasiPemilik() {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [catatan, setCatatan] = useState("");
+  const [kosDetail, setKosDetail] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleApprove = () => {
-    alert("Pemilik kost berhasil disetujui!");
-    navigate("/admin/verifikasi-pemilik");
-  };
-
-  const handleReject = () => {
-    if (!catatan.trim()) {
-      alert("Harap berikan catatan atau alasan penolakan terlebih dahulu.");
-      return;
+  useEffect(() => {
+    async function fetchDetail() {
+      setLoading(true);
+      try {
+        const res = await api.get('/admin/kos');
+        if (res.data && Array.isArray(res.data)) {
+          const found = res.data.find((k) => String(k.id) === String(id));
+          if (found) {
+            setKosDetail(found);
+          } else if (res.data.length > 0) {
+            setKosDetail(res.data[0]);
+          }
+        }
+      } catch (err) {
+        console.error("Gagal memuat detail verifikasi kos:", err);
+      } finally {
+        setLoading(false);
+      }
     }
-    alert("Pengajuan verifikasi berhasil ditolak.");
-    navigate("/admin/verifikasi-pemilik");
+    fetchDetail();
+  }, [id]);
+
+  const handleApprove = async () => {
+    const targetId = kosDetail?.id || id;
+    if (!targetId) return;
+
+    try {
+      await api.put(`/admin/kos/${targetId}/status`, { status: "aktif" });
+      alert("Pemilik kost & data kos berhasil disetujui!");
+      navigate("/admin/verifikasi-pemilik");
+    } catch (err) {
+      console.error("Gagal menyetujui kos:", err);
+      alert(err.message || "Gagal menyetujui verifikasi kos.");
+    }
   };
+
+  const handleReject = async () => {
+    const targetId = kosDetail?.id || id;
+    if (!targetId) return;
+
+    try {
+      await api.put(`/admin/kos/${targetId}/status`, { status: "ditolak" });
+      alert("Pengajuan verifikasi kos berhasil ditolak.");
+      navigate("/admin/verifikasi-pemilik");
+    } catch (err) {
+      console.error("Gagal menolak kos:", err);
+      alert(err.message || "Gagal menolak verifikasi kos.");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div style={{ padding: "40px", textAlign: "center" }}>
+        <p>Memuat detail verifikasi...</p>
+      </div>
+    );
+  }
+
+  const pemilik = kosDetail?.pemilik || {};
+  const statusStr = kosDetail?.status || "pending";
+
+  const fotoKtp = pemilik.foto_ktp_url || null;
+  const fotoUtama = kosDetail?.foto_utama_url || kosDetail?.foto_utama || defaultKostImg;
 
   return (
     <div className="detail-verifikasi-container">
@@ -46,9 +102,9 @@ export default function DetailVerifikasiPemilik() {
           <h1>Verifikasi Pemilik Kost</h1>
           <p>Tinjau data dan dokumen pemilik kost sebelum memberikan persetujuan.</p>
         </div>
-        <div className="header-status-badge pending">
+        <div className={`header-status-badge ${statusStr === 'aktif' ? 'approved' : statusStr === 'pending' ? 'pending' : 'rejected'}`}>
           <FiClock size={15} />
-          Menunggu Verifikasi
+          {statusStr === 'aktif' ? 'Disetujui' : statusStr === 'pending' ? 'Menunggu Verifikasi' : 'Ditolak'}
         </div>
       </div>
 
@@ -56,42 +112,43 @@ export default function DetailVerifikasiPemilik() {
         <InfoCard icon={FiUser} title="1. Informasi Pemilik">
           <div className="pemilik-info-wrapper">
             <img
-              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150"
-              alt="Siti Aisyah"
+              src={pemilik.foto_profil_url || defaultAvatar}
+              alt={pemilik.nama || "Pemilik Kost"}
               className="pemilik-avatar-lg"
+              onError={(e) => { e.target.src = defaultAvatar; }}
             />
             <div className="data-list">
-              <DataRow label="Nama Lengkap" value="Siti Aisyah" />
-              <DataRow label="Email" value="siti.aisyah@email.com" />
-              <DataRow label="Nomor Telepon" value="0813 9876 5432" />
-              <DataRow label="NIK" value="3271 6801 9203 0001" />
+              <DataRow label="Nama Lengkap" value={pemilik.nama || pemilik.name || "Pemilik Kost"} />
+              <DataRow label="Email" value={pemilik.email || "-"} />
+              <DataRow label="Nomor Telepon" value={pemilik.no_hp || "-"} />
+              <DataRow label="Role" value={(pemilik.role || "pemilik").toUpperCase()} />
+              <DataRow label="NIK" value={pemilik.nik || "-"} />
               <DataRow
                 label="Alamat"
-                value="Jl. Melati No.20, Depok Jaya, Kec. Pancoran Mas, Kota Depok, Jawa Barat 16432"
+                value={pemilik.alamat || kosDetail?.alamat || "Indonesia"}
               />
-              <DataRow label="Tanggal Pengajuan" value="14 Mei 2024, 10:30 WIB" />
+              <DataRow label="Tanggal Pengajuan" value={kosDetail?.created_at ? new Date(kosDetail.created_at).toLocaleDateString("id-ID") : "Baru"} />
             </div>
           </div>
         </InfoCard>
 
         <InfoCard icon={FiHome} title="2. Informasi Kost">
           <div className="data-list">
-            <DataRow label="Nama Kost" value="Kost Putri Alifia" />
+            <DataRow label="Nama Kost" value={kosDetail?.nama_kos || "Kost"} />
             <DataRow
               label="Jenis Kost"
-              customRender={<span className="badge-tag-type">Putri</span>}
+              customRender={<span className="badge-tag-type">{kosDetail?.tipe ? kosDetail.tipe.toUpperCase() : "KOST"}</span>}
             />
             <DataRow
               label="Alamat Lengkap"
-              value="Jl. Melati No.20, Depok Jaya, Kec. Pancoran Mas, Kota Depok, Jawa Barat 16432"
+              value={kosDetail?.alamat || "-"}
             />
-            <DataRow label="Provinsi" value="Jawa Barat" />
-            <DataRow label="Kota" value="Depok" />
-            <DataRow label="Jumlah Kamar" value="12 Kamar" />
-            <DataRow label="Harga Mulai" value="Rp 1.200.000 / bulan" />
+            <DataRow label="Kota" value={kosDetail?.kota || "-"} />
+            <DataRow label="Jumlah Kamar" value={`${kosDetail?.jumlah_kamar || 0} Kamar`} />
+            <DataRow label="Harga Mulai" value={`Rp ${Number(kosDetail?.harga_per_bulan || 0).toLocaleString("id-ID")} / bulan`} />
             <DataRow
               label="Deskripsi Singkat"
-              value="Kost putri nyaman, bersih, dan aman. Dekat dengan kampus dan pusat perbelanjaan. Fasilitas lengkap dengan harga terjangkau."
+              value={kosDetail?.deskripsi || "Tidak ada deskripsi."}
             />
           </div>
         </InfoCard>
@@ -102,37 +159,25 @@ export default function DetailVerifikasiPemilik() {
           <div className="dokumen-grid">
             <DokumenCard
               title="Foto KTP"
-              fileName="KTP_SitiAisyah.jpg"
-              fileSize="1.2 MB"
-              imgSrc="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=200"
+              fileName={fotoKtp ? "Dokumen KTP Pemilik" : "Belum diunggah"}
+              fileSize="-"
+              imgSrc={fotoKtp || defaultAvatar}
             />
             <DokumenCard
-              title="Foto Depan Kost"
-              fileName="Depan_Kost.jpg"
-              fileSize="2.4 MB"
-              imgSrc="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=200"
-            />
-            <DokumenCard
-              title="Foto Lingkungan Kost"
-              fileName="Lingkungan_Kost.jpg"
-              fileSize="1.8 MB"
-              imgSrc="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=200"
-            />
-            <DokumenCard
-              title="Surat Kepemilikan"
-              fileName="Sertifikat.jpg"
-              fileSize="1.8 MB"
-              imgSrc="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=200"
+              title="Foto Utama Kost"
+              fileName="Bangunan_Utama.jpg"
+              fileSize="-"
+              imgSrc={fotoUtama}
             />
           </div>
 
           <div className="dokumen-info-note">
             <FiInfo size={14} color="#0066ff" />
-            <span>Klik gambar untuk melihat ukuran penuh</span>
+            <span>Dokumen diunggah secara resmi oleh pemilik kos.</span>
           </div>
         </InfoCard>
 
-        <MapLokasiCard lat="-6.2088" lng="106.8456" />
+        <MapLokasiCard lat={kosDetail?.lat || kosDetail?.latitude || "-6.2088"} lng={kosDetail?.lng || kosDetail?.longitude || "106.8456"} />
       </div>
 
       <InfoCard icon={FiFileText} title="Catatan Admin">
@@ -150,14 +195,18 @@ export default function DetailVerifikasiPemilik() {
           <FiArrowLeft size={16} /> Kembali
         </Link>
 
-        <div className="action-buttons-group">
-          <button type="button" className="btn-reject-outline" onClick={handleReject}>
-            <FiXCircle size={16} /> Tolak Verifikasi
-          </button>
-          <button type="button" className="btn-approve-solid" onClick={handleApprove}>
-            <FiCheckCircle size={16} /> Setujui Verifikasi
-          </button>
-        </div>
+        {statusStr !== "aktif" && (
+          <div className="action-buttons-group">
+            {statusStr !== "ditolak" && (
+              <button type="button" className="btn-reject-outline" onClick={handleReject}>
+                <FiXCircle size={16} /> Tolak Verifikasi
+              </button>
+            )}
+            <button type="button" className="btn-approve-solid" onClick={handleApprove}>
+              <FiCheckCircle size={16} /> Setujui Verifikasi
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

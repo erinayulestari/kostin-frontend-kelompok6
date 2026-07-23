@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff, UserRound, House, ShieldAlert, ShieldCheck, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, UserRound, House, ShieldAlert, Lock, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -21,14 +21,24 @@ export default function LoginForm({ isAdminLogin = false }) {
 
     try {
       const res = await login(email, password);
-      const userRole = res.data?.user?.role || role;
+      const userRole = res.data?.user?.role;
 
+      // 1. Validasi khusus jika sedang berada di halaman Login Super Admin
       if (isAdminLogin && userRole !== "admin") {
         await logout();
         setError("Akses Ditolak: Akun Anda bukan akun Super Admin.");
         return;
       }
 
+      // 2. Validasi Ketat (Option 1): Cocokkan role pilihan user dengan role asli di DB
+      if (!isAdminLogin && userRole !== role) {
+        await logout();
+        const expectedRoleName = userRole === "pemilik" ? "Pemilik Kost" : userRole === "admin" ? "Super Admin" : "Pencari Kost";
+        setError(`Akses Ditolak: Akun Anda terdaftar sebagai ${expectedRoleName}. Silakan pilih opsi "${expectedRoleName}" untuk masuk.`);
+        return;
+      }
+
+      // 3. Pengarahan rute jika role sesuai
       if (userRole === "admin") {
         navigate("/admin/dashboard");
       } else if (userRole === "pemilik") {
@@ -47,15 +57,11 @@ export default function LoginForm({ isAdminLogin = false }) {
     <form className="form" onSubmit={handleSubmit}>
       {isAdminLogin ? (
         <div style={{ marginBottom: "20px" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", backgroundColor: "#eff6ff", border: "1px solid #bfdbfe", padding: "6px 12px", borderRadius: "8px", color: "#1d4ed8", fontSize: "13px", fontWeight: "700", marginBottom: "12px" }}>
-            <ShieldCheck size={18} color="#2563eb" />
-            <span>Administrator Portal</span>
-          </div>
-          <h2 style={{ fontSize: "24px", color: "#0f172a", margin: "0 0 6px 0" }}>
-            Login Control Panel 🛡️
+          <h2 style={{ fontSize: "28px", fontWeight: "700", color: "#0f172a", margin: "0 0 6px 0" }}>
+            Login Admin
           </h2>
           <p style={{ color: "#64748b", fontSize: "14px", margin: 0 }}>
-            Masukkan kredensial Super Admin untuk mengelola seluruh data platform.
+            Masukkan email dan password admin Anda.
           </p>
         </div>
       ) : (
@@ -66,7 +72,7 @@ export default function LoginForm({ isAdminLogin = false }) {
       )}
 
       {error && (
-        <div style={{ color: "#ef4444", fontSize: "0.875rem", marginBottom: "1rem", backgroundColor: "#fee2e2", padding: "0.75rem 1rem", borderRadius: "0.5rem", display: "flex", alignItems: "center", gap: "8px", border: "1px solid #fca5a5" }}>
+        <div style={{ color: "#ef4444", fontSize: "0.875rem", marginBottom: "1.25rem", backgroundColor: "#fee2e2", padding: "0.75rem 1rem", borderRadius: "0.5rem", display: "flex", alignItems: "center", gap: "8px", border: "1px solid #fca5a5" }}>
           <ShieldAlert size={20} color="#ef4444" style={{ flexShrink: 0 }} />
           <span>{error}</span>
         </div>
@@ -103,22 +109,24 @@ export default function LoginForm({ isAdminLogin = false }) {
         </button>
       </div>
 
-      <a href="#" className="forgot" onClick={(e) => e.preventDefault()}>
-        Lupa password?
-      </a>
+      {!isAdminLogin && (
+        <a href="#" className="forgot" onClick={(e) => e.preventDefault()}>
+          Lupa password?
+        </a>
+      )}
 
       <button
         type="submit"
+        className={`btn-submit-form ${isAdminLogin ? "admin-btn" : ""}`}
         disabled={submitting}
-        style={isAdminLogin ? { backgroundColor: "#1e40af", fontWeight: "700" } : {}}
       >
-        {submitting ? "Memproses..." : isAdminLogin ? "Masuk ke Control Panel 🚀" : "Masuk"}
+        {submitting ? "Memproses..." : "Masuk"}
       </button>
 
       {isAdminLogin ? (
-        <div style={{ marginTop: "24px", padding: "12px 14px", backgroundColor: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "12px", color: "#64748b", lineHeight: "1.5", textAlign: "center" }}>
-          ⚠️ <strong>Area Terbatas:</strong> Halaman ini khusus diproteksi untuk Super Admin Kostin. Seluruh aktivitas login diawasi oleh sistem keamanan.
-        </div>
+        <p style={{ textAlign: "center", fontSize: "12px", color: "#94a3b8", marginTop: "24px", margin: "24px 0 0 0" }}>
+          🛡️ Hak Akses Khusus Super Admin Kostin
+        </p>
       ) : (
         <div className="role-box">
           <div className="role-title">

@@ -1,5 +1,6 @@
 import React from "react";
 import { Search } from "lucide-react";
+import CustomSelect from "./CustomSelect";
 
 export default function FilterBar({ 
   searchTerm, 
@@ -24,28 +25,30 @@ export default function FilterBar({
       <div className="filter-controls">
         <div className="filter-group">
           <span className="filter-label">Status</span>
-          <select 
-            className="filter-select"
+          <CustomSelect
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="Semua">Semua</option>
-            <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
-            <option value="Disetujui">Disetujui</option>
-            <option value="Ditolak">Ditolak</option>
-          </select>
+            onChange={(val) => setStatusFilter(val)}
+            options={[
+              { value: "Semua", label: "Semua Status" },
+              { value: "Menunggu Verifikasi", label: "Menunggu Verifikasi" },
+              { value: "Disetujui", label: "Disetujui" },
+              { value: "Ditolak", label: "Ditolak" },
+            ]}
+            width="170px"
+          />
         </div>
 
         <div className="filter-group">
           <span className="filter-label">Urutkan</span>
-          <select 
-            className="filter-select"
+          <CustomSelect
             value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-          >
-            <option value="Terbaru">Terbaru</option>
-            <option value="Terlama">Terlama</option>
-          </select>
+            onChange={(val) => setSortOrder(val)}
+            options={[
+              { value: "Terbaru", label: "Terbaru" },
+              { value: "Terlama", label: "Terlama" },
+            ]}
+            width="130px"
+          />
         </div>
       </div>
     </div>

@@ -185,22 +185,22 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 10px;
+  gap: 12px;
 }
 
-/* Badge Status (Diperlebar ke 180px & dipaksa 1 baris) */
+/* Badge Status */
 .v-status-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  width: 180px; /* Cukup lebar untuk 1 baris teks 'Menunggu Verifikasi' */
+  min-width: 150px;
   height: 32px;
-  padding: 0 12px;
+  padding: 0 14px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
-  white-space: nowrap; /* Mencegah teks tertekuk jadi 2 baris */
+  white-space: nowrap;
   box-sizing: border-box;
 }
 
@@ -219,30 +219,66 @@
   color: #ef4444;
 }
 
-/* Tombol Detail (Disamakan 180px agar sejajar sempurna) */
-.btn-detail-outline {
+/* Group & Tombol Aksi */
+.v-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.btn-v-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  width: 180px;
   height: 36px;
   padding: 0 14px;
-  border: 1px solid #0066ff;
   border-radius: 8px;
-  background-color: #ffffff;
-  color: #0066ff;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   box-sizing: border-box;
+  border: 1px solid transparent;
+  outline: none;
+  white-space: nowrap;
 }
 
-.btn-detail-outline:hover {
+.btn-v-approve {
+  background-color: #f0fdf4;
+  color: #16a34a;
+  border-color: #bbf7d0;
+}
+
+.btn-v-approve:hover {
+  background-color: #16a34a;
+  color: #ffffff;
+  border-color: #16a34a;
+}
+
+.btn-v-reject {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.btn-v-reject:hover {
+  background-color: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+
+.btn-v-detail {
   background-color: #0066ff;
   color: #ffffff;
+  border-color: #0066ff;
+}
+
+.btn-v-detail:hover {
+  background-color: #0052cc;
+  border-color: #0052cc;
 }
 
 /* ==========================================================================

@@ -91,9 +91,40 @@ const TransactionRowCard = ({ transaction, onViewDetail, onViewInvoice, onDownlo
         <span className="val-price">{formatRupiah(transaction.amount)}</span>
       </div>
 
-      {/* 6. Status Badge */}
-      <div className="status-container">
+      {/* 6. Status Badge & Disbursement Badge */}
+      <div className="status-container" style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start' }}>
         {renderStatusBadge(transaction.status)}
+        {transaction.status === 'Berhasil' && (
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              padding: '2px 8px',
+              borderRadius: '12px',
+              fontSize: '11px',
+              fontWeight: '600',
+              backgroundColor:
+                transaction.statusDisbursement === 'selesai'
+                  ? '#dcfce7'
+                  : transaction.statusDisbursement === 'diproses'
+                  ? '#e0f2fe'
+                  : '#fef3c7',
+              color:
+                transaction.statusDisbursement === 'selesai'
+                  ? '#16a34a'
+                  : transaction.statusDisbursement === 'diproses'
+                  ? '#0284c7'
+                  : '#d97706',
+            }}
+          >
+            {transaction.statusDisbursement === 'selesai'
+              ? '✓ Ditransfer Admin'
+              : transaction.statusDisbursement === 'diproses'
+              ? '🔄 Diproses Admin'
+              : '🕒 Pending Transfer'}
+          </span>
+        )}
       </div>
 
       {/* 7. Action Buttons & Dropdown */}
